@@ -1,13 +1,11 @@
 import { Suspense, useEffect, useState } from 'react';
-import * as THREE from 'three';
-import { AnimationMixer } from 'three';
-import { Canvas, useFrame, } from '@react-three/fiber';
-import { OrbitControls, Preload, useGLTF } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Preload, useGLTF, Float } from '@react-three/drei';
 
 import CanvasLoader from '../Loader';
 
 const Computers = ({ isMobile }) => {
-  const computer = useGLTF('./zd16.glb')
+  const computer = useGLTF('./zd16-v1.glb')
   // const [mixer] = useState(() => new AnimationMixer(computer.scene));
 
   // // Update the AnimationMixer on each frame
@@ -28,7 +26,7 @@ const Computers = ({ isMobile }) => {
   // }, [computer.animations, mixer]);
 
   return (
-    
+    <Float>
       <mesh>
         <hemisphereLight intensity={1} groundColor="black" />
         <pointLight intensity={0.5} />
@@ -47,7 +45,7 @@ const Computers = ({ isMobile }) => {
           rotation={[0.9, 0.7, -0.4]}
         />
       </mesh>
-    
+      </Float>
   )
 }
 
@@ -68,7 +66,7 @@ const ComputersCanvas = () => {
     }
 
     // Add the callback function as listener for changes to the media query
-    mediaQuery.addEventListener('change', handleMediaQueryChange);
+    mediaQuery.addEventListener('change', handleMediaQueryChange, {passive: true});
 
     // Remove the listener when the component is unmounted
     return () => {
