@@ -38,11 +38,11 @@ import {
   
   const services = [
     {
-      title: "React/Next Web Developer",
+      title: "Web Developer",
       icon: web,
     },
     {
-      title: "TensorFlow Associate",
+      title: "AI Integrations",
       icon: mobile,
     },
     {
@@ -50,7 +50,7 @@ import {
       icon: backend,
     },
     {
-      title: "Learning three.js and WebGL",
+      title: "Three.js and WebGL",
       icon: creator,
     },
   ];
@@ -88,10 +88,10 @@ import {
       name: "Node JS",
       icon: nodejs,
     },
-    {
-      name: "MongoDB",
-      icon: mongodb,
-    },
+    // {
+    //   name: "MongoDB",
+    //   icon: mongodb,
+    // },
     {
       name: "Three JS",
       icon: threejs,
@@ -100,10 +100,10 @@ import {
       name: "git",
       icon: git,
     },
-    {
-      name: "figma",
-      icon: figma,
-    },
+    // {
+    //   name: "figma",
+    //   icon: figma,
+    // },
     {
       name: "docker",
       icon: docker,
@@ -111,6 +111,27 @@ import {
   ];
   
   const projects = [
+    {
+      name: "Respiratory Diseases Classification",
+      description:
+        "Trained a CNN model with TensorFlow 2.11 to classify respiratory diseases by WAV recordings.",
+      tags: [
+        {
+          name: "TensorFlow",
+          color: "blue-text-gradient",
+        },
+        {
+          name: "StreamLit",
+          color: "green-text-gradient",
+        },
+        {
+          name: "Colaboratory",
+          color: "pink-text-gradient",
+        },
+      ],
+      image: tripguide,
+      source_code_link: "https://pernapasan.streamlit.app",
+    },
     {
       name: "Car Rent",
       description:
@@ -132,48 +153,27 @@ import {
       image: carrent,
       source_code_link: "https://github.com/",
     },
-    {
-      name: "Job IT",
-      description:
-        "Web application that enables users to search for job openings, view estimated salary ranges for positions, and locate available jobs based on their current location.",
-      tags: [
-        {
-          name: "react",
-          color: "blue-text-gradient",
-        },
-        {
-          name: "restapi",
-          color: "green-text-gradient",
-        },
-        {
-          name: "scss",
-          color: "pink-text-gradient",
-        },
-      ],
-      image: jobit,
-      source_code_link: "https://github.com/",
-    },
-    {
-      name: "Trip Guide",
-      description:
-        "A comprehensive travel booking platform that allows users to book flights, hotels, and rental cars, and offers curated recommendations for popular destinations.",
-      tags: [
-        {
-          name: "nextjs",
-          color: "blue-text-gradient",
-        },
-        {
-          name: "supabase",
-          color: "green-text-gradient",
-        },
-        {
-          name: "css",
-          color: "pink-text-gradient",
-        },
-      ],
-      image: tripguide,
-      source_code_link: "https://github.com/",
-    },
+    // {
+    //   name: "Job IT",
+    //   description:
+    //     "Web application that enables users to search for job openings, view estimated salary ranges for positions, and locate available jobs based on their current location.",
+    //   tags: [
+    //     {
+    //       name: "react",
+    //       color: "blue-text-gradient",
+    //     },
+    //     {
+    //       name: "restapi",
+    //       color: "green-text-gradient",
+    //     },
+    //     {
+    //       name: "scss",
+    //       color: "pink-text-gradient",
+    //     },
+    //   ],
+    //   image: jobit,
+    //   source_code_link: "https://github.com/",
+    // },
   ];
   
   export { services, technologies, projects };
