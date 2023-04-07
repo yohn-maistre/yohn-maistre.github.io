@@ -4,7 +4,7 @@ import { OrbitControls, Preload, useGLTF, Float } from '@react-three/drei';
 
 import CanvasLoader from '../Loader';
 
-const Computers = ({ isMobile }) => {
+const Computers = () => {
   const computer = useGLTF('./zd16_lowest-v1.glb')
   // const [mixer] = useState(() => new AnimationMixer(computer.scene));
 
@@ -50,29 +50,29 @@ const Computers = ({ isMobile }) => {
 }
 
 const ComputersCanvas = () => {
-  const [isMobile, setIsMobile] = useState(false);
+  // const [isMobile, setIsMobile] = useState(false);
 
 
-  useEffect(() => {
-    // Add a listener for changes to the screen size
-    const mediaQuery = window.matchMedia('(max-width: 500px)');
+  // useEffect(() => {
+  //   // Add a listener for changes to the screen size
+  //   const mediaQuery = window.matchMedia('(max-width: 500px)');
 
-    // Set the initial value of the 'isMobile' state available
-    setIsMobile(mediaQuery.matches);
+  //   // Set the initial value of the 'isMobile' state available
+  //   setIsMobile(mediaQuery.matches);
 
-    // Define a callback function to handle state variable
-    const handleMediaQueryChange = (event) => {
-      setIsMobile(event.matches);
-    }
+  //   // Define a callback function to handle state variable
+  //   const handleMediaQueryChange = (event) => {
+  //     setIsMobile(event.matches);
+  //   }
 
-    // Add the callback function as listener for changes to the media query
-    mediaQuery.addEventListener('change', handleMediaQueryChange, {passive: true});
+  //   // Add the callback function as listener for changes to the media query
+  //   mediaQuery.addEventListener('change', handleMediaQueryChange, {passive: true});
 
-    // Remove the listener when the component is unmounted
-    return () => {
-      mediaQuery.removeEventListener('change', handleMediaQueryChange);
-    };
-  }, []);
+  //   // Remove the listener when the component is unmounted
+  //   return () => {
+  //     mediaQuery.removeEventListener('change', handleMediaQueryChange);
+  //   };
+  // }, []);
 
 
   return (
@@ -89,7 +89,8 @@ const ComputersCanvas = () => {
           maxPolarAngle={Math.PI / 2}
           minPolarAngle={Math.PI / 2}
         />
-        <Computers isMobile={isMobile} />
+        <Computers />
+        {/* <Computers isMobile={isMobile} /> */}
       </Suspense>
 
       <Preload all />
