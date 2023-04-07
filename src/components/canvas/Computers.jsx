@@ -26,7 +26,7 @@ const Computers = ({ isMobile }) => {
   // }, [computer.animations, mixer]);
 
   return (
-    <Float>
+    // <Float>
       <mesh>
         <hemisphereLight intensity={1} groundColor="black" />
         <pointLight intensity={0.5} />
@@ -45,7 +45,7 @@ const Computers = ({ isMobile }) => {
           rotation={[0.9, 0.7, -0.4]}
         />
       </mesh>
-    </Float>
+    // {/* </Float> */}
   )
 }
 
@@ -77,7 +77,7 @@ const ComputersCanvas = () => {
 
   return (
     <Canvas
-      frameloop='always'
+      frameloop='demand'
       shadows
       camera={{ position: [20, 3, 5], fov: 25 }}
       gl={{ preserveDrawingBuffer: true }}
