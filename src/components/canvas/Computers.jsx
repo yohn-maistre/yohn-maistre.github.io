@@ -5,7 +5,7 @@ import { OrbitControls, Preload, useGLTF, Float } from '@react-three/drei';
 import CanvasLoader from '../Loader';
 
 const Computers = ({ isMobile }) => {
-  const computer = useGLTF('./zd16-v1.glb')
+  const computer = useGLTF('./zd16_lowest-v1.glb')
   // const [mixer] = useState(() => new AnimationMixer(computer.scene));
 
   // // Update the AnimationMixer on each frame
@@ -26,7 +26,7 @@ const Computers = ({ isMobile }) => {
   // }, [computer.animations, mixer]);
 
   return (
-    <Float>
+    // <Float>
       <mesh>
         <hemisphereLight intensity={1} groundColor="black" />
         <pointLight intensity={0.5} />
@@ -40,12 +40,12 @@ const Computers = ({ isMobile }) => {
         />
         <primitive
           object={computer.scene}
-          scale={isMobile ? 10 : 15.5}
+          scale={isMobile ? 8 : 14}
           position={isMobile ? [0, -0.6, 0] : [0, -0.7, 0]}
           rotation={[0.9, 0.7, -0.4]}
         />
       </mesh>
-      </Float>
+    // </Float>
   )
 }
 
@@ -77,7 +77,7 @@ const ComputersCanvas = () => {
 
   return (
     <Canvas
-      frameloop='always'
+      frameloop='demand'
       shadows
       camera={{ position: [20, 3, 5], fov: 25 }}
       gl={{ preserveDrawingBuffer: true }}
