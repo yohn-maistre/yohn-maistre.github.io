@@ -84,7 +84,7 @@ const Works = () => {
           variants={fadeIn("", "", 0.1, 1)}
           className="mt-3 text-secondary text-[17px] max-w-3xl leading-[30px]"
         >
-          Projects to showcase my experience through. Each project is briefly described with
+          Each project is briefly described with
           links to code repositories and live demos.
         </motion.p>
       </div>
