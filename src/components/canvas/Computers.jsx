@@ -5,7 +5,7 @@ import { OrbitControls, Preload, useGLTF, Float } from '@react-three/drei';
 import CanvasLoader from '../Loader';
 
 const Computers = ({ isMobile }) => {
-  const computer = useGLTF('./zd16_lowest-v1.glb')
+  const computer = useGLTF('./zd16-v1.glb')
   // const [mixer] = useState(() => new AnimationMixer(computer.scene));
 
   // // Update the AnimationMixer on each frame
