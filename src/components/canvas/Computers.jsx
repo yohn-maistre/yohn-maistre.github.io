@@ -26,7 +26,7 @@ const Computers = ({ isMobile }) => {
   // }, [computer.animations, mixer]);
 
   return (
-    // <Float>
+    <Float>
       <mesh>
         <hemisphereLight intensity={1} groundColor="black" />
         <pointLight intensity={0.5} />
@@ -45,7 +45,7 @@ const Computers = ({ isMobile }) => {
           rotation={[0.9, 0.7, -0.4]}
         />
       </mesh>
-  //  {/* </Float> */}
+    </Float>
   )
 }
 
