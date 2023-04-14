@@ -48,7 +48,7 @@ const About = () => {
         Experience with <b>Python, TypeScript, and JavaScript</b>. 
         <br /><br />For web development, I use frameworks like <b>React, Next.js, Vite, and Node.js</b>, among others 
         - and have been dabbling with <b>Three.js</b>. 
-        <br /><br />Using both <b>TensorFlow & PyTorch</b> to develop AI models and <b>FastAPI</b> to build real-world ML solutions; 
+        <br /><br />I use both <b>TensorFlow & PyTorch</b> to develop AI models and <b>FastAPI</b> to build real-world ML solutions; 
         working with data from <b>AWS and Pinecone (vector)</b>.
       </motion.p>
 
