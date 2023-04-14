@@ -85,7 +85,7 @@ const Works = () => {
           className="mt-3 text-secondary text-[17px] max-w-3xl leading-[30px]"
         >
           Each project is briefly described with
-          links to code repositories and live demos.
+          links to repositories and live demos.
         </motion.p>
       </div>
 
@@ -102,4 +102,4 @@ const Works = () => {
   )
 }
 
-export default SectionWrapper(Works, "");
+export default SectionWrapper(Works, "projects");

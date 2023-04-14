@@ -26,3 +26,4 @@ dist-ssr
 .firebase
 .firebaserc
 *.exe
+yose.json
