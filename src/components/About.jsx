@@ -45,10 +45,10 @@ const About = () => {
         variants={fadeIn("", "", 0.1, 1)}
         className='mt-4 text-secondary text-[17px] max-w-3xl leading-[30px]'
       >
-        6 years of developing with <b>Python, TypeScript, and JavaScript</b>. 
+        Experience with <b>Python, TypeScript, and JavaScript</b>. 
         <br /><br />For web development, I use frameworks like <b>React, Next.js, Vite, and Node.js</b>, among others 
         - and have been dabbling with <b>Three.js</b>. 
-        <br /><br />I've also been using both <b>TensorFlow & PyTorch</b> to develop AI models and <b>FastAPI</b> to build real-world ML solutions; 
+        <br /><br />Using both <b>TensorFlow & PyTorch</b> to develop AI models and <b>FastAPI</b> to build real-world ML solutions; 
         working with data from <b>AWS and Pinecone (vector)</b>.
       </motion.p>
 
