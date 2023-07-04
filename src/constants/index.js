@@ -114,7 +114,7 @@ import {
     {
       name: "Respiratory Diseases Classification",
       description:
-        "Trained a CNN model with TensorFlow 2.11 to classify respiratory diseases by WAV recordings.",
+        "A CNN model trained with TensorFlow 2.11 to classify respiratory diseases by WAV recordings.",
       tags: [
         {
           name: "TensorFlow",
