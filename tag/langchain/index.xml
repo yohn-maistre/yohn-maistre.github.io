@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>LangChain | Yose</title><link>https://yohn-maistre.github.io/hugo-cv/tag/langchain/</link><atom:link href="https://yohn-maistre.github.io/hugo-cv/tag/langchain/index.xml" rel="self" type="application/rss+xml"/><description>LangChain</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sat, 24 Sep 2022 00:00:00 +0000</lastBuildDate><image><url>https://yohn-maistre.github.io/hugo-cv/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png</url><title>LangChain</title><link>https://yohn-maistre.github.io/hugo-cv/tag/langchain/</link></image><item><title>Using Llama 2-13b for RetrievalQA with LangChain and HuggingFace</title><link>https://yohn-maistre.github.io/hugo-cv/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/</link><pubDate>Sat, 24 Sep 2022 00:00:00 +0000</pubDate><guid>https://yohn-maistre.github.io/hugo-cv/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/</guid><description>&lt;p>&lt;a href="https://colab.research.google.com/github/pinecone-io/examples/blob/master/learn/generation/llm-field-guide/llama-2/llama-2-13b-retrievalqa.ipynb" target="_blank" rel="noopener">
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/a> &lt;a href="https://nbviewer.org/github/pinecone-io/examples/blob/master/learn/generation/llm-field-guide/llama-2/llama-2-13b-retrievalqa.ipynb" target="_blank" rel="noopener">
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://raw.githubusercontent.com/pinecone-io/examples/master/assets/nbviewer-shield.svg" alt="Open nbviewer" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/a>&lt;/p>
+&lt;h1 id="rag-with-llama-13b">RAG with LLaMa 13B&lt;/h1>
+&lt;p>In this notebook we&amp;rsquo;ll explore how we can use the open source &lt;strong>Llama-13b-chat&lt;/strong> model in both Hugging Face transformers and LangChain.
+At the time of writing, you must first request access to Llama 2 models via &lt;a href="https://ai.meta.com/resources/models-and-libraries/llama-downloads/" target="_blank" rel="noopener">this form&lt;/a> (access is typically granted within a few hours). If you need guidance on getting access please refer to the beginning of this &lt;a href="https://www.pinecone.io/learn/llama-2/" target="_blank" rel="noopener">article&lt;/a> or &lt;a href="https://youtu.be/6iHVJyX2e50?t=175" target="_blank" rel="noopener">video&lt;/a>.&lt;/p>
+&lt;hr>
+&lt;p>🚨 &lt;em>Note that running this on CPU is sloooow. If running on Google Colab you can avoid this by going to &lt;strong>Runtime &amp;gt; Change runtime type &amp;gt; Hardware accelerator &amp;gt; GPU &amp;gt; GPU type &amp;gt; T4&lt;/strong>. This should be included within the free tier of Colab.&lt;/em>&lt;/p>
+&lt;hr>
+&lt;p>We start by doing a &lt;code>pip install&lt;/code> of all required libraries.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="err">!&lt;/span>&lt;span class="n">pip&lt;/span> &lt;span class="n">install&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="n">qU&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">transformers&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="mf">4.31.0&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sentence&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">transformers&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="mf">2.2.2&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">pinecone&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">client&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="mf">2.2.2&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">datasets&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="mf">2.14.0&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">accelerate&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="mf">0.21.0&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">einops&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="mf">0.6.1&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">langchain&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="mf">0.0.240&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">xformers&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="mf">0.0.20&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">bitsandbytes&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="mf">0.41.0&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>---------------------------------------------------------------------------
+NotImplementedError Traceback (most recent call last)
+&amp;lt;ipython-input-28-7814daf2c61a&amp;gt; in &amp;lt;cell line: 1&amp;gt;()
+----&amp;gt; 1 get_ipython().system('pip install -qU transformers==4.31.0 sentence-transformers==2.2.2 pinecone-client==2.2.2 datasets==2.14.0 accelerate==0.21.0 einops==0.6.1 langchain==0.0.240 xformers==0.0.20 bitsandbytes==0.41.0')
+/usr/local/lib/python3.10/dist-packages/google/colab/_shell.py in system(self, *args, **kwargs)
+97 kwargs.update({'also_return_output': True})
+98
+---&amp;gt; 99 output = _system_commands._system_compat(self, *args, **kwargs) # pylint:disable=protected-access
+100
+101 if pip_warn:
+/usr/local/lib/python3.10/dist-packages/google/colab/_system_commands.py in _system_compat(shell, cmd, also_return_output)
+451 # is expected to call this function, thus adding one level of nesting to the
+452 # stack.
+--&amp;gt; 453 result = _run_command(
+454 shell.var_expand(cmd, depth=2), clear_streamed_output=False
+455 )
+/usr/local/lib/python3.10/dist-packages/google/colab/_system_commands.py in _run_command(cmd, clear_streamed_output)
+165 locale_encoding = locale.getpreferredencoding()
+166 if locale_encoding != _ENCODING:
+--&amp;gt; 167 raise NotImplementedError(
+168 'A UTF-8 locale is required. Got {}'.format(locale_encoding)
+169 )
+NotImplementedError: A UTF-8 locale is required. Got ANSI_X3.4-1968
+&lt;/code>&lt;/pre>
+&lt;h2 id="initializing-the-hugging-face-embedding-pipeline">Initializing the Hugging Face Embedding Pipeline&lt;/h2>
+&lt;p>We begin by initializing the embedding pipeline that will handle the transformation of our docs into vector embeddings. We will use the &lt;code>sentence-transformers/all-MiniLM-L6-v2&lt;/code> model for embedding.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">torch&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">cuda&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">langchain.embeddings.huggingface&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">HuggingFaceEmbeddings&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">embed_model_id&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;sentence-transformers/all-MiniLM-L6-v2&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">device&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="sa">f&lt;/span>&lt;span class="s1">&amp;#39;cuda:&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">cuda&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">current_device&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span> &lt;span class="k">if&lt;/span> &lt;span class="n">cuda&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">is_available&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="k">else&lt;/span> &lt;span class="s1">&amp;#39;cpu&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">embed_model&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">HuggingFaceEmbeddings&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">model_name&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">embed_model_id&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">model_kwargs&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="s1">&amp;#39;device&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">device&lt;/span>&lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">encode_kwargs&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="s1">&amp;#39;device&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">device&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;batch_size&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">32&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can use the embedding model to create document embeddings like so:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">docs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;this is one document&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;and another document&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">embeddings&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">embed_model&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">embed_documents&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">docs&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;Kita punya &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="nb">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">embeddings&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2"> doc yang sudah di-embed, masing-masing dengan &amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;dimensi &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="nb">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">embeddings&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">])&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">.&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>Kita punya 2 doc yang sudah di-embed, masing-masing dengan dimensi 384.
+&lt;/code>&lt;/pre>
+&lt;h2 id="bangun-indeks-vektor">Bangun Indeks Vektor&lt;/h2>
+&lt;p>Sekarang kita perlu menggunakan pipeline embedding untuk membangun embedding kita dan menyimpannya di indeks vektor Pinecone. Untuk memulai, kita akan menginisialisasi indeks kita, untuk ini kita akan membutuhkan &lt;a href="https://app.pinecone.io/" target="_blank" rel="noopener">kunci API Pinecone gratis&lt;/a>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">os&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">pinecone&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># get API key from app.pinecone.io and environment from console&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">pinecone&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">init&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">api_key&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">environ&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;PINECONE_API_KEY&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="ow">or&lt;/span> &lt;span class="s1">&amp;#39;d13041cb-813a-43f3-921e-abbb00f4c47c&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">environment&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">environ&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;PINECONE_ENVIRONMENT&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="ow">or&lt;/span> &lt;span class="s1">&amp;#39;us-west1-gcp&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Inisialisasi indeks&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">time&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">index_name&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;llama-2-rag&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="n">index_name&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">pinecone&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">list_indexes&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">pinecone&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">create_index&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">index_name&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">dimension&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">embeddings&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">metric&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;cosine&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># wait for index to finish initialization&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">pinecone&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">describe_index&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">index_name&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">status&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;ready&amp;#39;&lt;/span>&lt;span class="p">]:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">time&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sleep&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Now we connect to the index:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">index&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">pinecone&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">Index&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">index_name&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">index&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">describe_index_stats&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>{'dimension': 384,
+'index_fullness': 0.0,
+'namespaces': {'': {'vector_count': 4838}},
+'total_vector_count': 4838}
+&lt;/code>&lt;/pre>
+&lt;p>With our index and embedding process ready we can move onto the indexing process itself. For that, we&amp;rsquo;ll need a dataset. We will use a set of Arxiv papers related to (and including) the Llama 2 research paper.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">datasets&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">load_dataset&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">load_dataset&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s1">&amp;#39;jamescalam/llama-2-arxiv-papers-chunked&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">split&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;train&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">data&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>Downloading readme: 0%| | 0.00/409 [00:00&amp;lt;?, ?B/s]
+Downloading data files: 0%| | 0/1 [00:00&amp;lt;?, ?it/s]
+Downloading data: 0%| | 0.00/14.4M [00:00&amp;lt;?, ?B/s]
+Extracting data files: 0%| | 0/1 [00:00&amp;lt;?, ?it/s]
+Generating train split: 0 examples [00:00, ? examples/s]
+Dataset({
+features: ['doi', 'chunk-id', 'chunk', 'id', 'title', 'summary', 'source', 'authors', 'categories', 'comment', 'journal_ref', 'primary_category', 'published', 'updated', 'references'],
+num_rows: 4838
+})
+&lt;/code>&lt;/pre>
+&lt;p>We will embed and index the documents like so:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">data&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">data&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">to_pandas&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">batch_size&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">32&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">for&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="nb">range&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">data&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="n">batch_size&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">i_end&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">min&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">data&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">batch_size&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">batch&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">data&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">iloc&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">i_end&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ids&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;doi&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">-&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;chunk-id&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">batch&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">iterrows&lt;/span>&lt;span class="p">()]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">texts&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;chunk&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">batch&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">iterrows&lt;/span>&lt;span class="p">()]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">embeds&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">embed_model&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">embed_documents&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">texts&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># get metadata to store in Pinecone&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">metadata&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>&lt;span class="s1">&amp;#39;text&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">x&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;chunk&amp;#39;&lt;/span>&lt;span class="p">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s1">&amp;#39;source&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">x&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;source&amp;#39;&lt;/span>&lt;span class="p">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s1">&amp;#39;title&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">x&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;title&amp;#39;&lt;/span>&lt;span class="p">]}&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">x&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">batch&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">iterrows&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># add to Pinecone&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">index&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">upsert&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">vectors&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb">zip&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ids&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">embeds&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">metadata&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">index&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">describe_index_stats&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>{'dimension': 384,
+'index_fullness': 0.0,
+'namespaces': {'': {'vector_count': 4838}},
+'total_vector_count': 4838}
+&lt;/code>&lt;/pre>
+&lt;h2 id="initializing-the-hugging-face-pipeline">Initializing the Hugging Face Pipeline&lt;/h2>
+&lt;p>The first thing we need to do is initialize a &lt;code>text-generation&lt;/code> pipeline with Hugging Face transformers. The Pipeline requires three things that we must initialize first, those are:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>A LLM, in this case it will be &lt;code>meta-llama/Llama-2-13b-chat-hf&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>The respective tokenizer for the model.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>We&amp;rsquo;ll explain these as we get to them, let&amp;rsquo;s begin with our model.&lt;/p>
+&lt;p>We initialize the model and move it to our CUDA-enabled GPU. Using Colab this can take 5-10 minutes to download and initialize the model.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">torch&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">cuda&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">bfloat16&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">transformers&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">model_id&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;tiiuae/falcon-7b-instruct&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">device&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="sa">f&lt;/span>&lt;span class="s1">&amp;#39;cuda:&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">cuda&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">current_device&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s1">&amp;#39;&lt;/span> &lt;span class="c1"># if cuda.is_available() else &amp;#39;cpu&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># set quantization configuration to load large model with less GPU memory&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># this requires the `bitsandbytes` library&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">bnb_config&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">transformers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">BitsAndBytesConfig&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">load_in_4bit&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="kc">True&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">bnb_4bit_quant_type&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;nf4&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">bnb_4bit_use_double_quant&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="kc">True&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">bnb_4bit_compute_dtype&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">bfloat16&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># begin initializing HF items, need auth token for these&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">hf_auth&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;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&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">model_config&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">transformers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">AutoConfig&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">from_pretrained&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">model_id&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">use_auth_token&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">hf_auth&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">model&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">transformers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">AutoModelForCausalLM&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">from_pretrained&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">model_id&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">trust_remote_code&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="kc">True&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">config&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">model_config&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">quantization_config&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">bnb_config&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">device_map&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;auto&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">use_auth_token&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">hf_auth&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">model&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">eval&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;Model loaded on &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">device&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>Loading tiiuae/falcon-7b-instruct requires to execute some code in that repo, you can inspect the content of the repository at https://hf.co/tiiuae/falcon-7b-instruct. You can dismiss this prompt by passing `trust_remote_code=True`.
+Do you accept? [y/N] y
+/usr/local/lib/python3.10/dist-packages/transformers/configuration_utils.py:483: FutureWarning: The `use_auth_token` argument is deprecated and will be removed in v5 of Transformers.
+warnings.warn(
+/usr/local/lib/python3.10/dist-packages/transformers/modeling_utils.py:2193: FutureWarning: The `use_auth_token` argument is deprecated and will be removed in v5 of Transformers.
+warnings.warn(
+Loading checkpoint shards: 0%| | 0/2 [00:00&amp;lt;?, ?it/s]
+Downloading (…)neration_config.json: 0%| | 0.00/111 [00:00&amp;lt;?, ?B/s]
+Model loaded on cuda:0
+&lt;/code>&lt;/pre>
+&lt;p>The pipeline requires a tokenizer which handles the translation of human readable plaintext to LLM readable token IDs. The Llama 2 13B models were trained using the Llama 2 13B tokenizer, which we initialize like so:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">tokenizer&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">transformers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">AutoTokenizer&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">from_pretrained&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">model_id&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">use_auth_token&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">hf_auth&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>Downloading (…)okenizer_config.json: 0%| | 0.00/220 [00:00&amp;lt;?, ?B/s]
+/usr/local/lib/python3.10/dist-packages/transformers/tokenization_utils_base.py:1714: FutureWarning: The `use_auth_token` argument is deprecated and will be removed in v5 of Transformers.
+warnings.warn(
+Downloading (…)/main/tokenizer.json: 0%| | 0.00/2.73M [00:00&amp;lt;?, ?B/s]
+Downloading (…)cial_tokens_map.json: 0%| | 0.00/281 [00:00&amp;lt;?, ?B/s]
+&lt;/code>&lt;/pre>
+&lt;p>Now we&amp;rsquo;re ready to initialize the HF pipeline. There are a few additional parameters that we must define here. Comments explaining these have been included in the code.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">generate_text&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">transformers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">pipeline&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">model&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">model&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">tokenizer&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">tokenizer&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">return_full_text&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="kc">True&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1"># langchain expects the full text&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">task&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;text-generation&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># we pass model parameters here too&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">temperature&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mf">0.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1"># &amp;#39;randomness&amp;#39; of outputs, 0.0 is the min and 1.0 the max&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">max_new_tokens&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">512&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1"># mex number of tokens to generate in the output&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">repetition_penalty&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mf">1.1&lt;/span> &lt;span class="c1"># without this output begins repeating&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Confirm this is working:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">res&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">generate_text&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;Explain to me the difference between nuclear fission and fusion.&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">res&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="s2">&amp;#34;generated_text&amp;#34;&lt;/span>&lt;span class="p">])&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>/usr/local/lib/python3.10/dist-packages/transformers/generation/utils.py:1270: UserWarning: You have modified the pretrained model configuration to control generation. This is a deprecated strategy to control generation and will be removed soon, in a future version. Please use a generation configuration file (see https://huggingface.co/docs/transformers/main_classes/text_generation )
+warnings.warn(
+Setting `pad_token_id` to `eos_token_id`:11 for open-end generation.
+Explain to me the difference between nuclear fission and fusion.
+Nuclear fission is a nuclear reaction in which an atomic nucleus splits into two smaller nuclei, releasing a large amount of energy in the form of radiation and kinetic energy. Fusion, on the other hand, is a nuclear reaction in which two atomic nuclei combine to form a heavier nucleus, releasing a large amount of energy in the form of radiation and kinetic energy. The main difference between the two reactions is that fusion requires a higher temperature and density of fuel than fission, in order to initiate the reaction, whereas fission can occur at relatively low temperatures and densities.
+&lt;/code>&lt;/pre>
+&lt;p>Now to implement this in LangChain&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">langchain.llms&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">HuggingFacePipeline&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">llm&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">HuggingFacePipeline&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">pipeline&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">generate_text&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">llm&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">prompt&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;Explain to me the difference between nuclear fission and fusion.&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>Setting `pad_token_id` to `eos_token_id`:11 for open-end generation.
+'\nNuclear fission is a nuclear reaction in which an atomic nucleus splits into two smaller nuclei, releasing a large amount of energy in the form of radiation and kinetic energy. Fusion, on the other hand, is a nuclear reaction in which two atomic nuclei combine to form a heavier nucleus, releasing a large amount of energy in the form of radiation and kinetic energy. The main difference between the two reactions is that fusion requires a higher temperature and density of fuel than fission, in order to initiate the reaction, whereas fission can occur at relatively low temperatures and densities.'
+&lt;/code>&lt;/pre>
+&lt;p>We still get the same output as we&amp;rsquo;re not really doing anything differently here, but we have now added &lt;strong>Llama 2 13B Chat&lt;/strong> to the LangChain library. Using this we can now begin using LangChain&amp;rsquo;s advanced agent tooling, chains, etc, with &lt;strong>Llama 2&lt;/strong>.&lt;/p>
+&lt;h2 id="initializing-a-retrievalqa-chain">Initializing a RetrievalQA Chain&lt;/h2>
+&lt;p>For &lt;strong>R&lt;/strong>etrieval &lt;strong>A&lt;/strong>ugmented &lt;strong>G&lt;/strong>eneration (RAG) in LangChain we need to initialize either a &lt;code>RetrievalQA&lt;/code> or &lt;code>RetrievalQAWithSourcesChain&lt;/code> object. For both of these we need an &lt;code>llm&lt;/code> (which we have initialized) and a Pinecone index — but initialized within a LangChain vector store object.&lt;/p>
+&lt;p>Let&amp;rsquo;s begin by initializing the LangChain vector store, we do it like so:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">langchain.vectorstores&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">Pinecone&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">text_field&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;text&amp;#39;&lt;/span> &lt;span class="c1"># field in metadata that contains text content&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">vectorstore&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">Pinecone&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">index&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">embed_model&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">embed_query&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">text_field&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can confirm this works like so:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">query&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;what makes llama 2 special?&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">vectorstore&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">similarity_search&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">query&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1"># the search query&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">k&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">3&lt;/span> &lt;span class="c1"># returns top 3 most relevant chunks of text&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>[Document(page_content='Ricardo Lopez-Barquilla, Marc Shedroﬀ, Kelly Michelena, Allie Feinstein, Amit Sangani, Geeta\nChauhan,ChesterHu,CharltonGholson,AnjaKomlenovic,EissaJamil,BrandonSpence,Azadeh\nYazdan, Elisa Garcia Anzano, and Natascha Parks.\n•ChrisMarra,ChayaNayak,JacquelinePan,GeorgeOrlin,EdwardDowling,EstebanArcaute,Philomena Lobo, Eleonora Presani, and Logan Kerr, who provided helpful product and technical organization support.\n46\n•Armand Joulin, Edouard Grave, Guillaume Lample, and Timothee Lacroix, members of the original\nLlama team who helped get this work started.\n•Drew Hamlin, Chantal Mora, and Aran Mun, who gave us some design input on the ﬁgures in the\npaper.\n•Vijai Mohan for the discussions about RLHF that inspired our Figure 20, and his contribution to the\ninternal demo.\n•Earlyreviewersofthispaper,whohelpedusimproveitsquality,includingMikeLewis,JoellePineau,\nLaurens van der Maaten, Jason Weston, and Omer Levy.', metadata={'source': 'http://arxiv.org/pdf/2307.09288', 'title': 'Llama 2: Open Foundation and Fine-Tuned Chat Models'}),
+Document(page_content='our responsible release strategy can be found in Section 5.3.\nTheremainderofthispaperdescribesourpretrainingmethodology(Section2),ﬁne-tuningmethodology\n(Section 3), approach to model safety (Section 4), key observations and insights (Section 5), relevant related\nwork (Section 6), and conclusions (Section 7).\n‡https://ai.meta.com/resources/models-and-libraries/llama/\n§We are delaying the release of the 34B model due to a lack of time to suﬃciently red team.\n¶https://ai.meta.com/llama\n‖https://github.com/facebookresearch/llama\n4\nFigure 4: Training of L/l.sc/a.sc/m.sc/a.sc /two.taboldstyle-C/h.sc/a.sc/t.sc : This process begins with the pretraining ofL/l.sc/a.sc/m.sc/a.sc /two.taboldstyle using publicly\navailableonlinesources. Followingthis,wecreateaninitialversionof L/l.sc/a.sc/m.sc/a.sc /two.taboldstyle-C/h.sc/a.sc/t.sc throughtheapplication', metadata={'source': 'http://arxiv.org/pdf/2307.09288', 'title': 'Llama 2: Open Foundation and Fine-Tuned Chat Models'}),
+Document(page_content='Evaluation Results\nSee evaluations for pretraining (Section 2); ﬁne-tuning (Section 3); and safety (Section 4).\nEthical Considerations and Limitations (Section 5.2)\nL/l.sc/a.sc/m.sc/a.sc /two.taboldstyle is a new technology that carries risks with use. Testing conducted to date has been in\nEnglish, and has notcovered, nor could it coverall scenarios. For these reasons, aswith all LLMs,\nL/l.sc/a.sc/m.sc/a.sc /two.taboldstyle’s potential outputs cannot be predicted in advance, and the model may in some instances\nproduceinaccurateorobjectionableresponsestouserprompts. Therefore,beforedeployingany\napplications of L/l.sc/a.sc/m.sc/a.sc /two.taboldstyle, developers should perform safety testing and tuning tailored to their\nspeciﬁc applications of the model. Please see the Responsible Use Guide available available at\nhttps://ai.meta.com/llama/responsible-user-guide\nTable 52: Model card for L/l.sc/a.sc/m.sc/a.sc /two.taboldstyle .\n77', metadata={'source': 'http://arxiv.org/pdf/2307.09288', 'title': 'Llama 2: Open Foundation and Fine-Tuned Chat Models'})]
+&lt;/code>&lt;/pre>
+&lt;p>Looks good! Now we can put our &lt;code>vectorstore&lt;/code> and &lt;code>llm&lt;/code> together to create our RAG pipeline.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">langchain.chains&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">RetrievalQA&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">rag_pipeline&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">RetrievalQA&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">from_chain_type&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">llm&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">llm&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">chain_type&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;stuff&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">retriever&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">vectorstore&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">as_retriever&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s begin asking questions! First let&amp;rsquo;s try &lt;em>without&lt;/em> RAG:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">llm&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;what is so special about llama 2?&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>Setting `pad_token_id` to `eos_token_id`:11 for open-end generation.
+&amp;quot;\nI'm sorry, I cannot provide a response as there is no context or information provided about what llama 2 is.&amp;quot;
+&lt;/code>&lt;/pre>
+&lt;p>Hmm, that&amp;rsquo;s not what we meant&amp;hellip; What if we use our RAG pipeline?&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">rag_pipeline&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;what is so special about llama 2?&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>Setting `pad_token_id` to `eos_token_id`:11 for open-end generation.
+{'query': 'what is so special about llama 2?',
+'result': '\n\nLlama 2 is a collection of pretrained and fine-tuned large language models (LLMs) ranging in scale from 7 billion to 70 billion parameters. These LLMs are optimized for dialogue use cases and outperform open-source chat models on most benchmarks tested. Additionally, Llama 2 is a product-ready LLM that is suitable for closed-source applications.'}
+&lt;/code>&lt;/pre>
+&lt;p>This looks &lt;em>much&lt;/em> better! Let&amp;rsquo;s try some more.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">llm&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;what safety measures were used in the development of llama 2?&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Okay, it looks like the LLM with no RAG is less than ideal — let&amp;rsquo;s stop embarassing the poor LLM and stick with RAG + LLM. Let&amp;rsquo;s ask the same question to our RAG pipeline.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">rag_pipeline&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;what safety measures were used in the development of llama 2?&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre>&lt;code>Setting `pad_token_id` to `eos_token_id`:11 for open-end generation.
+---------------------------------------------------------------------------
+KeyboardInterrupt Traceback (most recent call last)
+&amp;lt;ipython-input-27-30c863a6097f&amp;gt; in &amp;lt;cell line: 1&amp;gt;()
+----&amp;gt; 1 rag_pipeline('what safety measures were used in the development of llama 2?')
+/usr/local/lib/python3.10/dist-packages/langchain/chains/base.py in __call__(self, inputs, return_only_outputs, callbacks, tags, metadata, include_run_info)
+241 except (KeyboardInterrupt, Exception) as e:
+242 run_manager.on_chain_error(e)
+--&amp;gt; 243 raise e
+244 run_manager.on_chain_end(outputs)
+245 final_outputs: Dict[str, Any] = self.prep_outputs(
+/usr/local/lib/python3.10/dist-packages/langchain/chains/base.py in __call__(self, inputs, return_only_outputs, callbacks, tags, metadata, include_run_info)
+235 try:
+236 outputs = (
+--&amp;gt; 237 self._call(inputs, run_manager=run_manager)
+238 if new_arg_supported
+239 else self._call(inputs)
+/usr/local/lib/python3.10/dist-packages/langchain/chains/retrieval_qa/base.py in _call(self, inputs, run_manager)
+131 else:
+132 docs = self._get_docs(question) # type: ignore[call-arg]
+--&amp;gt; 133 answer = self.combine_documents_chain.run(
+134 input_documents=docs, question=question, callbacks=_run_manager.get_child()
+135 )
+/usr/local/lib/python3.10/dist-packages/langchain/chains/base.py in run(self, callbacks, tags, metadata, *args, **kwargs)
+443
+444 if kwargs and not args:
+--&amp;gt; 445 return self(kwargs, callbacks=callbacks, tags=tags, metadata=metadata)[
+446 _output_key
+447 ]
+/usr/local/lib/python3.10/dist-packages/langchain/chains/base.py in __call__(self, inputs, return_only_outputs, callbacks, tags, metadata, include_run_info)
+241 except (KeyboardInterrupt, Exception) as e:
+242 run_manager.on_chain_error(e)
+--&amp;gt; 243 raise e
+244 run_manager.on_chain_end(outputs)
+245 final_outputs: Dict[str, Any] = self.prep_outputs(
+/usr/local/lib/python3.10/dist-packages/langchain/chains/base.py in __call__(self, inputs, return_only_outputs, callbacks, tags, metadata, include_run_info)
+235 try:
+236 outputs = (
+--&amp;gt; 237 self._call(inputs, run_manager=run_manager)
+238 if new_arg_supported
+239 else self._call(inputs)
+/usr/local/lib/python3.10/dist-packages/langchain/chains/combine_documents/base.py in _call(self, inputs, run_manager)
+104 # Other keys are assumed to be needed for LLM prediction
+105 other_keys = {k: v for k, v in inputs.items() if k != self.input_key}
+--&amp;gt; 106 output, extra_return_dict = self.combine_docs(
+107 docs, callbacks=_run_manager.get_child(), **other_keys
+108 )
+/usr/local/lib/python3.10/dist-packages/langchain/chains/combine_documents/stuff.py in combine_docs(self, docs, callbacks, **kwargs)
+163 inputs = self._get_inputs(docs, **kwargs)
+164 # Call predict on the LLM.
+--&amp;gt; 165 return self.llm_chain.predict(callbacks=callbacks, **inputs), {}
+166
+167 async def acombine_docs(
+/usr/local/lib/python3.10/dist-packages/langchain/chains/llm.py in predict(self, callbacks, **kwargs)
+250 completion = llm.predict(adjective=&amp;quot;funny&amp;quot;)
+251 &amp;quot;&amp;quot;&amp;quot;
+--&amp;gt; 252 return self(kwargs, callbacks=callbacks)[self.output_key]
+253
+254 async def apredict(self, callbacks: Callbacks = None, **kwargs: Any) -&amp;gt; str:
+/usr/local/lib/python3.10/dist-packages/langchain/chains/base.py in __call__(self, inputs, return_only_outputs, callbacks, tags, metadata, include_run_info)
+241 except (KeyboardInterrupt, Exception) as e:
+242 run_manager.on_chain_error(e)
+--&amp;gt; 243 raise e
+244 run_manager.on_chain_end(outputs)
+245 final_outputs: Dict[str, Any] = self.prep_outputs(
+/usr/local/lib/python3.10/dist-packages/langchain/chains/base.py in __call__(self, inputs, return_only_outputs, callbacks, tags, metadata, include_run_info)
+235 try:
+236 outputs = (
+--&amp;gt; 237 self._call(inputs, run_manager=run_manager)
+238 if new_arg_supported
+239 else self._call(inputs)
+/usr/local/lib/python3.10/dist-packages/langchain/chains/llm.py in _call(self, inputs, run_manager)
+90 run_manager: Optional[CallbackManagerForChainRun] = None,
+91 ) -&amp;gt; Dict[str, str]:
+---&amp;gt; 92 response = self.generate([inputs], run_manager=run_manager)
+93 return self.create_outputs(response)[0]
+94
+/usr/local/lib/python3.10/dist-packages/langchain/chains/llm.py in generate(self, input_list, run_manager)
+100 &amp;quot;&amp;quot;&amp;quot;Generate LLM result from inputs.&amp;quot;&amp;quot;&amp;quot;
+101 prompts, stop = self.prep_prompts(input_list, run_manager=run_manager)
+--&amp;gt; 102 return self.llm.generate_prompt(
+103 prompts,
+104 stop,
+/usr/local/lib/python3.10/dist-packages/langchain/llms/base.py in generate_prompt(self, prompts, stop, callbacks, **kwargs)
+186 ) -&amp;gt; LLMResult:
+187 prompt_strings = [p.to_string() for p in prompts]
+--&amp;gt; 188 return self.generate(prompt_strings, stop=stop, callbacks=callbacks, **kwargs)
+189
+190 async def agenerate_prompt(
+/usr/local/lib/python3.10/dist-packages/langchain/llms/base.py in generate(self, prompts, stop, callbacks, tags, metadata, **kwargs)
+279 dumpd(self), prompts, invocation_params=params, options=options
+280 )
+--&amp;gt; 281 output = self._generate_helper(
+282 prompts, stop, run_managers, bool(new_arg_supported), **kwargs
+283 )
+/usr/local/lib/python3.10/dist-packages/langchain/llms/base.py in _generate_helper(self, prompts, stop, run_managers, new_arg_supported, **kwargs)
+223 for run_manager in run_managers:
+224 run_manager.on_llm_error(e)
+--&amp;gt; 225 raise e
+226 flattened_outputs = output.flatten()
+227 for manager, flattened_output in zip(run_managers, flattened_outputs):
+/usr/local/lib/python3.10/dist-packages/langchain/llms/base.py in _generate_helper(self, prompts, stop, run_managers, new_arg_supported, **kwargs)
+210 try:
+211 output = (
+--&amp;gt; 212 self._generate(
+213 prompts,
+214 stop=stop,
+/usr/local/lib/python3.10/dist-packages/langchain/llms/base.py in _generate(self, prompts, stop, run_manager, **kwargs)
+602 for prompt in prompts:
+603 text = (
+--&amp;gt; 604 self._call(prompt, stop=stop, run_manager=run_manager, **kwargs)
+605 if new_arg_supported
+606 else self._call(prompt, stop=stop, **kwargs)
+/usr/local/lib/python3.10/dist-packages/langchain/llms/huggingface_pipeline.py in _call(self, prompt, stop, run_manager, **kwargs)
+166 **kwargs: Any,
+167 ) -&amp;gt; str:
+--&amp;gt; 168 response = self.pipeline(prompt)
+169 if self.pipeline.task == &amp;quot;text-generation&amp;quot;:
+170 # Text generation return includes the starter text.
+/usr/local/lib/python3.10/dist-packages/transformers/pipelines/text_generation.py in __call__(self, text_inputs, **kwargs)
+198 ids of the generated text.
+199 &amp;quot;&amp;quot;&amp;quot;
+--&amp;gt; 200 return super().__call__(text_inputs, **kwargs)
+201
+202 def preprocess(self, prompt_text, prefix=&amp;quot;&amp;quot;, handle_long_generation=None, **generate_kwargs):
+/usr/local/lib/python3.10/dist-packages/transformers/pipelines/base.py in __call__(self, inputs, num_workers, batch_size, *args, **kwargs)
+1120 )
+1121 else:
+-&amp;gt; 1122 return self.run_single(inputs, preprocess_params, forward_params, postprocess_params)
+1123
+1124 def run_multi(self, inputs, preprocess_params, forward_params, postprocess_params):
+/usr/local/lib/python3.10/dist-packages/transformers/pipelines/base.py in run_single(self, inputs, preprocess_params, forward_params, postprocess_params)
+1127 def run_single(self, inputs, preprocess_params, forward_params, postprocess_params):
+1128 model_inputs = self.preprocess(inputs, **preprocess_params)
+-&amp;gt; 1129 model_outputs = self.forward(model_inputs, **forward_params)
+1130 outputs = self.postprocess(model_outputs, **postprocess_params)
+1131 return outputs
+/usr/local/lib/python3.10/dist-packages/transformers/pipelines/base.py in forward(self, model_inputs, **forward_params)
+1026 with inference_context():
+1027 model_inputs = self._ensure_tensor_on_device(model_inputs, device=self.device)
+-&amp;gt; 1028 model_outputs = self._forward(model_inputs, **forward_params)
+1029 model_outputs = self._ensure_tensor_on_device(model_outputs, device=torch.device(&amp;quot;cpu&amp;quot;))
+1030 else:
+/usr/local/lib/python3.10/dist-packages/transformers/pipelines/text_generation.py in _forward(self, model_inputs, **generate_kwargs)
+259
+260 # BS x SL
+--&amp;gt; 261 generated_sequence = self.model.generate(input_ids=input_ids, attention_mask=attention_mask, **generate_kwargs)
+262 out_b = generated_sequence.shape[0]
+263 if self.framework == &amp;quot;pt&amp;quot;:
+/usr/local/lib/python3.10/dist-packages/torch/utils/_contextlib.py in decorate_context(*args, **kwargs)
+113 def decorate_context(*args, **kwargs):
+114 with ctx_factory():
+--&amp;gt; 115 return func(*args, **kwargs)
+116
+117 return decorate_context
+/usr/local/lib/python3.10/dist-packages/transformers/generation/utils.py in generate(self, inputs, generation_config, logits_processor, stopping_criteria, prefix_allowed_tokens_fn, synced_gpus, assistant_model, streamer, **kwargs)
+1536
+1537 # 11. run greedy search
+-&amp;gt; 1538 return self.greedy_search(
+1539 input_ids,
+1540 logits_processor=logits_processor,
+/usr/local/lib/python3.10/dist-packages/transformers/generation/utils.py in greedy_search(self, input_ids, logits_processor, stopping_criteria, max_length, pad_token_id, eos_token_id, output_attentions, output_hidden_states, output_scores, return_dict_in_generate, synced_gpus, streamer, **model_kwargs)
+2360
+2361 # forward pass to get next token
+-&amp;gt; 2362 outputs = self(
+2363 **model_inputs,
+2364 return_dict=True,
+/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py in _call_impl(self, *args, **kwargs)
+1499 or _global_backward_pre_hooks or _global_backward_hooks
+1500 or _global_forward_hooks or _global_forward_pre_hooks):
+-&amp;gt; 1501 return forward_call(*args, **kwargs)
+1502 # Do not call functions when jit is used
+1503 full_backward_hooks, non_full_backward_hooks = [], []
+/usr/local/lib/python3.10/dist-packages/accelerate/hooks.py in new_forward(*args, **kwargs)
+163 output = old_forward(*args, **kwargs)
+164 else:
+--&amp;gt; 165 output = old_forward(*args, **kwargs)
+166 return module._hf_hook.post_forward(module, output)
+167
+~/.cache/huggingface/modules/transformers_modules/tiiuae/falcon-7b-instruct/eb410fb6ffa9028e97adb801f0d6ec46d02f8b07/modelling_RW.py in forward(self, input_ids, past_key_values, attention_mask, head_mask, inputs_embeds, labels, use_cache, output_attentions, output_hidden_states, return_dict, **deprecated_arguments)
+751 return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+752
+--&amp;gt; 753 transformer_outputs = self.transformer(
+754 input_ids,
+755 past_key_values=past_key_values,
+/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py in _call_impl(self, *args, **kwargs)
+1499 or _global_backward_pre_hooks or _global_backward_hooks
+1500 or _global_forward_hooks or _global_forward_pre_hooks):
+-&amp;gt; 1501 return forward_call(*args, **kwargs)
+1502 # Do not call functions when jit is used
+1503 full_backward_hooks, non_full_backward_hooks = [], []
+/usr/local/lib/python3.10/dist-packages/accelerate/hooks.py in new_forward(*args, **kwargs)
+163 output = old_forward(*args, **kwargs)
+164 else:
+--&amp;gt; 165 output = old_forward(*args, **kwargs)
+166 return module._hf_hook.post_forward(module, output)
+167
+~/.cache/huggingface/modules/transformers_modules/tiiuae/falcon-7b-instruct/eb410fb6ffa9028e97adb801f0d6ec46d02f8b07/modelling_RW.py in forward(self, input_ids, past_key_values, attention_mask, head_mask, inputs_embeds, use_cache, output_attentions, output_hidden_states, return_dict, **deprecated_arguments)
+646 )
+647 else:
+--&amp;gt; 648 outputs = block(
+649 hidden_states,
+650 layer_past=layer_past,
+/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py in _call_impl(self, *args, **kwargs)
+1499 or _global_backward_pre_hooks or _global_backward_hooks
+1500 or _global_forward_hooks or _global_forward_pre_hooks):
+-&amp;gt; 1501 return forward_call(*args, **kwargs)
+1502 # Do not call functions when jit is used
+1503 full_backward_hooks, non_full_backward_hooks = [], []
+/usr/local/lib/python3.10/dist-packages/accelerate/hooks.py in new_forward(*args, **kwargs)
+163 output = old_forward(*args, **kwargs)
+164 else:
+--&amp;gt; 165 output = old_forward(*args, **kwargs)
+166 return module._hf_hook.post_forward(module, output)
+167
+~/.cache/huggingface/modules/transformers_modules/tiiuae/falcon-7b-instruct/eb410fb6ffa9028e97adb801f0d6ec46d02f8b07/modelling_RW.py in forward(self, hidden_states, alibi, attention_mask, layer_past, head_mask, use_cache, output_attentions)
+383
+384 # Self attention.
+--&amp;gt; 385 attn_outputs = self.self_attention(
+386 layernorm_output,
+387 layer_past=layer_past,
+/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py in _call_impl(self, *args, **kwargs)
+1499 or _global_backward_pre_hooks or _global_backward_hooks
+1500 or _global_forward_hooks or _global_forward_pre_hooks):
+-&amp;gt; 1501 return forward_call(*args, **kwargs)
+1502 # Do not call functions when jit is used
+1503 full_backward_hooks, non_full_backward_hooks = [], []
+/usr/local/lib/python3.10/dist-packages/accelerate/hooks.py in new_forward(*args, **kwargs)
+163 output = old_forward(*args, **kwargs)
+164 else:
+--&amp;gt; 165 output = old_forward(*args, **kwargs)
+166 return module._hf_hook.post_forward(module, output)
+167
+~/.cache/huggingface/modules/transformers_modules/tiiuae/falcon-7b-instruct/eb410fb6ffa9028e97adb801f0d6ec46d02f8b07/modelling_RW.py in forward(self, hidden_states, alibi, attention_mask, layer_past, head_mask, use_cache, output_attentions)
+243
+244 # 3 x [batch_size, seq_length, num_heads, head_dim]
+--&amp;gt; 245 (query_layer, key_layer, value_layer) = self._split_heads(fused_qkv)
+246
+247 batch_size, q_length, _, _ = query_layer.shape
+KeyboardInterrupt:
+&lt;/code>&lt;/pre>
+&lt;p>A reasonable answer from the RAG pipeline, but it doesn&amp;rsquo;t contain much information — maybe we can ask more about this, like what is this &lt;em>&amp;ldquo;red team&amp;rdquo;&lt;/em> procedure that delayed the launch of the 34B model?&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">rag_pipeline&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;what red teaming procedures were followed for llama 2?&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Very interesting!&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">rag_pipeline&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;how does the performance of llama 2 compare to other local LLMs?&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
