@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>LangChain | Yose</title>
-    <link>https://yohn-maistre.github.io/hugo-cv/category/langchain/</link>
-      <atom:link href="https://yohn-maistre.github.io/hugo-cv/category/langchain/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://yohn-maistre.github.io/category/langchain/</link>
+      <atom:link href="https://yohn-maistre.github.io/category/langchain/index.xml" rel="self" type="application/rss+xml" />
     <description>LangChain</description>
     <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sat, 24 Sep 2022 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://yohn-maistre.github.io/hugo-cv/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png</url>
+      <url>https://yohn-maistre.github.io/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png</url>
       <title>LangChain</title>
-      <link>https://yohn-maistre.github.io/hugo-cv/category/langchain/</link>
+      <link>https://yohn-maistre.github.io/category/langchain/</link>
     </image>
     
     <item>
       <title>Using Llama 2-13b for RetrievalQA with LangChain and HuggingFace</title>
-      <link>https://yohn-maistre.github.io/hugo-cv/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/</link>
+      <link>https://yohn-maistre.github.io/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/</link>
       <pubDate>Sat, 24 Sep 2022 00:00:00 +0000</pubDate>
-      <guid>https://yohn-maistre.github.io/hugo-cv/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/</guid>
+      <guid>https://yohn-maistre.github.io/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://colab.research.google.com/github/pinecone-io/examples/blob/master/learn/generation/llm-field-guide/llama-2/llama-2-13b-retrievalqa.ipynb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;
 
 

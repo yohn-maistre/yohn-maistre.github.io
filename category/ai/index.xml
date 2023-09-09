@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>AI | Yose</title>
-    <link>https://yohn-maistre.github.io/hugo-cv/category/ai/</link>
-      <atom:link href="https://yohn-maistre.github.io/hugo-cv/category/ai/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://yohn-maistre.github.io/category/ai/</link>
+      <atom:link href="https://yohn-maistre.github.io/category/ai/index.xml" rel="self" type="application/rss+xml" />
     <description>AI</description>
     <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sat, 24 Sep 2022 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://yohn-maistre.github.io/hugo-cv/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png</url>
+      <url>https://yohn-maistre.github.io/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png</url>
       <title>AI</title>
-      <link>https://yohn-maistre.github.io/hugo-cv/category/ai/</link>
+      <link>https://yohn-maistre.github.io/category/ai/</link>
     </image>
     
     <item>
       <title>Training a CNN Model to Classify Respiratory Diseases</title>
-      <link>https://yohn-maistre.github.io/hugo-cv/post/cnn-respsound/cnn_mfcc_respsound/</link>
+      <link>https://yohn-maistre.github.io/post/cnn-respsound/cnn_mfcc_respsound/</link>
       <pubDate>Sat, 24 Sep 2022 00:00:00 +0000</pubDate>
-      <guid>https://yohn-maistre.github.io/hugo-cv/post/cnn-respsound/cnn_mfcc_respsound/</guid>
+      <guid>https://yohn-maistre.github.io/post/cnn-respsound/cnn_mfcc_respsound/</guid>
       <description>&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#Import libraries&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;datetime&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;datetime&lt;/span&gt;
@@ -1234,9 +1234,9 @@ NameError: name &#39;preds&#39; is not defined
     
     <item>
       <title>Using Llama 2-13b for RetrievalQA with LangChain and HuggingFace</title>
-      <link>https://yohn-maistre.github.io/hugo-cv/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/</link>
+      <link>https://yohn-maistre.github.io/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/</link>
       <pubDate>Sat, 24 Sep 2022 00:00:00 +0000</pubDate>
-      <guid>https://yohn-maistre.github.io/hugo-cv/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/</guid>
+      <guid>https://yohn-maistre.github.io/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://colab.research.google.com/github/pinecone-io/examples/blob/master/learn/generation/llm-field-guide/llama-2/llama-2-13b-retrievalqa.ipynb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;
 
 

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>TensorFlow | Yose</title>
-    <link>https://yohn-maistre.github.io/hugo-cv/tag/tensorflow/</link>
-      <atom:link href="https://yohn-maistre.github.io/hugo-cv/tag/tensorflow/index.xml" rel="self" type="application/rss+xml" />
+    <link>https://yohn-maistre.github.io/tag/tensorflow/</link>
+      <atom:link href="https://yohn-maistre.github.io/tag/tensorflow/index.xml" rel="self" type="application/rss+xml" />
     <description>TensorFlow</description>
     <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sat, 24 Sep 2022 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://yohn-maistre.github.io/hugo-cv/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png</url>
+      <url>https://yohn-maistre.github.io/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png</url>
       <title>TensorFlow</title>
-      <link>https://yohn-maistre.github.io/hugo-cv/tag/tensorflow/</link>
+      <link>https://yohn-maistre.github.io/tag/tensorflow/</link>
     </image>
     
     <item>
       <title>Training a CNN Model to Classify Respiratory Diseases</title>
-      <link>https://yohn-maistre.github.io/hugo-cv/post/cnn-respsound/cnn_mfcc_respsound/</link>
+      <link>https://yohn-maistre.github.io/post/cnn-respsound/cnn_mfcc_respsound/</link>
       <pubDate>Sat, 24 Sep 2022 00:00:00 +0000</pubDate>
-      <guid>https://yohn-maistre.github.io/hugo-cv/post/cnn-respsound/cnn_mfcc_respsound/</guid>
+      <guid>https://yohn-maistre.github.io/post/cnn-respsound/cnn_mfcc_respsound/</guid>
       <description>&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#Import libraries&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;datetime&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;datetime&lt;/span&gt;
