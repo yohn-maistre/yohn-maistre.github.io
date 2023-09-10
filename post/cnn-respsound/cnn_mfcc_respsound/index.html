@@ -57,8 +57,8 @@
   
     
       
-      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=B612+Mono&family=B612:wght@400;700&family=Jura:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=B612+Mono&family=B612:wght@400;700&family=Jura:wght@400;700&display=swap" media="print" onload="this.media='all'">
     
   
 
@@ -212,7 +212,7 @@
   
   
   
-  <link rel="stylesheet" href="/css/wowchemy.042e26407c9e383d96a1f26d6787c686.css" />
+  <link rel="stylesheet" href="/css/wowchemy.fe4e3148398e48a56194a0f178b46590.css" />
 
   
   
@@ -316,9 +316,9 @@
   <meta property="twitter:site" content="@jind0sh" />
   <meta property="twitter:creator" content="@jind0sh" />
 <meta property="twitter:image" content="https://yohn-maistre.github.io/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png" />
-<meta property="og:site_name" content="Yose" />
+<meta property="og:site_name" content="Portfolio | Yose Marthin Giyay" />
 <meta property="og:url" content="https://yohn-maistre.github.io/post/cnn-respsound/cnn_mfcc_respsound/" />
-<meta property="og:title" content="Training a CNN Model to Classify Respiratory Diseases | Yose" />
+<meta property="og:title" content="Training a CNN Model to Classify Respiratory Diseases | Portfolio | Yose Marthin Giyay" />
 <meta property="og:description" content="Here I showed how to train a model to classify respiratory diseases based on recordings using Tensorflow back-end. We will be converting the dataset to MFCC for it to be processed." /><meta property="og:image" content="https://yohn-maistre.github.io/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
 
   
@@ -396,7 +396,7 @@
 
 
   
-  <title>Training a CNN Model to Classify Respiratory Diseases | Yose</title>
+  <title>Training a CNN Model to Classify Respiratory Diseases | Portfolio | Yose Marthin Giyay</title>
 
   
   
@@ -427,7 +427,7 @@
   
   
   
-  <script src="/js/wowchemy-init.min.ec9d49ca50e4b80bdb08f0417a28ed84.js"></script>
+  <script src="/js/wowchemy-init.min.7532de8e15162845d694f17af8b46a99.js"></script>
 
   
 
@@ -495,7 +495,7 @@
 
       
       <div class="d-none d-lg-inline-flex">
-        <a class="navbar-brand" href="/">Yose</a>
+        <a class="navbar-brand" href="/">Portfolio | Yose Marthin Giyay</a>
       </div>
       
 
@@ -508,7 +508,7 @@
 
       
       <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
-        <a class="navbar-brand" href="/">Yose</a>
+        <a class="navbar-brand" href="/">Portfolio | Yose Marthin Giyay</a>
       </div>
       
 
@@ -796,7 +796,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    36 min read
+    33 min read
   </span>
   
 
@@ -878,168 +878,9 @@ Required-by:
   current browser session. Please rerun this cell to enable.
   &lt;/output&gt;
   &lt;script&gt;// Copyright 2017 Google LLC
-</code></pre>
-<p>//
-// Licensed under the Apache License, Version 2.0 (the &ldquo;License&rdquo;);
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener">http://www.apache.org/licenses/LICENSE-2.0</a>
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an &ldquo;AS IS&rdquo; BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.</p>
-<p>/**</p>
-<ul>
-<li>@fileoverview Helpers for google.colab Python module.
-*/
-(function(scope) {
-function span(text, styleAttributes = {}) {
-const element = document.createElement(&lsquo;span&rsquo;);
-element.textContent = text;
-for (const key of Object.keys(styleAttributes)) {
-element.style[key] = styleAttributes[key];
-}
-return element;
-}</li>
-</ul>
-<p>// Max number of bytes which will be uploaded at a time.
-const MAX_PAYLOAD_SIZE = 100 * 1024;</p>
-<p>function _uploadFiles(inputId, outputId) {
-const steps = uploadFilesStep(inputId, outputId);
-const outputElement = document.getElementById(outputId);
-// Cache steps on the outputElement to make it available for the next call
-// to uploadFilesContinue from Python.
-outputElement.steps = steps;</p>
-<p>return _uploadFilesContinue(outputId);
-}</p>
-<p>// This is roughly an async generator (not supported in the browser yet),
-// where there are multiple asynchronous steps and the Python side is going
-// to poll for completion of each step.
-// This uses a Promise to block the python side on completion of each step,
-// then passes the result of the previous step as the input to the next step.
-function _uploadFilesContinue(outputId) {
-const outputElement = document.getElementById(outputId);
-const steps = outputElement.steps;</p>
-<p>const next = steps.next(outputElement.lastPromiseValue);
-return Promise.resolve(next.value.promise).then((value) =&gt; {
-// Cache the last promise value to make it available to the next
-// step of the generator.
-outputElement.lastPromiseValue = value;
-return next.value.response;
-});
-}</p>
-<p>/**</p>
-<ul>
-<li>Generator function which is called between each async step of the upload</li>
-<li>process.</li>
-<li>@param {string} inputId Element ID of the input file picker element.</li>
-<li>@param {string} outputId Element ID of the output display.</li>
-<li>@return {!Iterable<!Object>} Iterable of next steps.
-<em>/
-function</em> uploadFilesStep(inputId, outputId) {
-const inputElement = document.getElementById(inputId);
-inputElement.disabled = false;</li>
-</ul>
-<p>const outputElement = document.getElementById(outputId);
-outputElement.innerHTML = &lsquo;&rsquo;;</p>
-<p>const pickedPromise = new Promise((resolve) =&gt; {
-inputElement.addEventListener(&lsquo;change&rsquo;, (e) =&gt; {
-resolve(e.target.files);
-});
-});</p>
-<p>const cancel = document.createElement(&lsquo;button&rsquo;);
-inputElement.parentElement.appendChild(cancel);
-cancel.textContent = &lsquo;Cancel upload&rsquo;;
-const cancelPromise = new Promise((resolve) =&gt; {
-cancel.onclick = () =&gt; {
-resolve(null);
-};
-});</p>
-<p>// Wait for the user to pick the files.
-const files = yield {
-promise: Promise.race([pickedPromise, cancelPromise]),
-response: {
-action: &lsquo;starting&rsquo;,
-}
-};</p>
-<p>cancel.remove();</p>
-<p>// Disable the input element since further picks are not allowed.
-inputElement.disabled = true;</p>
-<p>if (!files) {
-return {
-response: {
-action: &lsquo;complete&rsquo;,
-}
-};
-}</p>
-<p>for (const file of files) {
-const li = document.createElement(&rsquo;li&rsquo;);
-li.append(span(file.name, {fontWeight: &lsquo;bold&rsquo;}));
-li.append(span(
-<code>(${file.type || 'n/a'}) - ${file.size} bytes, </code> +
-<code>last modified: ${ file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : 'n/a'} - </code>));
-const percent = span(&lsquo;0% done&rsquo;);
-li.appendChild(percent);</p>
-<pre><code>outputElement.appendChild(li);
 
-const fileDataPromise = new Promise((resolve) =&gt; {
-  const reader = new FileReader();
-  reader.onload = (e) =&gt; {
-    resolve(e.target.result);
-  };
-  reader.readAsArrayBuffer(file);
-});
-// Wait for the data to be ready.
-let fileData = yield {
-  promise: fileDataPromise,
-  response: {
-    action: 'continue',
-  }
-};
 
-// Use a chunked sending to avoid message size limits. See b/62115660.
-let position = 0;
-do {
-  const length = Math.min(fileData.byteLength - position, MAX_PAYLOAD_SIZE);
-  const chunk = new Uint8Array(fileData, position, length);
-  position += length;
-
-  const base64 = btoa(String.fromCharCode.apply(null, chunk));
-  yield {
-    response: {
-      action: 'append',
-      file: file.name,
-      data: base64,
-    },
-  };
-
-  let percentDone = fileData.byteLength === 0 ?
-      100 :
-      Math.round((position / fileData.byteLength) * 100);
-  percent.textContent = `${percentDone}% done`;
-
-} while (position &lt; fileData.byteLength);
-</code></pre>
-<p>}</p>
-<p>// All done.
-yield {
-response: {
-action: &lsquo;complete&rsquo;,
-}
-};
-}</p>
-<p>scope.google = scope.google || {};
-scope.google.colab = scope.google.colab || {};
-scope.google.colab._files = {
-_uploadFiles,
-_uploadFilesContinue,
-};
-})(self);
-</script></p>
-<pre><code>Saving kaggle.json to kaggle.json
+Saving kaggle.json to kaggle.json
 
 
 

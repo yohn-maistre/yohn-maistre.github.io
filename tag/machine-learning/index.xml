@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Machine Learning | Yose</title>
+    <title>Machine Learning | Portfolio | Yose Marthin Giyay</title>
     <link>https://yohn-maistre.github.io/tag/machine-learning/</link>
       <atom:link href="https://yohn-maistre.github.io/tag/machine-learning/index.xml" rel="self" type="application/rss+xml" />
     <description>Machine Learning</description>
@@ -67,168 +67,9 @@ Required-by:
   current browser session. Please rerun this cell to enable.
   &amp;lt;/output&amp;gt;
   &amp;lt;script&amp;gt;// Copyright 2017 Google LLC
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;//
-// Licensed under the Apache License, Version 2.0 (the &amp;ldquo;License&amp;rdquo;);
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      &lt;a href=&#34;http://www.apache.org/licenses/LICENSE-2.0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;http://www.apache.org/licenses/LICENSE-2.0&lt;/a&gt;
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an &amp;ldquo;AS IS&amp;rdquo; BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.&lt;/p&gt;
-&lt;p&gt;/**&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;@fileoverview Helpers for google.colab Python module.
-*/
-(function(scope) {
-function span(text, styleAttributes = {}) {
-const element = document.createElement(&amp;lsquo;span&amp;rsquo;);
-element.textContent = text;
-for (const key of Object.keys(styleAttributes)) {
-element.style[key] = styleAttributes[key];
-}
-return element;
-}&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;// Max number of bytes which will be uploaded at a time.
-const MAX_PAYLOAD_SIZE = 100 * 1024;&lt;/p&gt;
-&lt;p&gt;function _uploadFiles(inputId, outputId) {
-const steps = uploadFilesStep(inputId, outputId);
-const outputElement = document.getElementById(outputId);
-// Cache steps on the outputElement to make it available for the next call
-// to uploadFilesContinue from Python.
-outputElement.steps = steps;&lt;/p&gt;
-&lt;p&gt;return _uploadFilesContinue(outputId);
-}&lt;/p&gt;
-&lt;p&gt;// This is roughly an async generator (not supported in the browser yet),
-// where there are multiple asynchronous steps and the Python side is going
-// to poll for completion of each step.
-// This uses a Promise to block the python side on completion of each step,
-// then passes the result of the previous step as the input to the next step.
-function _uploadFilesContinue(outputId) {
-const outputElement = document.getElementById(outputId);
-const steps = outputElement.steps;&lt;/p&gt;
-&lt;p&gt;const next = steps.next(outputElement.lastPromiseValue);
-return Promise.resolve(next.value.promise).then((value) =&amp;gt; {
-// Cache the last promise value to make it available to the next
-// step of the generator.
-outputElement.lastPromiseValue = value;
-return next.value.response;
-});
-}&lt;/p&gt;
-&lt;p&gt;/**&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Generator function which is called between each async step of the upload&lt;/li&gt;
-&lt;li&gt;process.&lt;/li&gt;
-&lt;li&gt;@param {string} inputId Element ID of the input file picker element.&lt;/li&gt;
-&lt;li&gt;@param {string} outputId Element ID of the output display.&lt;/li&gt;
-&lt;li&gt;@return {!Iterable&lt;!Object&gt;} Iterable of next steps.
-&lt;em&gt;/
-function&lt;/em&gt; uploadFilesStep(inputId, outputId) {
-const inputElement = document.getElementById(inputId);
-inputElement.disabled = false;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;const outputElement = document.getElementById(outputId);
-outputElement.innerHTML = &amp;lsquo;&amp;rsquo;;&lt;/p&gt;
-&lt;p&gt;const pickedPromise = new Promise((resolve) =&amp;gt; {
-inputElement.addEventListener(&amp;lsquo;change&amp;rsquo;, (e) =&amp;gt; {
-resolve(e.target.files);
-});
-});&lt;/p&gt;
-&lt;p&gt;const cancel = document.createElement(&amp;lsquo;button&amp;rsquo;);
-inputElement.parentElement.appendChild(cancel);
-cancel.textContent = &amp;lsquo;Cancel upload&amp;rsquo;;
-const cancelPromise = new Promise((resolve) =&amp;gt; {
-cancel.onclick = () =&amp;gt; {
-resolve(null);
-};
-});&lt;/p&gt;
-&lt;p&gt;// Wait for the user to pick the files.
-const files = yield {
-promise: Promise.race([pickedPromise, cancelPromise]),
-response: {
-action: &amp;lsquo;starting&amp;rsquo;,
-}
-};&lt;/p&gt;
-&lt;p&gt;cancel.remove();&lt;/p&gt;
-&lt;p&gt;// Disable the input element since further picks are not allowed.
-inputElement.disabled = true;&lt;/p&gt;
-&lt;p&gt;if (!files) {
-return {
-response: {
-action: &amp;lsquo;complete&amp;rsquo;,
-}
-};
-}&lt;/p&gt;
-&lt;p&gt;for (const file of files) {
-const li = document.createElement(&amp;rsquo;li&amp;rsquo;);
-li.append(span(file.name, {fontWeight: &amp;lsquo;bold&amp;rsquo;}));
-li.append(span(
-&lt;code&gt;(${file.type || &#39;n/a&#39;}) - ${file.size} bytes, &lt;/code&gt; +
-&lt;code&gt;last modified: ${ file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : &#39;n/a&#39;} - &lt;/code&gt;));
-const percent = span(&amp;lsquo;0% done&amp;rsquo;);
-li.appendChild(percent);&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;outputElement.appendChild(li);
 
-const fileDataPromise = new Promise((resolve) =&amp;gt; {
-  const reader = new FileReader();
-  reader.onload = (e) =&amp;gt; {
-    resolve(e.target.result);
-  };
-  reader.readAsArrayBuffer(file);
-});
-// Wait for the data to be ready.
-let fileData = yield {
-  promise: fileDataPromise,
-  response: {
-    action: &#39;continue&#39;,
-  }
-};
 
-// Use a chunked sending to avoid message size limits. See b/62115660.
-let position = 0;
-do {
-  const length = Math.min(fileData.byteLength - position, MAX_PAYLOAD_SIZE);
-  const chunk = new Uint8Array(fileData, position, length);
-  position += length;
-
-  const base64 = btoa(String.fromCharCode.apply(null, chunk));
-  yield {
-    response: {
-      action: &#39;append&#39;,
-      file: file.name,
-      data: base64,
-    },
-  };
-
-  let percentDone = fileData.byteLength === 0 ?
-      100 :
-      Math.round((position / fileData.byteLength) * 100);
-  percent.textContent = `${percentDone}% done`;
-
-} while (position &amp;lt; fileData.byteLength);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;}&lt;/p&gt;
-&lt;p&gt;// All done.
-yield {
-response: {
-action: &amp;lsquo;complete&amp;rsquo;,
-}
-};
-}&lt;/p&gt;
-&lt;p&gt;scope.google = scope.google || {};
-scope.google.colab = scope.google.colab || {};
-scope.google.colab._files = {
-_uploadFiles,
-_uploadFilesContinue,
-};
-})(self);
-&lt;/script&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Saving kaggle.json to kaggle.json
+Saving kaggle.json to kaggle.json
 
 
 
