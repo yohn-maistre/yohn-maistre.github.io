@@ -70,7 +70,7 @@ sections:
           company_url: 'https://www.sacode.web.id'
           company_logo: org-gc
           location: Jayapura, Indonesia
-          date_start: '2021-09-09'
+          date_start: '2021-10-26'
           date_end: ''
           description: |2-
               Responsibilities include:
@@ -84,7 +84,7 @@ sections:
           company_logo: org-x
           location: East Lansing, Michigan
           date_start: '2018-08-12'
-          date_end: '2019-06-31'
+          date_end: '2019-07-31'
           description: Maintained parts for the main cyclotron and reports back.
     design:
       columns: '2'
