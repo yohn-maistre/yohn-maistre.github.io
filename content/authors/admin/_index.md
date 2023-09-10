@@ -22,7 +22,7 @@ organizations:
     url: https://www.sacode.web.id/
 
 # Short bio (displayed in user profile at end of posts)
-bio: My research interests include distributed robotics, mobile computing and programmable matter.
+bio: My research interests include poking at LLMs and annoying them.
 
 # Interests to show in About widget
 interests:
@@ -77,5 +77,5 @@ email: 'giyaibo@pm.me'
 highlight_name: true
 ---
 
-Yose Marthin Giyay is a passionate learner and developer. His research interests include distributed computing, NLP for language preservation, and any programmable matter. Currently exploring Graph-of-Thought Prompting for LLMs in specialized task. He is a contributor for SaCode community, the first IT and education community based in Papua.
+As a Papuan (of the Mee tribe) and an aspiring AI developer, I have a vision of using AI to make a positive change to my indigenous community in Papua, Indonesia. My interest now is on NLP and LLMs, and how they can be used to support and promote my indigenous language (glottocode: ekar1243) which is on the threshold of being endangered. I'm currently working on getting a workshop afoot to build a corpus of the Ekari language, and fine-tuning an LLM for it. My aim is to develop a mascot that will act as a tutor and as a contact point for anything about my ethnic region. I am also a contributor and an instructor for SaCode community, the first IT and education community based in Papua.
 {style="text-align: justify;"}
