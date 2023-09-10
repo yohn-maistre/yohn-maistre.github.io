@@ -1,6 +1,6 @@
 ---
 # Leave the homepage title empty to use the site title
-title:
+title: Yose
 date: 2023-09-04
 type: landing
 
@@ -41,9 +41,9 @@ sections:
     content:
       title: Skills
       items:
-        - name: R
+        - name: Python
           description: 90%
-          icon: r-project
+          icon: python
           icon_pack: fab
         - name: Statistics
           description: 100%
