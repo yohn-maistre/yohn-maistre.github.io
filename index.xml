@@ -7,7 +7,7 @@
     <description>Portfolio</description>
     <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Mon, 04 Sep 2023 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>https://yohn-maistre.github.io/media/icon_hu733ee5cbf4fd96706e969248383414e6_16110_512x512_fill_lanczos_center_3.png</url>
+      <url>https://yohn-maistre.github.io/media/logo_hu733ee5cbf4fd96706e969248383414e6_16110_300x300_fit_lanczos_3.png</url>
       <title>Portfolio</title>
       <link>https://yohn-maistre.github.io/</link>
     </image>
@@ -1977,7 +1977,7 @@ data.head()
 
 
 
-&lt;div id=&#34;chart-347129568&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;chart-369541782&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
 &lt;script&gt;
   (function() {
     let a = setInterval( function() {
@@ -1987,7 +1987,7 @@ data.head()
       clearInterval( a );
 
       Plotly.d3.json(&#34;./line-chart.json&#34;, function(chart) {
-        Plotly.plot(&#39;chart-347129568&#39;, chart.data, chart.layout, {responsive: true});
+        Plotly.plot(&#39;chart-369541782&#39;, chart.data, chart.layout, {responsive: true});
       });
     }, 500 );
   })();
