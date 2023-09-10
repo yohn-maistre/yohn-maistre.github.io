@@ -1,6 +1,6 @@
 ---
 # Leave the homepage title empty to use the site title
-title: Portfolio |
+title: Portfolio
 date: 2023-09-04
 type: landing
 
