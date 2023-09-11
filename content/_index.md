@@ -171,20 +171,20 @@ sections:
       view: showcase
       # For Showcase view, flip alternate rows?
       flip_alt_rows: false
-  - block: markdown
-    content:
-      title: Gallery
-      subtitle: ''
-      text: |-
-        {{<script type="text/javascript">
-        (function(){
-        var i,e,d=document,s="script";i=d.createElement("script");i.async=1;i.charset="UTF-8";
-        i.src="https://cdn.curator.io/published/c05560e6-27f1-45bd-8aff-e219eb6e1d20.js";
-        e=d.getElementsByTagName(s)[0];e.parentNode.insertBefore(i, e);
-        })();
-        </script>}}
-    design:
-      columns: '1'
+  # - block: markdown
+  #   content:
+  #     title: Gallery
+  #     subtitle: ''
+  #     text: |-
+  #       {{<script type="text/javascript">
+  #       (function(){
+  #       var i,e,d=document,s="script";i=d.createElement("script");i.async=1;i.charset="UTF-8";
+  #       i.src="https://cdn.curator.io/published/c05560e6-27f1-45bd-8aff-e219eb6e1d20.js";
+  #       e=d.getElementsByTagName(s)[0];e.parentNode.insertBefore(i, e);
+  #       })();
+  #       </script>}}
+  #   design:
+  #     columns: '1'
   # - block: collection
   #   id: featured
   #   content:
