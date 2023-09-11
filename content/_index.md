@@ -14,7 +14,7 @@ sections:
       #   label: '**See Projects**'
       #   url: '/#projects'
       cta:
-        label: Say Hi in Our Community Discord
+        label: Say hi in our community Discord
         url: https://discord.gg/yyBtW2Je3U
     design:
       background:

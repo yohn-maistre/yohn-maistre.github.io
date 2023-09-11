@@ -12,20 +12,20 @@ address:
   postcode:
   country: Indonesia
 
-summary: An example talk using Wowchemy's Markdown slides feature.
+summary: First session of the Last HTML & CSS Class in 2023
 abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellusac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam.'
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
-date: '2030-06-01T13:00:00Z'
-date_end: '2030-06-01T15:00:00Z'
+date: '2022-07-08T18:00:00Z'
+date_end: '2022-07-08T20:00:00Z'
 all_day: false
 
 # Schedule page publish date (NOT talk date).
-publishDate: '2017-01-01T00:00:00Z'
+publishDate: '2023-01-01T00:00:00Z'
 
-authors: []
-tags: []
+authors: [admin]
+tags: [SaCode]
 
 # Is this a featured talk? (true/false)
 featured: true
@@ -35,10 +35,10 @@ image:
   focal_point: Right
 
 links:
-  - icon: twitter
+  - icon: instagram
     icon_pack: fab
     name: Follow
-    url: https://twitter.com/georgecushen
+    url: https://www.instagram.com/sacode.official/
 url_code: ''
 url_pdf: ''
 url_slides: ''

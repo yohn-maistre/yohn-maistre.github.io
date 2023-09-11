@@ -24,8 +24,8 @@ all_day: false
 # Schedule page publish date (NOT talk date).
 publishDate: '2017-01-01T00:00:00Z'
 
-authors: []
-tags: []
+authors: [admin]
+tags: [SaCode]
 
 # Is this a featured talk? (true/false)
 featured: true
@@ -35,10 +35,10 @@ image:
   focal_point: Right
 
 links:
-  - icon: twitter
+  - icon: instagram
     icon_pack: fab
     name: Follow
-    url: https://twitter.com/georgecushen
+    url: https://www.instagram.com/sacode.official/
 url_code: ''
 url_pdf: ''
 url_slides: ''

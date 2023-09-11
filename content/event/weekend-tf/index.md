@@ -17,15 +17,15 @@ abstract: 'What is TensorFlow as an option for doing Deep Learning, with demo'
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
-date: '2030-06-01T13:00:00Z'
-date_end: '2030-06-01T15:00:00Z'
+date: '2022-07-08T18:00:00Z'
+date_end: '2022-07-08T20:00:00Z'
 all_day: false
 
 # Schedule page publish date (NOT talk date).
-publishDate: '2017-01-01T00:00:00Z'
+publishDate: '2023-01-01T00:00:00Z'
 
-authors: []
-tags: []
+authors: [admin]
+tags: [SaCode]
 
 # Is this a featured talk? (true/false)
 featured: true
@@ -35,10 +35,10 @@ image:
   focal_point: Right
 
 links:
-  - icon: twitter
+  - icon: instagram
     icon_pack: fab
     name: Follow
-    url: https://twitter.com/georgecushen
+    url: https://www.instagram.com/sacode.official/
 url_code: ''
 url_pdf: ''
 url_slides: ''
