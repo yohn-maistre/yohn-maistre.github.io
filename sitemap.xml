@@ -2,15 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://yohn-maistre.github.io/post/event/example/</loc>
+    <loc>https://yohn-maistre.github.io/talk/first-session-of-the-last-html-css-class-in-2023/</loc>
     <lastmod>2030-06-01T13:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
-    <loc>https://yohn-maistre.github.io/post/</loc>
+    <loc>https://yohn-maistre.github.io/talk/first-session-of-the-last-html-css-class-in-2023/</loc>
     <lastmod>2030-06-01T13:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
-    <loc>https://yohn-maistre.github.io/post/event/</loc>
+    <loc>https://yohn-maistre.github.io/talk/first-session-of-the-last-html-css-class-in-2023/</loc>
+    <lastmod>2030-06-01T13:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
+    <loc>https://yohn-maistre.github.io/event/</loc>
     <lastmod>2030-06-01T13:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
@@ -38,6 +42,14 @@
     <lastmod>2022-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
+    <loc>https://yohn-maistre.github.io/tag/gpt/</loc>
+    <lastmod>2022-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
+    <loc>https://yohn-maistre.github.io/category/gpt/</loc>
+    <lastmod>2022-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
     <loc>https://yohn-maistre.github.io/tag/huggingface/</loc>
     <lastmod>2022-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -62,6 +74,22 @@
     <lastmod>2022-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
+    <loc>https://yohn-maistre.github.io/post/</loc>
+    <lastmod>2022-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
+    <loc>https://yohn-maistre.github.io/tag/pytorch/</loc>
+    <lastmod>2022-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
+    <loc>https://yohn-maistre.github.io/category/pytorch/</loc>
+    <lastmod>2022-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
+    <loc>https://yohn-maistre.github.io/category/self-attention/</loc>
+    <lastmod>2022-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
     <loc>https://yohn-maistre.github.io/tags/</loc>
     <lastmod>2022-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -75,10 +103,6 @@
     <changefreq>weekly</changefreq>
   </url><url>
     <loc>https://yohn-maistre.github.io/post/cnn-respsound/cnn_mfcc_respsound/</loc>
-    <lastmod>2022-09-24T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-  </url><url>
-    <loc>https://yohn-maistre.github.io/post/html-class/</loc>
     <lastmod>2022-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
