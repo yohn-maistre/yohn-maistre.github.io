@@ -13,7 +13,7 @@ sections:
       # cta:
       #   label: '**See Projects**'
       #   url: '/#projects'
-      cta_alt:
+      cta:
         label: Say Hi in Our Community Discord
         url: https://discord.gg/yyBtW2Je3U
     design:

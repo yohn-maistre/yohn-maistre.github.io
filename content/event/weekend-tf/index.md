@@ -1,7 +1,7 @@
 ---
-title: First Session of the Last HTML & CSS Class in 2023 
+title: Overview of TenserFlow + MNIST Demo
 
-event: Wowchemy Conference
+event: SaCode's Weekend 2023
 event_url: https://www.sacode.web.id/
 
 location: PT. Nokensoft
@@ -12,8 +12,8 @@ address:
   postcode:
   country: Indonesia
 
-summary: An example talk using Wowchemy's Markdown slides feature.
-abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellusac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam.'
+summary: Gave an overview of TensorFlow as a framework
+abstract: 'What is TensorFlow as an option for doing Deep Learning, with demo'
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
