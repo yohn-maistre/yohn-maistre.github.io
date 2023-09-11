@@ -7,14 +7,14 @@ type: landing
 sections:
   - block: hero
     content:
-      title: Hi 👋🏽
+      title: *Hi, halo 👋🏽*
       image:
         filename: '/authors/admin/avatar.jpg'
-      cta:
-        label: '**See Projects**'
-        url: '/#projects'
+      # cta:
+      #   label: '**See Projects**'
+      #   url: '/#projects'
       cta_alt:
-        label: Say hi in our community discord
+        label: Say Hi in Our Community Discord
         url: https://discord.gg/yyBtW2Je3U
     design:
       background:
@@ -213,16 +213,16 @@ e=d.getElementsByTagName(s)[0];e.parentNode.insertBefore(i, e);
   #   design:
   #     columns: '2'
   #     view: citation
-  # - block: collection
-  #   id: talks
-  #   content:
-  #     title: Recent & Upcoming Talks
-  #     filters:
-  #       folders:
-  #         - event
-  #   design:
-  #     columns: '2'
-  #     view: compact
+  - block: collection
+    id: talks
+    content:
+      title: Recent & Upcoming SaCode Activities
+      filters:
+        folders:
+          - event
+    design:
+      columns: '2'
+      view: compact
   - block: tag_cloud
     content:
       title: Popular Topics
