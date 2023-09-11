@@ -63,7 +63,7 @@ sections:
           date_start: '2023-01-12'
           date_end: ''
           description: Created tailwind templates for clients
-        - title: Instructor
+        - title: Instructor & Contributor
           company: SaCode Community
           company_url: 'https://www.sacode.web.id'
           company_logo: org-gc
@@ -76,6 +76,8 @@ sections:
               * Developing a curriculum for intro to HTML-CSS and Python
               * Running a class of 15-20 people
               * Creating reports for the class and sponsors
+              * Organizing a language documentation workshop
+              * Running an AI think tank
         - title: Operations Student Assistant
           company: NSCL, Michigan State University
           company_url: ''
