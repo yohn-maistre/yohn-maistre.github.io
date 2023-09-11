@@ -7,7 +7,7 @@ type: landing
 sections:
   - block: hero
     content:
-      title: *Hi, halo 👋🏽*
+      title: "Hi, halo 👋🏽"
       image:
         filename: '/authors/admin/avatar.jpg'
       # cta:
