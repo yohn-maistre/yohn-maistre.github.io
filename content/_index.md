@@ -7,7 +7,7 @@ type: landing
 sections:
   - block: hero
     content:
-      title: Hi, I'm **Yose**
+      title: Halo 👋🏽
       image:
         filename: '/authors/admin/avatar.jpg'
       cta:
