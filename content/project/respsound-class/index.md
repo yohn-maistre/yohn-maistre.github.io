@@ -2,7 +2,7 @@
 title: Respiratory Diseases Classification
 summary: A Streamlit web app for the CNN trained to classify pulmonary diseases with respiratory sound recordings (.wav). Hosted on HuggingFace Spaces.
 tags:
-  - ML
+  - Deep Learning
   - Streamlit
   - HuggingFace
   - TensorFlow
