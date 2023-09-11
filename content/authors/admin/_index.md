@@ -54,9 +54,6 @@ social:
     label: Follow me on Twitter
     display:
       header: true
-  - icon: graduation-cap # Alternatively, use `google-scholar` icon from `ai` icon pack
-    icon_pack: fas
-    link: https://scholar.google.co.uk/citations?user=sIwtMXoAAAAJ
   - icon: github
     icon_pack: fab
     link: https://github.com/yohn-maistre
@@ -77,5 +74,5 @@ email: 'giyaibo@pm.me'
 highlight_name: true
 ---
 
-As a Papuan (of the Mee tribe) and an aspiring AI developer, I have a vision of using AI to make a positive change to my indigenous community in Papua, Indonesia. My interest now is on NLP and LLMs, and how they can be used to support and promote my indigenous language (glottocode: ekar1243) which is on the threshold of being endangered. I'm currently working on getting a workshop afoot to build a corpus of the Ekari language, and fine-tuning an LLM for it. My aim is to develop a mascot that will act as a tutor and as a contact point for anything about my ethnic region. I am also a contributor and an instructor for SaCode community, the first IT and education community based in Papua.
+As a Papuan (of the Mee tribe) and an aspiring AI developer, I have a passion of using AI to make a positive change to my indigenous community in Papua, Indonesia. I am now focused on documenting the Ekari language, while expanding my knowledge on computational linguistics and LLMs, and how they can be used to support and promote my indigenous language that is on the threshold of being endangered. I'm currently working on organizing a workshop to build a semantic corpus of the Ekari language to ultimately fine-tune an LLM for it. My aim is to develop a mascot that will act as a tutor and as a contact point for anything regarding my ethnic region. I am also a curriculum developer and an instructor for SaCode community, the first IT community and coding school in Papua.
 {style="text-align: justify;"}
