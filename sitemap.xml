@@ -2,6 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://yohn-maistre.github.io/post/event/example/</loc>
+    <lastmod>2030-06-01T13:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
+    <loc>https://yohn-maistre.github.io/post/</loc>
+    <lastmod>2030-06-01T13:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
+    <loc>https://yohn-maistre.github.io/post/event/</loc>
+    <lastmod>2030-06-01T13:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
     <loc>https://yohn-maistre.github.io/</loc>
     <lastmod>2023-09-04T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -50,10 +62,6 @@
     <lastmod>2022-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
-    <loc>https://yohn-maistre.github.io/post/</loc>
-    <lastmod>2022-09-24T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-  </url><url>
     <loc>https://yohn-maistre.github.io/tags/</loc>
     <lastmod>2022-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -67,6 +75,10 @@
     <changefreq>weekly</changefreq>
   </url><url>
     <loc>https://yohn-maistre.github.io/post/cnn-respsound/cnn_mfcc_respsound/</loc>
+    <lastmod>2022-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
+    <loc>https://yohn-maistre.github.io/post/html-class/</loc>
     <lastmod>2022-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
