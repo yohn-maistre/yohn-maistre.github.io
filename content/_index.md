@@ -214,7 +214,7 @@ sections:
   - block: collection
     id: talks
     content:
-      title: Recent & Upcoming SaCode Activities
+      title: SaCode Activities
       filters:
         folders:
           - event
