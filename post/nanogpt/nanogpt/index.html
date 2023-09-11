@@ -276,12 +276,12 @@
 
   
 
-<meta name="description" content="Yose Marthin Giyay, AI developer" />
+<meta name="description" content="Andrej Karpathy&#39;s is a legend. Here he gives a clear and concise lecture on transformers and attention while creating one from scratch. This is just me rewriting what I&#39;ve learned." />
 
 
 
-<link rel="alternate" hreflang="en-us" href="https://yohn-maistre.github.io/category/llm/" />
-<link rel="canonical" href="https://yohn-maistre.github.io/category/llm/" />
+<link rel="alternate" hreflang="en-us" href="https://yohn-maistre.github.io/post/nanogpt/nanogpt/" />
+<link rel="canonical" href="https://yohn-maistre.github.io/post/nanogpt/nanogpt/" />
 
 
 
@@ -317,37 +317,86 @@
   <meta property="twitter:creator" content="@jind0sh" />
 <meta property="twitter:image" content="https://yohn-maistre.github.io/media/logo_hu1fc4a639baa6f133b2bd0a34232daa33_39251_300x300_fit_lanczos_3.png" />
 <meta property="og:site_name" content="Yose" />
-<meta property="og:url" content="https://yohn-maistre.github.io/category/llm/" />
-<meta property="og:title" content="LLM | Yose" />
-<meta property="og:description" content="Yose Marthin Giyay, AI developer" /><meta property="og:image" content="https://yohn-maistre.github.io/media/logo_hu1fc4a639baa6f133b2bd0a34232daa33_39251_300x300_fit_lanczos_3.png" /><meta property="og:locale" content="en-us" />
+<meta property="og:url" content="https://yohn-maistre.github.io/post/nanogpt/nanogpt/" />
+<meta property="og:title" content="Andrej Karpathy&#39;s &#34;GPT from Scratch&#34; Textual Guide - Part 1 | Yose" />
+<meta property="og:description" content="Andrej Karpathy&#39;s is a legend. Here he gives a clear and concise lecture on transformers and attention while creating one from scratch. This is just me rewriting what I&#39;ve learned." /><meta property="og:image" content="https://yohn-maistre.github.io/media/logo_hu1fc4a639baa6f133b2bd0a34232daa33_39251_300x300_fit_lanczos_3.png" /><meta property="og:locale" content="en-us" />
 
   
-    <meta property="og:updated_time" content="2022-09-24T00:00:00&#43;00:00" />
-  
-
-
-
-
-
-
-
-
-
-
+    <meta
+      property="article:published_time"
+      content="2022-09-24T00:00:00&#43;00:00"
+    />
   
   
-  
-
-  
-  
-    <link rel="alternate" href="/category/llm/index.xml" type="application/rss+xml" title="Yose" />
-  
-
+    <meta property="article:modified_time" content="2022-09-24T00:00:00&#43;00:00">
   
 
 
+
+
+
+
+    
+
+
+
+
+
+
   
-  <title>LLM | Yose</title>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yohn-maistre.github.io/post/nanogpt/nanogpt/"
+  },
+  "headline": "Andrej Karpathy's \"GPT from Scratch\" Textual Guide - Part 1",
+  
+  "datePublished": "2022-09-24T00:00:00Z",
+  "dateModified": "2022-09-24T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Yose Marthin Giyay"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "SaCode Community",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yohn-maistre.github.io/media/logo_hu1fc4a639baa6f133b2bd0a34232daa33_39251_192x192_fit_lanczos_3.png"
+    }
+  },
+  "description": "Andrej Karpathy's is a legend. Here he gives a clear and concise lecture on transformers and attention while creating one from scratch. This is just me rewriting what I've learned."
+}
+</script>
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+  
+
+  
+
+
+  
+  <title>Andrej Karpathy&#39;s &#34;GPT from Scratch&#34; Textual Guide - Part 1 | Yose</title>
 
   
   
@@ -367,7 +416,7 @@
 </head>
 
 
-<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   "  >
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="51f6c68d6e3daaf7be68402cc8ba764a" >
 
   
   
@@ -691,7 +740,9 @@
     
     
 
-    
+    <article class="article">
+
+  
 
 
 
@@ -710,64 +761,15 @@
   
   
   
-    
-  
-<div class="universal-wrapper pt-3">
-  <h1>LLM</h1>
+<div class="article-container pt-3">
+  <h1>Andrej Karpathy&#39;s &#34;GPT from Scratch&#34; Textual Guide - Part 1</h1>
 
   
-
-  
-</div>
-
-
-
-<div class="universal-wrapper">
+  <p class="page-subtitle">AI has been increasingly democratized.</p>
   
 
-
-  
-
-  
   
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-<div class="media stream-item view-compact">
-  <div class="media-body">
-
-    <div class="section-subheading article-title mb-0 mt-0">
-      <a href="/post/nanogpt/nanogpt/" >Andrej Karpathy&#39;s &#34;GPT from Scratch&#34; Textual Guide - Part 1</a>
-    </div>
-
-    
-    <a href="/post/nanogpt/nanogpt/"  class="summary-link">
-      <div class="article-style">
-        Andrej Karpathy&rsquo;s is a legend. Here he gives a clear and concise lecture on transformers and attention while creating one from scratch. This is just me rewriting what I&rsquo;ve learned.
-      </div>
-    </a>
-    
-
-    <div class="stream-meta article-metadata">
-
-      
-
-      
-        
 
 
 <div class="article-metadata">
@@ -818,126 +820,336 @@
 
 </div>
 
-      
-    </div>
-
     
 
-  </div>
-  <div class="ml-3">
-    
-    
-  </div>
+
+
+
+
+  
 </div>
 
-  
-    
 
 
+  <div class="article-container">
 
+    <div class="article-style">
+      <p>If you&rsquo;re interested in delving into the world of creating language models like ChatGPT or crafting your very own GPT model from scratch on your computer, this blog is your go-to guide. 😄</p>
+<p>For a visual tutorial, check out this video guide: <a href="https://www.youtube.com/watch?v=kCc8FmEb1nY&amp;ab_channel=AndrejKarpathy" target="_blank" rel="noopener">https://www.youtube.com/watch?v=kCc8FmEb1nY&ab_channel=AndrejKarpathy</a></p>
+<p>And here&rsquo;s the code you&rsquo;ll need: <a href="https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing" target="_blank" rel="noopener">https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing</a></p>
+<p>Andrej Karpathy did a stellar job breaking down GPT for newcomers and those with some prior knowledge. This blog is Part 1 aiming to simplify the topic just for me to learn.</p>
+<p>Let&rsquo;s dive in!</p>
+<p>ChatGPT. It takes the words you input and dissects them into a sequence. Then, it uses this sequence to predict the next word or words, making your text sound impressively human-like. ChatGPT is based on the GPT-3 model, which underwent training on a colossal 45 terabytes of text data. If you were thinking about replicating this on your laptop, be prepared for it to take approximately 335 years!</p>
+<p>However, there&rsquo;s a glimmer of hope. Recently, Stanford and Databricks introduced Alpaca and Dolly models, hinting at the possibility of creating powerful tools like ChatGPT with significantly fewer resources. Keep an eye out for more details; I&rsquo;ll be sharing them soon.</p>
+<p>Now, let&rsquo;s talk Transformers. In 2017, a paper titled &ldquo;Attention is all you need&rdquo; was published. At the time, its authors probably didn&rsquo;t foresee the transformative impact of the Transformer architecture on the field.</p>
+<p>You might have come across this diagram:</p>
+<p>Transformer Diagram</p>
+<p>It serves as the basis for GPT and various other AI applications. We&rsquo;ll employ this architecture to construct our personalized GPT.</p>
+<p>While the colossal 45 TB of data that GPT-3 trained on is beyond our reach, we&rsquo;re going for something simpler: all the words written by Shakespeare. You can find the data here: Access the Data.</p>
+<p>Our objective? Training a Transformer-based language model, but it&rsquo;s going to be character-level. In other words, it will predict the next character in a sequence. In contrast, ChatGPT predicts entire words.</p>
+<p>Now, there&rsquo;s something called nanGPT, but we&rsquo;ll save that discussion for later.</p>
+<p>Ready for action? First, we&rsquo;ll read and explore the data to determine the number of characters.</p>
+<p>Next, we&rsquo;ll delve into tokenization and split our data into training and validation sets. Why? To assess our model&rsquo;s performance without overfitting.</p>
+<p>Here&rsquo;s where it gets intriguing. We can&rsquo;t feed the Transformer with all our training data in one go; that would lead to memory issues. Even though we&rsquo;re working with a small dataset, this chunking approach is essential to prevent memory errors.</p>
+<p>We&rsquo;ll also touch upon batch size, a familiar concept in machine learning that facilitates parallel processing. Think of it as serving data in manageable chunks to our Transformer.</p>
+<p>Moving on, we&rsquo;ll construct a basic bigram language model as a modest start to language modeling. It&rsquo;s nothing fancy at this stage.</p>
+<p>Calculating loss is crucial to gauge our model&rsquo;s performance. We&rsquo;re using negative log likelihood loss here.</p>
+<p>Now, the exciting part! We&rsquo;ll generate some text from our model. Brace yourself; it might appear a bit nonsensical at this stage. 🙃</p>
+<p>Remember, our model currently relies only on the previous character to predict the next one. We&rsquo;re not considering the full context just yet.</p>
+<p>Lastly, we&rsquo;ll train our bigram model to reduce the loss value and enhance predictions. We&rsquo;re employing the Adam optimizer, a well-regarded choice. By increasing our batch size, we&rsquo;ll observe a drop in loss. Repeating this training loop several times can further minimize it.</p>
+<p>Now, let&rsquo;s assess whether our predictions have improved by generating text once again. It should look somewhat more sensible, though still far from perfection.</p>
+<p>And that wraps up Part 1! Stay tuned for more adventures in constructing language models. 😎🤖</p>
 
-
-
-
-
-
-
-
-
-
-  
-
-
-<div class="media stream-item view-compact">
-  <div class="media-body">
-
-    <div class="section-subheading article-title mb-0 mt-0">
-      <a href="/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/" >Using Llama 2-13b for RetrievalQA with LangChain and HuggingFace</a>
     </div>
 
     
-    <a href="/post/llama-retrieval/sacode_llama_2_13b_retrievalqa_hf/"  class="summary-link">
-      <div class="article-style">
-        In recent times, AI has been increasingly democratized. Now we can use a state-of-the-art Large Language Model in a single T4 GPU instance to read documents (or any file) for us. Here&rsquo;s how.
-      </div>
-    </a>
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/langchain/">LangChain</a>
+  
+  <a class="badge badge-light" href="/tag/huggingface/">HuggingFace</a>
+  
+  <a class="badge badge-light" href="/tag/ai/">AI</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
     
-
-    <div class="stream-meta article-metadata">
-
       
-
+      
       
         
-
-
-<div class="article-metadata">
-
-  
-  
-  
-  
-  <div>
-    
-
-  <span class="author-highlighted">
-      Yose Marthin Giyay</span>
-  </div>
-  
-  
-
-  
-  <span class="article-date">
-    
+      
+      
+      
+      
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fyohn-maistre.github.io%2Fpost%2Fnanogpt%2Fnanogpt%2F&amp;text=Andrej&#43;Karpathy%27s&#43;%22GPT&#43;from&#43;Scratch%22&#43;Textual&#43;Guide&#43;-&#43;Part&#43;1" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
     
       
+      
+      
+        
+      
+      
+      
+      
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fyohn-maistre.github.io%2Fpost%2Fnanogpt%2Fnanogpt%2F&amp;t=Andrej&#43;Karpathy%27s&#43;%22GPT&#43;from&#43;Scratch%22&#43;Textual&#43;Guide&#43;-&#43;Part&#43;1" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
     
-    Sep 24, 2022
-  </span>
-  
-
-  
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    16 min read
-  </span>
-  
-
-  
-  
-  
-  
-
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/category/llm/">LLM</a>, <a href="/category/langchain/">LangChain</a>, <a href="/category/huggingface/">HuggingFace</a>, <a href="/category/ai/">AI</a></span>
-  
-
+      
+      
+      
+        
+      
+      
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a href="mailto:?subject=Andrej%20Karpathy%27s%20%22GPT%20from%20Scratch%22%20Textual%20Guide%20-%20Part%201&amp;body=https%3A%2F%2Fyohn-maistre.github.io%2Fpost%2Fnanogpt%2Fnanogpt%2F" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https%3A%2F%2Fyohn-maistre.github.io%2Fpost%2Fnanogpt%2Fnanogpt%2F&amp;title=Andrej&#43;Karpathy%27s&#43;%22GPT&#43;from&#43;Scratch%22&#43;Textual&#43;Guide&#43;-&#43;Part&#43;1" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Andrej&#43;Karpathy%27s&#43;%22GPT&#43;from&#43;Scratch%22&#43;Textual&#43;Guide&#43;-&#43;Part&#43;1%20https%3A%2F%2Fyohn-maistre.github.io%2Fpost%2Fnanogpt%2Fnanogpt%2F" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https%3A%2F%2Fyohn-maistre.github.io%2Fpost%2Fnanogpt%2Fnanogpt%2F&amp;title=Andrej&#43;Karpathy%27s&#43;%22GPT&#43;from&#43;Scratch%22&#43;Textual&#43;Guide&#43;-&#43;Part&#43;1" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
       
+      <a href="https://yohn-maistre.github.io/"><img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu0a3814c419ef758bbb309bd97589875d_201012_270x270_fill_q75_lanczos_center.jpg" alt="Yose Marthin Giyay"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://yohn-maistre.github.io/">Yose Marthin Giyay</a></h5>
+      <h6 class="card-subtitle">AI Developer</h6>
+      <p class="card-text">My research interests include poking at LLMs and annoying them.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/jind0sh" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.co.uk/citations?user=sIwtMXoAAAAJ" target="_blank" rel="noopener">
+        <i class="fas fa-graduation-cap"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/yohn-maistre" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/yose-marthin-giyay-22241b151/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/uploads/resume.pdf" >
+        <i class="ai ai-cv"></i>
+      </a>
+    </li>
+  
+</ul>
+
     </div>
+  </div>
 
-    
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   </div>
-  <div class="ml-3">
-    
-    
-  </div>
-</div>
-
-  
-
-  
-
-  
-
-</div>
+</article>
   </div>
 
   <div class="page-footer">
