@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ML | Yose</title>
-    <link>https://yohn-maistre.github.io/tag/ml/</link>
-      <atom:link href="https://yohn-maistre.github.io/tag/ml/index.xml" rel="self" type="application/rss+xml" />
-    <description>ML</description>
+    <title>Deep Learning | Yose</title>
+    <link>https://yohn-maistre.github.io/tag/deep-learning/</link>
+      <atom:link href="https://yohn-maistre.github.io/tag/deep-learning/index.xml" rel="self" type="application/rss+xml" />
+    <description>Deep Learning</description>
     <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Wed, 27 Apr 2016 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://yohn-maistre.github.io/media/logo_hu1fc4a639baa6f133b2bd0a34232daa33_39251_300x300_fit_lanczos_3.png</url>
-      <title>ML</title>
-      <link>https://yohn-maistre.github.io/tag/ml/</link>
+      <title>Deep Learning</title>
+      <link>https://yohn-maistre.github.io/tag/deep-learning/</link>
     </image>
     
     <item>
