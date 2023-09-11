@@ -4,11 +4,11 @@ subtitle: AI has been increasingly democratized.
 summary: Andrej Karpathy's is a legend. Here he gives a clear and concise lecture on transformers and attention while creating one from scratch. This is just me rewriting what I've learned.
 authors:
   - admin
-tags: [LangChain, HuggingFace, AI]
+tags: [GPT, PyTorch, AI]
 categories: 
-  - LLM
-  - LangChain
-  - HuggingFace
+  - GPT
+  - Self-Attention
+  - PyTorch
   - AI
 projects: []
 date: '2022-09-24T00:00:00Z'
@@ -33,10 +33,6 @@ ChatGPT. It takes the words you input and dissects them into a sequence. Then, i
 However, there's a glimmer of hope. Recently, Stanford and Databricks introduced Alpaca and Dolly models, hinting at the possibility of creating powerful tools like ChatGPT with significantly fewer resources. Keep an eye out for more details; I'll be sharing them soon.
 
 Now, let's talk Transformers. In 2017, a paper titled "Attention is all you need" was published. At the time, its authors probably didn't foresee the transformative impact of the Transformer architecture on the field.
-
-You might have come across this diagram:
-
-Transformer Diagram
 
 It serves as the basis for GPT and various other AI applications. We'll employ this architecture to construct our personalized GPT.
 

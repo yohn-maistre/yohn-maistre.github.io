@@ -7,7 +7,7 @@ type: landing
 sections:
   - block: hero
     content:
-      title: Halo 👋🏽
+      title: Hi 👋🏽
       image:
         filename: '/authors/admin/avatar.jpg'
       cta:
@@ -16,16 +16,6 @@ sections:
       cta_alt:
         label: Say hi in our community discord
         url: https://discord.gg/yyBtW2Je3U
-      cta_note:
-        label: >-
-          <div style="text-shadow: none;"><a class="github-button" href="https://github.com/wowchemy/wowchemy-hugo-themes" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star">Star Wowchemy Website Builder</a></div><div style="text-shadow: none;"><a class="github-button" href="https://github.com/wowchemy/starter-hugo-academic" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star">Star the Academic template</a></div>
-      text: |-
-        From LLM apps and forecasting models to full-stack websites, curriculums, and tech blogs.
-
-        <!--Custom spacing-->
-        <div class="mb-3"></div>
-        <!--GitHub Button JS-->
-        <script async defer src="https://buttons.github.io/buttons.js"></script>
     design:
       background:
         gradient_end: '	#000080' #'#1976d2'
@@ -39,7 +29,7 @@ sections:
       username: admin
   - block: features
     content:
-      title: Skills
+      title: Featured
       items:
         - name: Python
           description: 90%
@@ -65,6 +55,14 @@ sections:
       #   Leave `date_end` empty if it's your current employer.
       #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
       items:
+        - title: Web Developer
+          company: PT. Nokensoft Inovasi Teknologi Papua
+          company_url: 'https://nokensoft.com'
+          company_logo: org-x
+          location: Jayapura, Indonesia
+          date_start: '2023-01-12'
+          date_end: ''
+          description: Created tailwind templates for clients
         - title: Instructor
           company: SaCode Community
           company_url: 'https://www.sacode.web.id'
@@ -109,14 +107,6 @@ sections:
           organization_url: https://www.coursera.org
           title: Neural Networks and Deep Learning
           url: ''
-        - certificate_url: https://www.edx.org
-          date_end: ''
-          date_start: '2021-01-01'
-          description: Formulated informed blockchain models, hypotheses, and use cases.
-          organization: edX
-          organization_url: https://www.edx.org
-          title: Blockchain Fundamentals
-          url: https://www.edx.org/professional-certificate/uc-berkeleyx-blockchain-fundamentals
         - certificate_url: https://www.datacamp.com
           date_end: '2020-12-21'
           date_start: '2020-07-01'
