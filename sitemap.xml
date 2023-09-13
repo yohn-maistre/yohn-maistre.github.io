@@ -2,24 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://yohn-maistre.github.io/talk/overview-of-ai-and-ml/</loc>
-    <lastmod>2030-06-01T13:00:00+00:00</lastmod>
+    <loc>https://yohn-maistre.github.io/</loc>
+    <lastmod>2023-09-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+  </url><url>
+    <loc>https://yohn-maistre.github.io/talk/data-and-ai-for-indigenous-peoples/</loc>
+    <lastmod>2023-05-20T18:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
     <loc>https://yohn-maistre.github.io/event/</loc>
-    <lastmod>2030-06-01T13:00:00+00:00</lastmod>
+    <lastmod>2023-05-20T18:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
     <loc>https://yohn-maistre.github.io/tag/sacode/</loc>
-    <lastmod>2030-06-01T13:00:00+00:00</lastmod>
+    <lastmod>2023-05-20T18:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
     <loc>https://yohn-maistre.github.io/tags/</loc>
-    <lastmod>2030-06-01T13:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-  </url><url>
-    <loc>https://yohn-maistre.github.io/</loc>
-    <lastmod>2023-09-04T00:00:00+00:00</lastmod>
+    <lastmod>2023-05-20T18:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
     <loc>https://yohn-maistre.github.io/tag/ai/</loc>
@@ -110,7 +110,7 @@
     <lastmod>2022-07-08T18:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
-    <loc>https://yohn-maistre.github.io/talk/overview-of-tenserflow--mnist-demo/</loc>
+    <loc>https://yohn-maistre.github.io/talk/overview-of-tensorflow--mnist-demo/</loc>
     <lastmod>2022-07-08T18:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
   </url><url>
