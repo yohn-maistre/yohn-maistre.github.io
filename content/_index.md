@@ -39,14 +39,18 @@ sections:
       #   Leave `date_end` empty if it's your current employer.
       #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
       items:
-        - title: Web Developer
+        - title: Developer
           company: PT. Nokensoft Inovasi Teknologi Papua
           company_url: 'https://nokensoft.com'
           company_logo: org-x
           location: Jayapura, Indonesia
           date_start: '2023-01-12'
           date_end: ''
-          description: Created tailwind templates for clients
+          description: |2-
+              Responsibilities include:
+
+              * Developing landing pages for clients in TailwindCSS and NextJS
+              * Creating forecasting models for client's business data in Colab using pandas and sk-learn
         - title: Instructor & Contributor
           company: SaCode Community
           company_url: 'https://www.sacode.web.id'
@@ -69,7 +73,12 @@ sections:
           location: East Lansing, Michigan
           date_start: '2018-08-12'
           date_end: '2019-07-31'
-          description: Maintained parts for the main cyclotron and reports back.
+          description: |2-
+              Responsibilities include:
+              
+              * Maintaining parts for the main particle accelerator and reports back
+              * Creating inventory reports
+              * Monitoring secondary cyclotron for errors
     design:
       columns: '2'
   - block: collection
