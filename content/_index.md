@@ -73,6 +73,16 @@ sections:
     design:
       columns: '2'
   - block: collection
+    id: talks
+    content:
+      title: SaCode
+      filters:
+        folders:
+          - event
+    design:
+      columns: '2'
+      view: compact
+  - block: collection
     id: posts
     content:
       title: Recent Posts
@@ -126,16 +136,6 @@ sections:
       view: showcase
       # For Showcase view, flip alternate rows?
       flip_alt_rows: false
-  - block: collection
-    id: talks
-    content:
-      title: SaCode
-      filters:
-        folders:
-          - event
-    design:
-      columns: '2'
-      view: compact
   # - block: features
   #   content:
   #     title: Featured
