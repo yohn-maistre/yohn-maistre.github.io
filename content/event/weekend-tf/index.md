@@ -1,14 +1,14 @@
 ---
-title: Overview of TenserFlow + MNIST Demo
+title: Overview of TensorFlow + MNIST Demo
 
 event: SaCode's Weekend 2023
 event_url: https://www.sacode.web.id/
 
 location: PT. Nokensoft
 address:
-  street: 450 Serra Mall
+  street: Jalan Raya Sentani Kelurahan Waena
   city: Jayapura
-  region: 
+  region: Papua
   postcode:
   country: Indonesia
 

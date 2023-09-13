@@ -1,14 +1,14 @@
 ---
 title: First Session of the Last HTML & CSS Class in 2023 
 
-event: Wowchemy Conference
+event: SaCode
 event_url: https://www.sacode.web.id/
 
 location: PT. Nokensoft
 address:
-  street: 450 Serra Mall
+  street: Jalan Raya Sentani Kelurahan Waena
   city: Jayapura
-  region: 
+  region: Papua
   postcode:
   country: Indonesia
 

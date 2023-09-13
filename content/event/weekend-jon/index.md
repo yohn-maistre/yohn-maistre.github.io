@@ -1,28 +1,28 @@
 ---
-title: Overview of AI and ML
+title: Data and AI for Indigenous Peoples
 
 event: SaCode's Weekend 2023
 event_url: https://www.sacode.web.id/
 
 location: PT. Nokensoft
 address:
-  street: 450 Serra Mall
+  street: Jalan Raya Sentani Kelurahan Waena
   city: Jayapura
-  region: 
+  region: Papua
   postcode:
   country: Indonesia
 
-summary: A brief overview of AI as a field by Jonathan Smith, a Meta Engineer
+summary: Moderated a sharing session on AI as a field by Jonathan Smith, a Meta Engineer
 abstract: 'AI is important for indigenous peoples and data independence.'
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
-date: '2030-06-01T13:00:00Z'
-date_end: '2030-06-01T15:00:00Z'
+date: '2023-05-20T18:00:00Z'
+date_end: '2023-05-20T20:00:00Z'
 all_day: false
 
 # Schedule page publish date (NOT talk date).
-publishDate: '2017-01-01T00:00:00Z'
+publishDate: '2023-07-13T20:00:00Z'
 
 authors: [admin]
 tags: [SaCode]
