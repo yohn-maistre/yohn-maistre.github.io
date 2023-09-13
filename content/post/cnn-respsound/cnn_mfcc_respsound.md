@@ -7,7 +7,7 @@ authors:
 tags: [Machine Learning, CNN, TensorFlow, AI]
 categories:
   - TensorFlow
-  - AI
+  - Deep Learning
 projects: []
 date: '2022-09-24T00:00:00Z'
 lastMod: '2022-09-24T00:00:00Z'

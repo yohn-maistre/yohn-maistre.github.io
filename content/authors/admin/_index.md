@@ -34,7 +34,7 @@ interests:
 education:
   courses:
     - course: BSc in Physics and Computational Math
-      institution: Michigan State University (full-ride scholarship; funding still incomplete due to wide-reaching political turmoil)
+      institution: Michigan State University (govt. sponsored full-ride scholarship; funding still incomplete due to wide-reaching political turmoil)
       year: 2016-2019
     - course: S1 Matematika (BSc equivalent)
       institution: Universitas Terbuka
