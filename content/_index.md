@@ -73,15 +73,32 @@ sections:
     design:
       columns: '2'
   - block: collection
-    id: talks
+    id: posts
     content:
-      title: SaCode Activities
+      title: Recent Posts
+      subtitle: ''
+      text: ''
+      # Choose how many pages you would like to display (0 = all pages)
+      count: 5
+      # Filter on criteria
       filters:
         folders:
-          - event
+          - post
+        author: ""
+        category: ""
+        tag: ""
+        exclude_featured: false
+        exclude_future: false
+        exclude_past: false
+        publication_type: ""
+      # Choose how many pages you would like to offset by
+      offset: 0
+      # Page order: descending (desc) or ascending (asc) date.
+      order: desc
     design:
-      columns: '2'
+      # Choose a layout view
       view: compact
+      columns: '2'
   - block: portfolio
     id: projects
     content:
@@ -109,6 +126,16 @@ sections:
       view: showcase
       # For Showcase view, flip alternate rows?
       flip_alt_rows: false
+  - block: collection
+    id: talks
+    content:
+      title: SaCode
+      filters:
+        folders:
+          - event
+    design:
+      columns: '2'
+      view: compact
   # - block: features
   #   content:
   #     title: Featured
@@ -156,33 +183,6 @@ sections:
     #       url: ''
     # design:
     #   columns: '2'
-  - block: collection
-    id: posts
-    content:
-      title: Recent Posts
-      subtitle: ''
-      text: ''
-      # Choose how many pages you would like to display (0 = all pages)
-      count: 5
-      # Filter on criteria
-      filters:
-        folders:
-          - post
-        author: ""
-        category: ""
-        tag: ""
-        exclude_featured: false
-        exclude_future: false
-        exclude_past: false
-        publication_type: ""
-      # Choose how many pages you would like to offset by
-      offset: 0
-      # Page order: descending (desc) or ascending (asc) date.
-      order: desc
-    design:
-      # Choose a layout view
-      view: compact
-      columns: '2'
   # - block: markdown
   #   content:
   #     title: Gallery
@@ -238,7 +238,7 @@ sections:
       # Contact (add or remove contact options as necessary)
       email: giyaibo@pm.me
       phone: +62 822 5095 8626
-      appointment_url: 'https://calendly.com'
+      # appointment_url: 'https://calendly.com'
       address:
         street: Jalan Raya Sentani Kelurahan Waena
         city: Jayapura
@@ -251,9 +251,13 @@ sections:
       #   - 'Monday 10:00 to 13:00'
       #   - 'Wednesday 09:00 to 10:00'
       contact_links:
+        - icon: instagram
+          icon_pack: fab
+          name: Instagram
+          link: 'https://instagram.com/giyaibo'
         - icon: twitter
           icon_pack: fab
-          name: DM Me
+          name: X
           link: 'https://twitter.com/jind0sh'
       # Automatically link email and phone or display as text?
       autolink: true

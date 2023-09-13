@@ -13,16 +13,16 @@ address:
   country: Indonesia
 
 summary: First session of the Last HTML & CSS Class in 2023
-abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellusac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam.'
+abstract: ''
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
-date: '2022-07-08T18:00:00Z'
-date_end: '2022-07-08T20:00:00Z'
+date: '2023-09-07T18:00:00Z'
+date_end: '2023-09-07T20:00:00Z'
 all_day: false
 
 # Schedule page publish date (NOT talk date).
-publishDate: '2023-01-01T00:00:00Z'
+publishDate: '2023-09-09T00:20:00Z'
 
 authors: [admin]
 tags: [SaCode]
