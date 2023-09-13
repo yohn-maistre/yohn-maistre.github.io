@@ -18,8 +18,8 @@ sections:
         url: https://discord.gg/yyBtW2Je3U
     design:
       background:
-        gradient_end: '	#000080' #'#1976d2'
-        gradient_start: '#000000' #'#004ba0'
+        gradient_end: '#000000' #'#1976d2'
+        gradient_start: '#000080' #'#004ba0'
         text_color_light: true
   - block: about.biography
     id: about
