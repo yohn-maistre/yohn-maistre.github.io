@@ -34,7 +34,7 @@ interests:
 education:
   courses:
     - course: BSc in Physics and Computational Math
-      institution: Michigan State University (full-ride scholarship; funding still incomplete due to wide-reaching political issues)
+      institution: Michigan State University (full-ride scholarship; funding still incomplete due to wide-reaching political turmoil)
       year: 2016-2019
     - course: S1 Matematika (BSc equivalent)
       institution: Universitas Terbuka
@@ -60,6 +60,9 @@ social:
   - icon: linkedin
     icon_pack: fab
     link: https://www.linkedin.com/in/yose-marthin-giyay-22241b151/
+  - icon: spotify
+    icon_pack: fab
+    link: https://open.spotify.com/user/imjohntears?si=451e81a4db7249de
   # Link to a PDF of your resume/CV.
   # To use: copy your resume to `static/uploads/resume.pdf`, enable `ai` icons in `params.yaml`,
   # and uncomment the lines below.
