@@ -27,6 +27,51 @@ sections:
       title: Biography
       # Choose a user profile to display (a folder name within `content/authors/`)
       username: admin
+  - block: experience
+    content:
+      title: Experience
+      # Date format for experience
+      #   Refer to https://wowchemy.com/docs/customization/#date-format
+      date_format: Jan 2006
+      # Experiences.
+      #   Add/remove as many `experience` items below as you like.
+      #   Required fields are `title`, `company`, and `date_start`.
+      #   Leave `date_end` empty if it's your current employer.
+      #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
+      items:
+        - title: Web Developer
+          company: PT. Nokensoft Inovasi Teknologi Papua
+          company_url: 'https://nokensoft.com'
+          company_logo: org-x
+          location: Jayapura, Indonesia
+          date_start: '2023-01-12'
+          date_end: ''
+          description: Created tailwind templates for clients
+        - title: Instructor & Contributor
+          company: SaCode Community
+          company_url: 'https://www.sacode.web.id'
+          company_logo: org-gc
+          location: Jayapura, Indonesia
+          date_start: '2021-10-26'
+          date_end: ''
+          description: |2-
+              Responsibilities include:
+
+              * Developing a curriculum for intro to HTML-CSS and Python
+              * Running a class of 15-20 people
+              * Creating reports for the class and sponsors
+              * Organizing a language documentation workshop
+              * Running an AI think tank
+        - title: Operations Student Assistant
+          company: NSCL, Michigan State University
+          company_url: ''
+          company_logo: org-x
+          location: East Lansing, Michigan
+          date_start: '2018-08-12'
+          date_end: '2019-07-31'
+          description: Maintained parts for the main cyclotron and reports back.
+    design:
+      columns: '2'
   - block: collection
     id: talks
     content:
@@ -80,51 +125,6 @@ sections:
   #         description: 10%
   #         icon: camera-retro
   #         icon_pack: fas
-  - block: experience
-    content:
-      title: Experience
-      # Date format for experience
-      #   Refer to https://wowchemy.com/docs/customization/#date-format
-      date_format: Jan 2006
-      # Experiences.
-      #   Add/remove as many `experience` items below as you like.
-      #   Required fields are `title`, `company`, and `date_start`.
-      #   Leave `date_end` empty if it's your current employer.
-      #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
-      items:
-        - title: Web Developer
-          company: PT. Nokensoft Inovasi Teknologi Papua
-          company_url: 'https://nokensoft.com'
-          company_logo: org-x
-          location: Jayapura, Indonesia
-          date_start: '2023-01-12'
-          date_end: ''
-          description: Created tailwind templates for clients
-        - title: Instructor & Contributor
-          company: SaCode Community
-          company_url: 'https://www.sacode.web.id'
-          company_logo: org-gc
-          location: Jayapura, Indonesia
-          date_start: '2021-10-26'
-          date_end: ''
-          description: |2-
-              Responsibilities include:
-
-              * Developing a curriculum for intro to HTML-CSS and Python
-              * Running a class of 15-20 people
-              * Creating reports for the class and sponsors
-              * Organizing a language documentation workshop
-              * Running an AI think tank
-        - title: Operations Student Assistant
-          company: NSCL, Michigan State University
-          company_url: ''
-          company_logo: org-x
-          location: East Lansing, Michigan
-          date_start: '2018-08-12'
-          date_end: '2019-07-31'
-          description: Maintained parts for the main cyclotron and reports back.
-    design:
-      columns: '2'
   # - block: accomplishments
   #   content:
   #     # Note: `&shy;` is used to add a 'soft' hyphen in a long heading.
