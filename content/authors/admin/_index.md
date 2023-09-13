@@ -34,7 +34,7 @@ interests:
 education:
   courses:
     - course: BSc in Physics and Computational Math
-      institution: Michigan State University (full-ride scholarship; funding still incomplete due to political issues)
+      institution: Michigan State University (full-ride scholarship; funding still incomplete due to wide-reaching political issues)
       year: 2016-2019
     - course: S1 Matematika (BSc equivalent)
       institution: Universitas Terbuka
@@ -46,7 +46,7 @@ education:
 #   form "mailto:your-email@example.com" or "/#contact" for contact widget.
 social:
   - icon: instagram
-    icon_pack: fas
+    icon_pack: fab
     link: https://www.instagram.com/giyaibo
   - icon: twitter
     icon_pack: fab
