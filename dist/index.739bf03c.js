@@ -606,10 +606,26 @@ const title = {
     sub: document.querySelector(".content__title-sub")
 };
 let isAnimating = false;
+function adjustHeight() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+window.addEventListener("resize", adjustHeight);
+adjustHeight();
+function toggleBodyScroll(disable) {
+    document.body.style.overflow = disable ? "hidden" : "";
+}
 // opens the menu
 const openMenu = ()=>{
     if (isAnimating) return;
     isAnimating = true;
+    toggleBodyScroll(true);
+    (0, _gsap.gsap).set([
+        menuWrap,
+        frame
+    ], {
+        height: "calc(var(--vh, 1vh) * 100)"
+    });
     (0, _gsap.gsap).timeline({
         onComplete: ()=>isAnimating = false
     }).set(overlayPath, {
@@ -677,6 +693,13 @@ const openMenu = ()=>{
 const closeMenu = ()=>{
     if (isAnimating) return;
     isAnimating = true;
+    toggleBodyScroll(false);
+    (0, _gsap.gsap).set([
+        menuWrap,
+        frame
+    ], {
+        height: "calc(var(--vh, 1vh) * 100)"
+    });
     (0, _gsap.gsap).timeline({
         onComplete: ()=>isAnimating = false
     }).set(overlayPath, {

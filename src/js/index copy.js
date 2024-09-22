@@ -30,26 +30,10 @@ const title = {
 
 let isAnimating = false;
 
-function adjustHeight() {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-}
-
-window.addEventListener('resize', adjustHeight);
-adjustHeight();
-
-function toggleBodyScroll(disable) {
-    document.body.style.overflow = disable ? 'hidden' : '';
-}
-
 // opens the menu
 const openMenu = () => {
     if (isAnimating) return;
     isAnimating = true;
-    toggleBodyScroll(true);
-    gsap.set([menuWrap, frame], { 
-        height: 'calc(var(--vh, 1vh) * 100)'
-    })
     gsap.timeline({
         onComplete: () => isAnimating = false
     })
@@ -110,10 +94,6 @@ const openMenu = () => {
 const closeMenu = () => {
     if (isAnimating) return;
     isAnimating = true;
-    toggleBodyScroll(false);
-    gsap.set([menuWrap, frame], { 
-        height: 'calc(var(--vh, 1vh) * 100)'
-    })
     gsap.timeline({
         onComplete: () => isAnimating = false
     })
