@@ -33,8 +33,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	overflow: hidden;
-	min-height: 100vh;
-	overflow-x: hidden;
+	height: 100vh;
 }
 
 /* Page Loader */
@@ -154,7 +153,7 @@ main {
 	display: grid;
 	align-content: space-between;
 	align-items: center;
-	min-height: 100vh;
+	height: 100vh;
 	padding: 1rem 1rem 0.5rem 1rem;
 	pointer-events: none;
 	font-size: 1rem;
@@ -274,12 +273,11 @@ main {
 	grid-area: 1 / 1 / 2 / 2;
 	display: flex;
 	flex-direction: column;
-	width: 100%;
+	width: 100vw;
 	position: relative;
 	align-items: center;
-	min-height: 100vh;
+	height: 100vh;
 	justify-content: center;
-	box-sizing: border-box;
 }
 
 .content__title {
@@ -320,7 +318,6 @@ main {
 	background: var(--color-bg-menu);
 	pointer-events: none;
 	opacity: 0;
-	min-height: 100vh;
 }
 
 .menu-wrap.menu-wrap--open {
@@ -379,16 +376,15 @@ main {
 }
 
 .tiles {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    height: 100vh;
-    display: flex;
-    opacity: 0.5;
-    flex-direction: column;
-    justify-content: center;
-    transform: translate3d(-50%,-50%, 0) rotate(22.5deg);
-    overflow: hidden;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	height: 150vh;
+	display: flex;
+	opacity: 0.5;
+	flex-direction: column;
+	justify-content: center;
+	transform: translate3d(-50%,-50%, 0) rotate(22.5deg);
 }
 
 .tiles__line {
@@ -439,18 +435,6 @@ main {
 .button-close:focus-visible,
 .button-close:hover {
 	stroke: var(--color-button-close-hover);
-}
-
-.html {
-    overflow-x: hidden;
-    position: relative;
-    width: 100%;
-}
-
-.body {
-	overflow-x: hidden;
-    position: relative;
-    width: 100%;
 }
 
 @media screen and (min-width: 53em) {
