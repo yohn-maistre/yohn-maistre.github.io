@@ -14,19 +14,19 @@ body {
 	--color-text-alt: #fff;
 	--color-heading-main: #000;
 	--color-heading-main-alt: #fff;
-	--color-heading-sub: #374b41;
-	--color-menu: #f8f9cd;
-	--color-menu-hover: #a7aa74;
+	--color-heading-sub: #000;
+	--color-menu: #fff5e0;
+	--color-menu-hover: #d5dee1;
 	--color-bg: #fff5e0;
 	--color-bg-menu: #000;
 	--color-link: #000;
-	--color-link-alt: #f8f9cd;
+	--color-link-alt: #fff5e0;
 	--color-link-hover: #000;
 	--color-link-alt-hover: #fff;
 	--color-button-menu: #000;
-	--color-button-menu-hover: #a7aa74;
+	--color-button-menu-hover: #d5dee1;
 	--color-button-close: #fff;
-	--color-button-close-hover: #a7aa74;
+	--color-button-close-hover: #d5dee1;
 	color: var(--color-text);
 	background-color: var(--color-bg);
 	font-family: meno-banner, serif;
@@ -195,6 +195,7 @@ main {
 .frame__author {
 	margin: 0;
 	grid-area: author;
+	font-size: 2vw;
 }
 
 .frame__button {
@@ -283,14 +284,14 @@ main {
 .content__title {
 	font-weight: 400;
 	text-align: center;
-	font-size: 7.5vw;
+	font-size: 5.5vw;
 	line-height: 0.75;
 	cursor: default;
 	margin: 10vh 0 0 0;
 }
 
 .content__title-main {
-	font-size: 23vw;
+	font-size: 15vw;
     display: block;
     will-change: opacity, transform;
 }
