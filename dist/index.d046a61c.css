@@ -7,7 +7,10 @@
   font-size: 15px;
 }
 
-body, html {
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
 }
 
@@ -34,19 +37,20 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: calc(var(--vh, 1vh) * 100);
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
   font-family: meno-banner, serif;
-  overflow: hidden;
 }
 
 main {
-  min-height: calc(var(--vh, 1vh) * 100);
-  grid-template-rows: 1fr;
-  grid-template-columns: 100%;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
   height: 100%;
-  display: grid;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: auto;
 }
 
 .js .loading:before, .js .loading:after {
@@ -161,7 +165,7 @@ main {
                        "title title title title";
   align-content: space-between;
   align-items: center;
-  height: 100vh;
+  height: 100%;
   padding: 1rem 1rem .5rem;
   font-size: 1rem;
   display: grid;
@@ -274,8 +278,8 @@ main {
   grid-area: 1 / 1 / 2 / 2;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   position: relative;
 }
@@ -283,7 +287,7 @@ main {
 .content__title {
   text-align: center;
   cursor: default;
-  margin: 10vh 0 0;
+  margin: 0;
   font-size: 5.5vw;
   font-weight: 400;
   line-height: .75;
@@ -434,6 +438,13 @@ main {
 
 .button-close:focus-visible, .button-close:hover {
   stroke: var(--color-button-close-hover);
+}
+
+@media screen and (height <= 600px) {
+  .content {
+    justify-content: flex-start;
+    padding-top: 2rem;
+  }
 }
 
 @media screen and (width >= 53em) {
