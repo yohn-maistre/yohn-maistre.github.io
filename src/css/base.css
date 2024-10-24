@@ -9,11 +9,10 @@
 	--vh: 1vh;
 }
 
-html, body {
+html {
 	margin: 0;
 	padding: 0;
     overflow: hidden;
-	height: 100%;
 }
 
 body {
@@ -41,18 +40,17 @@ body {
 	font-family: meno-banner, serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	overflow: hidden;
 	min-height: 100vh;
 	height: calc(var(--vh, 1vh) * 100);
 }
 
 main {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr; /* Use 1fr to allow content to adjust */
     height: 100%;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
+	min-height: calc(var(--vh, 1vh) * 100);
 }
 
 /* Page Loader */
@@ -301,16 +299,16 @@ main {
 }
 
 .content__title {
-	font-weight: 400;
+	font-weight: 200;
 	text-align: center;
-	font-size: 5.5vw;
+	font-size: clamp(2rem, 10vw, 5rem);
 	line-height: 0.75;
 	cursor: default;
-	margin: 0;
+	margin: 10vh 0 0 0;
 }
 
 .content__title-main {
-	font-size: 15vw;
+	font-size: clamp(3rem, 15vw, 10rem);
     display: block;
     will-change: opacity, transform;
 }
@@ -455,13 +453,6 @@ main {
 .button-close:focus-visible,
 .button-close:hover {
 	stroke: var(--color-button-close-hover);
-}
-
-@media screen and (max-height: 600px) {
-    .content {
-        justify-content: flex-start;
-        padding-top: 2rem;
-    }
 }
 
 @media screen and (min-width: 53em) {
