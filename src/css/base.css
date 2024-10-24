@@ -8,6 +8,10 @@
 	font-size: 15px;
 }
 
+body, html {
+    overflow: hidden;
+}
+
 body {
 	margin: 0;
 	--color-text: #000;

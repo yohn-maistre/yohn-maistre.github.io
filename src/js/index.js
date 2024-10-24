@@ -34,6 +34,7 @@ let isAnimating = false;
 const openMenu = () => {
     if (isAnimating) return;
     isAnimating = true;
+    localStorage.setItem('menuOpen', 'true');
     gsap.timeline({
         onComplete: () => isAnimating = false
     })
@@ -94,6 +95,7 @@ const openMenu = () => {
 const closeMenu = () => {
     if (isAnimating) return;
     isAnimating = true;
+    localStorage.setItem('menuOpen', 'false');
     gsap.timeline({
         onComplete: () => isAnimating = false
     })
@@ -155,6 +157,15 @@ closeMenuCtrl.addEventListener('click', closeMenu);
 menuWrap.addEventListener('wheel', (e) => {
     if (menuWrap.classList.contains('menu-wrap--open')) {
         e.preventDefault();
+    }
+});
+
+// Check the menu state on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const menuOpen = localStorage.getItem('menuOpen');
+    if (menuOpen === 'true') {
+        frame.classList.add('frame--menu-open');
+        menuWrap.classList.add('menu-wrap--open');
     }
 });
 
