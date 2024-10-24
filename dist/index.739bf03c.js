@@ -588,6 +588,13 @@ var _utils = require("./utils");
 var _gsap = require("gsap");
 // preload images then remove loader (loading class) 
 (0, _utils.preloadImages)(".tiles__line-img").then(()=>document.body.classList.remove("loading"));
+// Add this function to your existing JavaScript
+function setVH() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+// Set the value on initial load
+setVH();
 // frame element
 const frame = document.querySelector(".frame");
 // overlay (SVG path element)
@@ -610,7 +617,7 @@ let isAnimating = false;
 const openMenu = ()=>{
     if (isAnimating) return;
     isAnimating = true;
-    localStorage.setItem("menuOpen", "true");
+    sessionStorage.setItem("menuOpen", "true");
     (0, _gsap.gsap).timeline({
         onComplete: ()=>isAnimating = false
     }).set(overlayPath, {
@@ -678,7 +685,7 @@ const openMenu = ()=>{
 const closeMenu = ()=>{
     if (isAnimating) return;
     isAnimating = true;
-    localStorage.setItem("menuOpen", "false");
+    sessionStorage.setItem("menuOpen", "false");
     (0, _gsap.gsap).timeline({
         onComplete: ()=>isAnimating = false
     }).set(overlayPath, {
@@ -737,6 +744,14 @@ const closeMenu = ()=>{
         stagger: -0.05
     }, 0);
 };
+// Update the value on resize
+window.addEventListener("resize", ()=>{
+    setVH();
+});
+// Update the value on orientation change
+window.addEventListener("orientationchange", ()=>{
+    setVH();
+});
 // click on menu button
 openMenuCtrl.addEventListener("click", openMenu);
 // click on close menu button
@@ -747,10 +762,16 @@ menuWrap.addEventListener("wheel", (e)=>{
 });
 // Check the menu state on page load
 document.addEventListener("DOMContentLoaded", ()=>{
-    const menuOpen = localStorage.getItem("menuOpen");
+    const menuOpen = sessionStorage.getItem("menuOpen");
     if (menuOpen === "true") {
         frame.classList.add("frame--menu-open");
         menuWrap.classList.add("menu-wrap--open");
+    // You might need to call openMenu() here if you need to trigger animations
+    } else {
+        // Ensure menu is closed (this handles cases where sessionStorage is empty)
+        frame.classList.remove("frame--menu-open");
+        menuWrap.classList.remove("menu-wrap--open");
+    // You might need to call closeMenu() here if you need to trigger animations
     }
 });
 // Optional: Close menu on escape key press

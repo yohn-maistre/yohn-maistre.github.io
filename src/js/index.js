@@ -4,6 +4,15 @@ import { gsap } from 'gsap';
 // preload images then remove loader (loading class) 
 preloadImages('.tiles__line-img').then(() => document.body.classList.remove('loading'));
 
+// Add this function to your existing JavaScript
+function setVH() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+// Set the value on initial load
+setVH();
+
 // frame element
 const frame = document.querySelector('.frame');
 
@@ -34,7 +43,7 @@ let isAnimating = false;
 const openMenu = () => {
     if (isAnimating) return;
     isAnimating = true;
-    localStorage.setItem('menuOpen', 'true');
+    sessionStorage.setItem('menuOpen', 'true');
     gsap.timeline({
         onComplete: () => isAnimating = false
     })
@@ -95,7 +104,7 @@ const openMenu = () => {
 const closeMenu = () => {
     if (isAnimating) return;
     isAnimating = true;
-    localStorage.setItem('menuOpen', 'false');
+    sessionStorage.setItem('menuOpen', 'false');
     gsap.timeline({
         onComplete: () => isAnimating = false
     })
@@ -148,6 +157,16 @@ const closeMenu = () => {
     }, 0);
 }
 
+// Update the value on resize
+window.addEventListener('resize', () => {
+    setVH();
+});
+
+// Update the value on orientation change
+window.addEventListener('orientationchange', () => {
+    setVH();
+});
+
 // click on menu button
 openMenuCtrl.addEventListener('click', openMenu);
 // click on close menu button
@@ -162,10 +181,16 @@ menuWrap.addEventListener('wheel', (e) => {
 
 // Check the menu state on page load
 document.addEventListener('DOMContentLoaded', () => {
-    const menuOpen = localStorage.getItem('menuOpen');
+    const menuOpen = sessionStorage.getItem('menuOpen');
     if (menuOpen === 'true') {
         frame.classList.add('frame--menu-open');
         menuWrap.classList.add('menu-wrap--open');
+        // You might need to call openMenu() here if you need to trigger animations
+    } else {
+        // Ensure menu is closed (this handles cases where sessionStorage is empty)
+        frame.classList.remove('frame--menu-open');
+        menuWrap.classList.remove('menu-wrap--open');
+        // You might need to call closeMenu() here if you need to trigger animations
     }
 });
 

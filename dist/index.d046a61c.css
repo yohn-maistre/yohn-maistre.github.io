@@ -3,12 +3,11 @@
 }
 
 :root {
+  --vh: 1vh;
   font-size: 15px;
 }
 
 body, html {
-  height: 100%;
-  margin: 0;
   overflow: hidden;
 }
 
@@ -34,16 +33,20 @@ body {
   background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height: 100%;
+  height: calc(var(--vh, 1vh) * 100);
+  height: 100vh;
   margin: 0;
+  padding: 0;
   font-family: meno-banner, serif;
   overflow: hidden;
 }
 
 main {
-  flex-direction: column;
-  min-height: 100vh;
-  display: flex;
+  min-height: calc(var(--vh, 1vh) * 100);
+  grid-template-rows: 1fr;
+  grid-template-columns: 100%;
+  height: 100%;
+  display: grid;
 }
 
 .js .loading:before, .js .loading:after {
@@ -267,13 +270,12 @@ main {
 }
 
 .content {
-  box-sizing: border-box;
   flex-direction: column;
   grid-area: 1 / 1 / 2 / 2;
   justify-content: center;
   align-items: center;
   width: 100vw;
-  padding: 1rem;
+  height: 100vh;
   display: flex;
   position: relative;
 }
@@ -432,20 +434,6 @@ main {
 
 .button-close:focus-visible, .button-close:hover {
   stroke: var(--color-button-close-hover);
-}
-
-@media screen and (width <= 768px) {
-  .content__title {
-    font-size: 4vw;
-  }
-
-  .content__title-main {
-    font-size: 12vw;
-  }
-
-  .content__title-sub {
-    font-size: 6vw;
-  }
 }
 
 @media screen and (width >= 53em) {
