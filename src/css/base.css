@@ -12,7 +12,7 @@ body, html {
     overflow: hidden;
 }
 
-body {
+body, html {
 	margin: 0;
 	--color-text: #000;
 	--color-text-alt: #fff;
@@ -37,7 +37,14 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	overflow: hidden;
-	height: 100vh;
+	height: 100%;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr; /* Use 1fr to allow content to adjust */
+    height: 100%;
 }
 
 /* Page Loader */
@@ -275,14 +282,15 @@ main {
 }
 
 .content {
-	grid-area: 1 / 1 / 2 / 2;
-	display: flex;
-	flex-direction: column;
-	width: 100vw;
-	position: relative;
-	align-items: center;
-	height: 100vh;
-	justify-content: center;
+    grid-area: 1 / 1 / 2 / 2;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem; /* Add padding to ensure content is not cut off */
+    box-sizing: border-box; /* Ensure padding is included in the element's total width and height */
 }
 
 .content__title {
@@ -440,6 +448,18 @@ main {
 .button-close:focus-visible,
 .button-close:hover {
 	stroke: var(--color-button-close-hover);
+}
+
+@media screen and (max-width: 768px) {
+    .content__title {
+        font-size: 4vw; /* Adjust font size for smaller screens */
+    }
+    .content__title-main {
+        font-size: 12vw; /* Adjust font size for smaller screens */
+    }
+    .content__title-sub {
+        font-size: 6vw; /* Adjust font size for smaller screens */
+    }
 }
 
 @media screen and (min-width: 53em) {

@@ -610,6 +610,7 @@ let isAnimating = false;
 const openMenu = ()=>{
     if (isAnimating) return;
     isAnimating = true;
+    localStorage.setItem("menuOpen", "true");
     (0, _gsap.gsap).timeline({
         onComplete: ()=>isAnimating = false
     }).set(overlayPath, {
@@ -677,6 +678,7 @@ const openMenu = ()=>{
 const closeMenu = ()=>{
     if (isAnimating) return;
     isAnimating = true;
+    localStorage.setItem("menuOpen", "false");
     (0, _gsap.gsap).timeline({
         onComplete: ()=>isAnimating = false
     }).set(overlayPath, {
@@ -742,6 +744,14 @@ closeMenuCtrl.addEventListener("click", closeMenu);
 // Prevent scrolling when menu is open
 menuWrap.addEventListener("wheel", (e)=>{
     if (menuWrap.classList.contains("menu-wrap--open")) e.preventDefault();
+});
+// Check the menu state on page load
+document.addEventListener("DOMContentLoaded", ()=>{
+    const menuOpen = localStorage.getItem("menuOpen");
+    if (menuOpen === "true") {
+        frame.classList.add("frame--menu-open");
+        menuWrap.classList.add("menu-wrap--open");
+    }
 });
 // Optional: Close menu on escape key press
 document.addEventListener("keydown", (e)=>{

@@ -6,7 +6,7 @@
   font-size: 15px;
 }
 
-body {
+body, html {
   --color-text: #000;
   --color-text-alt: #fff;
   --color-heading-main: #000;
@@ -28,10 +28,17 @@ body {
   background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height: 100vh;
+  height: 100%;
   margin: 0;
   font-family: meno-banner, serif;
   overflow: hidden;
+}
+
+main {
+  grid-template-rows: 1fr;
+  grid-template-columns: 100%;
+  height: 100%;
+  display: grid;
 }
 
 .js .loading:before, .js .loading:after {
@@ -255,12 +262,13 @@ main {
 }
 
 .content {
+  box-sizing: border-box;
   flex-direction: column;
   grid-area: 1 / 1 / 2 / 2;
   justify-content: center;
   align-items: center;
   width: 100vw;
-  height: 100vh;
+  padding: 1rem;
   display: flex;
   position: relative;
 }
@@ -419,6 +427,20 @@ main {
 
 .button-close:focus-visible, .button-close:hover {
   stroke: var(--color-button-close-hover);
+}
+
+@media screen and (width <= 768px) {
+  .content__title {
+    font-size: 4vw;
+  }
+
+  .content__title-main {
+    font-size: 12vw;
+  }
+
+  .content__title-sub {
+    font-size: 6vw;
+  }
 }
 
 @media screen and (width >= 53em) {
