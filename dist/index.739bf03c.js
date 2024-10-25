@@ -744,13 +744,12 @@ const closeMenu = ()=>{
         stagger: -0.05
     }, 0);
 };
-// Update the value on resize
+// Update the value on resize and orientation change
 window.addEventListener("resize", ()=>{
-    setVH();
+    setTimeout(setVH, 100);
 });
-// Update the value on orientation change
 window.addEventListener("orientationchange", ()=>{
-    setVH();
+    setTimeout(setVH, 100);
 });
 // click on menu button
 openMenuCtrl.addEventListener("click", openMenu);
