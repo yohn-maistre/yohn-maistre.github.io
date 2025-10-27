@@ -50,7 +50,7 @@ export const theme: ThemeUserConfig = {
       { title: 'Blog', link: '/blog' },
       { title: 'Mind Garden', link: '/mind-garden' },
       { title: 'Projects', link: '/projects' },
-      { title: 'Media', link: '/media' },
+      { title: 'Movies & Books', link: '/media' },
       // { title: 'Links', link: '/links' },
       { title: 'About', link: '/about' }
     ]
