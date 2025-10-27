@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet href="/scripts/pretty-feed-v3.xsl" type="text/xsl"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:h="http://www.w3.org/TR/html4/"><channel><title>yose.is-a.dev</title><description>Stay hungry, stay foolish</description><link>https://astro-pure.js.org</link><item><title>Customize Theme</title><link>https://astro-pure.js.org/mind-garden/advanced/customize</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/advanced/customize</guid><description>Custom theme by yourself</description><content:encoded>&lt;p&gt;import { Aside, Spoiler, Steps } from &apos;astro-pure/user&apos;&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet href="/scripts/pretty-feed-v3.xsl" type="text/xsl"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:h="http://www.w3.org/TR/html4/"><channel><title>yose.is-a.dev</title><description>Stay hungry, stay foolish</description><link>https://astro-pure.js.org</link><item><title>Customize Theme</title><link>https://astro-pure.js.org/mind-garden/en/advanced/customize</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/advanced/customize</guid><description>Custom theme by yourself</description><content:encoded>&lt;p&gt;import { Aside, Spoiler, Steps } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;You Should Know&lt;/h2&gt;
 &lt;p&gt;This theme is designed to &quot;NPM Package&quot; for the following reasons:&lt;/p&gt;
 &lt;ol&gt;
@@ -7,7 +7,7 @@
 &lt;li&gt;Reduce system coupling &amp;#x26; increase reuse ability&lt;/li&gt;
 &lt;li&gt;The NPM Package mode can be used as a &quot;Astro plugin&quot; to append additional operations that enhance user experience during the build phase&lt;/li&gt;
 &lt;li&gt;Support some built-in commands like new, check, info, etc.&lt;/li&gt;
-&lt;li&gt;Use as component library for other Astro projects (yes, this project can be broken down into the UI component library): &lt;a href=&quot;https://www.npmjs.com/package/astro-pure&quot;&gt;Package details&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Use as component library for other Astro projects (yes, this project can be broken down into the UI component library): &lt;a href=&quot;https://www.npmjs.com/package/@yohn-maistre/astro-pure-fork&quot;&gt;Package details&lt;/a&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;Before you customize it, you should check &lt;a href=&quot;/mind-garden/setup/configuration#theme-configuration&quot;&gt;&lt;code&gt;site.config.ts&lt;/code&gt;&lt;/a&gt; to make sure there is no option that satisfy your need.&lt;/p&gt;
 &lt;h2&gt;Swizzling&lt;/h2&gt;
@@ -19,8 +19,8 @@
 &lt;/ol&gt;
 &lt;p&gt;Let&apos;s make an example to customize the &lt;code&gt;Footer&lt;/code&gt; component:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-astro&quot;&gt;---
-import { Footer, Header, ThemeProvider } from &apos;astro-pure/components/basic&apos;
-import type { SiteMeta } from &apos;astro-pure/types&apos;
+import { Footer, Header, ThemeProvider } from &apos;@yohn-maistre/astro-pure-fork/components/basic&apos;
+import type { SiteMeta } from &apos;@yohn-maistre/astro-pure-fork/types&apos;
 // ...
 ---
 &lt;/code&gt;&lt;/pre&gt;
@@ -41,10 +41,10 @@ export { default as ThemeProvider } from &apos;./ThemeProvider.astro&apos;
 &lt;li&gt;
 &lt;p&gt;Solve the sub-dependencies problem:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-astro&quot;&gt;---
-import config from &apos;virtual:config&apos;
+import config from &apos;virtual:pure-config&apos;
 
 import { Icon } from &apos;../user&apos; // [!code --]
-import { Icon } from &apos;astro-pure/user&apos; // [!code ++]
+import { Icon } from &apos;@yohn-maistre/astro-pure-fork/user&apos; // [!code ++]
 // ...
 ---
 &lt;/code&gt;&lt;/pre&gt;
@@ -52,8 +52,8 @@ import { Icon } from &apos;astro-pure/user&apos; // [!code ++]
 &lt;li&gt;
 &lt;p&gt;Change the reference in &lt;code&gt;BaseLayout.astro&lt;/code&gt;:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-astro&quot;&gt; ---
- import { Footer, Header, ThemeProvider } from &apos;astro-pure/components/basic&apos; // [!code --]
- import { Header, ThemeProvider } from &apos;astro-pure/components/basic&apos; // [!code ++]
+ import { Footer, Header, ThemeProvider } from &apos;@yohn-maistre/astro-pure-fork/components/basic&apos; // [!code --]
+ import { Header, ThemeProvider } from &apos;@yohn-maistre/astro-pure-fork/components/basic&apos; // [!code ++]
  import { Footer } from &apos;@/components/custom/Footer.astro&apos; // [!code ++]
  // ...
  ---
@@ -68,7 +68,7 @@ import { Icon } from &apos;astro-pure/user&apos; // [!code ++]
 &lt;li&gt;Link it to your project using your package manager.&lt;/li&gt;
 &lt;li&gt;Then change the theme code as it is a part of your code!&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;This can also help you correctly build your project on cloud CI/CD.&lt;/p&gt;</content:encoded></item><item><title>Optimize Your Site</title><link>https://astro-pure.js.org/mind-garden/advanced/optimize</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/advanced/optimize</guid><description>Improve your site performance and user experience</description><content:encoded>&lt;p&gt;import { Aside } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;p&gt;This can also help you correctly build your project on cloud CI/CD.&lt;/p&gt;</content:encoded></item><item><title>Optimize Your Site</title><link>https://astro-pure.js.org/mind-garden/en/advanced/optimize</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/advanced/optimize</guid><description>Improve your site performance and user experience</description><content:encoded>&lt;p&gt;import { Aside } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Integrations&lt;/h2&gt;
 &lt;p&gt;This theme has integrated with:&lt;/p&gt;
 &lt;ul&gt;
@@ -143,8 +143,8 @@ import myImage from &apos;../assets/my_image.png&apos; // Image is 1600x900
     domains: [&apos;&amp;#x3C;specific site domain&gt;&apos;] // [!code ++]
   }
 })
-&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Acknowledgements</title><link>https://astro-pure.js.org/mind-garden/advanced/thanks</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/advanced/thanks</guid><description>Acknowledgements for this theme project</description><content:encoded>&lt;p&gt;import { GithubCard } from &apos;astro-pure/advanced&apos;
-import { Button } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Acknowledgements</title><link>https://astro-pure.js.org/mind-garden/en/advanced/thanks</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/advanced/thanks</guid><description>Acknowledgements for this theme project</description><content:encoded>&lt;p&gt;import { GithubCard } from &apos;@yohn-maistre/astro-pure-fork/advanced&apos;
+import { Button } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;p&gt;The astro-theme-pure theme is open source under the &lt;a href=&quot;https://github.com/cworld1/astro-theme-pure/blob/main/LICENSE&quot;&gt;Apache 2.0&lt;/a&gt; license. Please abide by this license for any further development.&lt;/p&gt;
 &lt;h2&gt;Contributions&lt;/h2&gt;
 &lt;p&gt;A big thank you to everyone who has contributed to the &lt;a href=&quot;https://github.com/cworld1/astro-theme-pure&quot;&gt;astro-theme-pure&lt;/a&gt;. The open-source community is amazing because of you.&lt;/p&gt;
@@ -177,7 +177,7 @@ import { Button } from &apos;astro-pure/user&apos;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Compress: &lt;a href=&quot;https://github.com/PlayForm/Compress&quot;&gt;playform/compress&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Image compress: &lt;a href=&quot;https://github.com/lovell/sharp&quot;&gt;sharp&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content:encoded></item><item><title>Update Theme</title><link>https://astro-pure.js.org/mind-garden/advanced/update</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/advanced/update</guid><description>Update astro theme pure to the latest version</description><content:encoded>&lt;p&gt;import { Aside } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;/ul&gt;</content:encoded></item><item><title>Update Theme</title><link>https://astro-pure.js.org/mind-garden/en/advanced/update</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/advanced/update</guid><description>Update astro theme pure to the latest version</description><content:encoded>&lt;p&gt;import { Aside } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Breaking Changes&lt;/h2&gt;
 &lt;h3&gt;v4.0.8&lt;/h3&gt;
 &lt;p&gt;No breaking changes.&lt;/p&gt;
@@ -256,8 +256,8 @@ import { Button } from &apos;astro-pure/user&apos;&lt;/p&gt;
     applyTip: [
       { name: &apos;Name&apos;, val: theme.title }, // [!code highlight:4]
       { name: &apos;Desc&apos;, val: theme.description || &apos;Null&apos; },
-      { name: &apos;Link&apos;, val: &apos;https://astro-pure.js.org/&apos; },
-      { name: &apos;Avatar&apos;, val: &apos;https://astro-pure.js.org/favicon/favicon.ico&apos; }
+      { name: &apos;Link&apos;, val: &apos;https://@yohn-maistre/astro-pure-fork.js.org/&apos; },
+      { name: &apos;Avatar&apos;, val: &apos;https://@yohn-maistre/astro-pure-fork.js.org/favicon/favicon.ico&apos; }
       // You can also add more fields
     ]
   }
@@ -265,7 +265,7 @@ import { Button } from &apos;astro-pure/user&apos;&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Add the env variable &lt;code&gt;BUN_LINK_PKG&lt;/code&gt;. Set this to &lt;code&gt;true&lt;/code&gt; to automatically refer to the package &lt;code&gt;astro-pure&lt;/code&gt; in the path &lt;code&gt;packages/pure&lt;/code&gt; instead of &lt;code&gt;node_modules/astro-pure&lt;/code&gt;. This may help users develop the theme or change code for themselves (not recommended for production).&lt;/p&gt;
+&lt;p&gt;Add the env variable &lt;code&gt;BUN_LINK_PKG&lt;/code&gt;. Set this to &lt;code&gt;true&lt;/code&gt; to automatically refer to the package &lt;code&gt;@yohn-maistre/astro-pure-fork&lt;/code&gt; in the path &lt;code&gt;packages/pure&lt;/code&gt; instead of &lt;code&gt;node_modules/@yohn-maistre/astro-pure-fork&lt;/code&gt;. This may help users develop the theme or change code for themselves (not recommended for production).&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Changed the CSS framework to UnoCSS. This will affect &lt;code&gt;unocss.config.ts&lt;/code&gt; and typography class name settings.&lt;/p&gt;
@@ -297,9 +297,9 @@ import { Button } from &apos;astro-pure/user&apos;&lt;/p&gt;
 &lt;h3&gt;v4.0.0-alpha&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;Move all components, types and utils that are reused to new npm packages &lt;code&gt;astro-pure&lt;/code&gt;. Affected components are included in . Import method is also changed:&lt;/p&gt;
+&lt;p&gt;Move all components, types and utils that are reused to new npm packages &lt;code&gt;@yohn-maistre/astro-pure-fork&lt;/code&gt;. Affected components are included in . Import method is also changed:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;import { Button } from &apos;@/components/user&apos; // [!code --]
-import { Button } from &apos;astro-pure/user&apos; // [!code ++]
+import { Button } from &apos;@yohn-maistre/astro-pure-fork/user&apos; // [!code ++]
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/li&gt;
 &lt;li&gt;
@@ -307,11 +307,11 @@ import { Button } from &apos;astro-pure/user&apos; // [!code ++]
 &lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;import { siteConfig } from &apos;@/site-config&apos; // [!code --]
 import config from &apos;@/site-config&apos; // [!code ++]
 // Or if you want to use the config that is after processed or transformed
-import config from &apos;virtual:config&apos; // [!code ++]
+import config from &apos;virtual:pure-config&apos; // [!code ++]
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Built-in astro config supported. package &lt;code&gt;astro-pure&lt;/code&gt; will automatically config some integrations like &lt;code&gt;unocss/astro&lt;/code&gt;, &lt;code&gt;@astrojs/mdx&lt;/code&gt;, &lt;code&gt;@astrojs/sitemap&lt;/code&gt;, also with some rehypePlugins and remarkPlugins.&lt;/p&gt;
+&lt;p&gt;Built-in astro config supported. package &lt;code&gt;@yohn-maistre/astro-pure-fork&lt;/code&gt; will automatically config some integrations like &lt;code&gt;unocss/astro&lt;/code&gt;, &lt;code&gt;@astrojs/mdx&lt;/code&gt;, &lt;code&gt;@astrojs/sitemap&lt;/code&gt;, also with some rehypePlugins and remarkPlugins.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Changed search engine to &lt;a href=&quot;https://pagefind.app/&quot;&gt;pagefind&lt;/a&gt;, mainly because Astro v5 will not allow getting collection data directly from client (that is core working mode of Fuse.js search engine).&lt;/p&gt;
@@ -328,7 +328,7 @@ import config from &apos;virtual:config&apos; // [!code ++]
 &lt;li&gt;
 &lt;p&gt;Move advanced components to &lt;code&gt;src/components/advanced&lt;/code&gt;. Affected components are included in &lt;a href=&quot;/mind-garden/integrations/advanced&quot;&gt;Advanced Components&lt;/a&gt;. Import method is also changed:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;import LinkPreview from &apos;@/components/LinkPreview.astro&apos; // [!code --]
-import { LinkPreview } from &apos;astro-pure/advanced&apos; // [!code ++]
+import { LinkPreview } from &apos;@yohn-maistre/astro-pure-fork/advanced&apos; // [!code ++]
 
 &amp;#x3C;LinkPreview href=&apos;https://www.cloudflare.com/&apos; /&gt;
 &lt;/code&gt;&lt;/pre&gt;
@@ -348,7 +348,7 @@ import { LinkPreview } from &apos;astro-pure/advanced&apos; // [!code ++]
 &lt;li&gt;
 &lt;p&gt;Move user components to &lt;code&gt;src/components/user&lt;/code&gt;. Affected components are included in &lt;a href=&quot;/mind-garden/integrations/components&quot;&gt;User Components&lt;/a&gt;. Import method is also changed:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;import Button from &apos;@/components/Button&apos; // [!code --]
-import { Button } from &apos;astro-pure/user&apos; // [!code ++]
+import { Button } from &apos;@yohn-maistre/astro-pure-fork/user&apos; // [!code ++]
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/li&gt;
 &lt;li&gt;
@@ -437,7 +437,7 @@ f: ^src\\pages\\terms\\.*\.md$
 
 ### Blog ###
 # Your own files
-&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Fine-tuning TTS Models</title><link>https://astro-pure.js.org/mind-garden/gen-ai/text-to-speech-fine-tuning</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/gen-ai/text-to-speech-fine-tuning</guid><description>A technical guide to fine-tuning Text-to-Speech (TTS) models with Unsloth.</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Fine-tuning TTS Models</title><link>https://astro-pure.js.org/mind-garden/en/gen-ai/text-to-speech-fine-tuning</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/gen-ai/text-to-speech-fine-tuning</guid><description>A technical guide to fine-tuning Text-to-Speech (TTS) models with Unsloth.</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Fine-tuning TTS Models: A Practical Guide&lt;/h2&gt;
 &lt;p&gt;This is a straight-to-the-point guide on fine-tuning Text-to-Speech (TTS) models. We&apos;ll be using &lt;a href=&quot;https://github.com/unslothai/unsloth&quot;&gt;Unsloth&lt;/a&gt; to speed up the process. The goal is to customize a TTS model for a specific voice or style.&lt;/p&gt;
 &lt;h3&gt;Fine-tuning vs. Zero-shot&lt;/h3&gt;
@@ -530,7 +530,7 @@ trainer = Trainer(
 tokenizer.save_pretrained(&quot;lora_model&quot;)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/li&gt;
-&lt;/ol&gt;</content:encoded></item><item><title>Advanced Components</title><link>https://astro-pure.js.org/mind-garden/integrations/advanced</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/integrations/advanced</guid><description>Advanced components with advanced docs</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;/ol&gt;</content:encoded></item><item><title>Advanced Components</title><link>https://astro-pure.js.org/mind-garden/en/integrations/advanced</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/advanced</guid><description>Advanced components with advanced docs</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Web Content Render&lt;/h2&gt;
 &lt;h3&gt;Quote&lt;/h3&gt;
 &lt;p&gt;The &lt;code&gt;Quote&lt;/code&gt; component is a simple component that displays a random quote.&lt;/p&gt;
@@ -573,7 +573,7 @@ Try click the following image.
 ![img](https://github.com/user-attachments/assets/6c42b061-df7e-4696-a29b-bff07fe17d88)
 
 See [Other Integrations#medium-zoom](/docs/integrations/others#medium-zoom).
-&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Shiki Code</title><link>https://astro-pure.js.org/mind-garden/integrations/code</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/integrations/code</guid><description>Some methods for better using shiki code</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Shiki Code</title><link>https://astro-pure.js.org/mind-garden/en/integrations/code</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/code</guid><description>Some methods for better using shiki code</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Basic Usage&lt;/h2&gt;
 &lt;p&gt;For &lt;code&gt;.astro&lt;/code&gt; file:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-astro&quot;&gt;---
@@ -656,7 +656,7 @@ function draw(t,c) { ctx.fillStyle=c; ctx.fillRect(t%sz*sz+1,~~(t/sz)*sz+1,sz-2,
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;&amp;#x3C;/Fragment&gt;
 &amp;#x3C;/MdxRepl&gt;
-&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Comment System</title><link>https://astro-pure.js.org/mind-garden/integrations/comment</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/integrations/comment</guid><description>Comment system for pages at the bottom</description><content:encoded>&lt;p&gt;import { Aside } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Comment System</title><link>https://astro-pure.js.org/mind-garden/en/integrations/comment</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/comment</guid><description>Comment system for pages at the bottom</description><content:encoded>&lt;p&gt;import { Aside } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Waline Comment System&lt;/h2&gt;
 &lt;p&gt;The theme&apos;s comment, read statistics, likes, and other functionalities are all provided by &lt;a href=&quot;https://waline.js.org/&quot;&gt;Waline&lt;/a&gt;.&lt;/p&gt;
 &lt;h3&gt;Remove&lt;/h3&gt;
@@ -727,7 +727,7 @@ function draw(t,c) { ctx.fillStyle=c; ctx.fillRect(t%sz*sz+1,~~(t/sz)*sz+1,sz-2,
 &amp;#x3C;Comment /&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Render:&lt;/p&gt;
-&lt;p&gt;import { Comment } from &apos;@/components/waline&apos;&lt;/p&gt;</content:encoded></item><item><title>User Components</title><link>https://astro-pure.js.org/mind-garden/integrations/components</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/integrations/components</guid><description>Easily extend your content page more interactive</description><content:encoded>&lt;p&gt;import { Aside, Tabs, TabItem, MdxRepl } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;p&gt;import { Comment } from &apos;@/components/waline&apos;&lt;/p&gt;</content:encoded></item><item><title>User Components</title><link>https://astro-pure.js.org/mind-garden/en/integrations/components</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/components</guid><description>Easily extend your content page more interactive</description><content:encoded>&lt;p&gt;import { Aside, Tabs, TabItem, MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;p&gt;Components let you easily reuse a piece of UI or styling consistently. You can use them not just in &lt;code&gt;.astro&lt;/code&gt; files, but also in &lt;code&gt;.mdx&lt;/code&gt; files.&lt;/p&gt;
 &lt;p&gt;For &lt;code&gt;.astro&lt;/code&gt;, you can directly import and use components and use. An example will also shown in the first section.&lt;/p&gt;
 &lt;h2&gt;Containers&lt;/h2&gt;
@@ -756,7 +756,7 @@ date=&apos;August 2021&apos;&lt;/p&gt;
 &amp;#x3C;TabItem label=&apos;Astro&apos;&gt;
 ```astro
 ---
-import { Card } from &apos;astro-pure/user&apos;
+import { Card } from &apos;@yohn-maistre/astro-pure-fork/user&apos;
 ---
 &amp;#x3C;!-- ... --&gt;
 &amp;#x3C;Card
@@ -820,7 +820,7 @@ title: &apos;Vidit suscipit&apos;, link: &apos;#&apos;
 ### Timeline
 
 &amp;#x3C;MdxRepl&gt;
-import { Timeline } from &apos;astro-pure/user&apos;
+import { Timeline } from &apos;@yohn-maistre/astro-pure-fork/user&apos;
 
 &amp;#x3C;Timeline events={
 [
@@ -831,7 +831,7 @@ import { Timeline } from &apos;astro-pure/user&apos;
 
 &amp;#x3C;Fragment slot=&apos;desc&apos;&gt;
 ```jsx
-import { Timeline } from &apos;astro-pure/user&apos;
+import { Timeline } from &apos;@yohn-maistre/astro-pure-fork/user&apos;
 
 &amp;#x3C;Timeline events={
   [
@@ -858,13 +858,13 @@ import { Timeline } from &apos;astro-pure/user&apos;
 ### Formatted Date
 
 &amp;#x3C;MdxRepl&gt;
-import { FormattedDate } from &apos;astro-pure/user&apos;
+import { FormattedDate } from &apos;@yohn-maistre/astro-pure-fork/user&apos;
 
 &amp;#x3C;FormattedDate date={new Date(&apos;2021-08-01&apos;)} dateTimeOptions={{ month: &apos;short&apos; }} /&gt;
 
 &amp;#x3C;Fragment slot=&apos;desc&apos;&gt;
 ```jsx
-import { FormattedDate } from &apos;astro-pure/user&apos;
+import { FormattedDate } from &apos;@yohn-maistre/astro-pure-fork/user&apos;
 
 &amp;#x3C;FormattedDate date={new Date(&apos;2021-08-01&apos;)} dateTimeOptions={{ month: &apos;short&apos; }} /&gt;
 &lt;/code&gt;&lt;/pre&gt;
@@ -881,13 +881,13 @@ import { FormattedDate } from &apos;astro-pure/user&apos;
 
 &amp;#x3C;MdxRepl width=&apos;100%&apos;&gt;
 &amp;#x3C;div&gt;
-import { Icon } from &apos;astro-pure/user&apos;
+import { Icon } from &apos;@yohn-maistre/astro-pure-fork/user&apos;
 
 Single use: &amp;#x3C;Icon name=&apos;rss&apos; class=&apos;inline&apos; /&gt;
 
 Preview all icons available (click button to copy):
 
-import { Icons as allIcons } from &apos;astro-pure/libs&apos;
+import { Icons as allIcons } from &apos;@yohn-maistre/astro-pure-fork/libs&apos;
 
 &amp;#x3C;div class=&apos;flex flex-wrap gap-2&apos;&gt;
 {
@@ -906,14 +906,14 @@ Object.keys(allIcons).map(icon =&gt; {
 
 &amp;#x3C;Fragment slot=&apos;desc&apos;&gt;
 ```jsx
-import { Icon } from &apos;astro-pure/user&apos;
+import { Icon } from &apos;@yohn-maistre/astro-pure-fork/user&apos;
 
 Single use: &amp;#x3C;Icon name=&apos;rss&apos; class=&apos;inline&apos; /&gt;
 
 Preview all icons available (click button to copy):
 
-import { Icons as allIcons } from &apos;astro-pure/libs&apos;
-import { Button } from &apos;astro-pure/user&apos;
+import { Icons as allIcons } from &apos;@yohn-maistre/astro-pure-fork/libs&apos;
+import { Button } from &apos;@yohn-maistre/astro-pure-fork/user&apos;
 
 &amp;#x3C;div class=&apos;flex flex-wrap gap-2&apos;&gt;
 {
@@ -929,7 +929,7 @@ import { Button } from &apos;astro-pure/user&apos;
 }
 &amp;#x3C;/div&gt;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;There&apos;s also some &lt;a href=&quot;/mind-garden/integrations/advanced&quot;&gt;Advanced Components&lt;/a&gt;, which may suit for you. Hope you enjoy using these components!&lt;/p&gt;</content:encoded></item><item><title>Friend Links</title><link>https://astro-pure.js.org/mind-garden/integrations/links</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/integrations/links</guid><description>Configurations for friend links</description><content:encoded>&lt;p&gt;import { Steps } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;p&gt;There&apos;s also some &lt;a href=&quot;/mind-garden/integrations/advanced&quot;&gt;Advanced Components&lt;/a&gt;, which may suit for you. Hope you enjoy using these components!&lt;/p&gt;</content:encoded></item><item><title>Friend Links</title><link>https://astro-pure.js.org/mind-garden/en/integrations/links</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/links</guid><description>Configurations for friend links</description><content:encoded>&lt;p&gt;import { Steps } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Remove Links Page&lt;/h2&gt;
 &lt;p&gt;Links page is a page for showing your friend blog links, which is enabled by default.&lt;/p&gt;
 &lt;p&gt;If you want to remove the links page for any reason, follow the steps in this section. Otherwise, you can skip ahead to the next chapter.&lt;/p&gt;
@@ -963,8 +963,8 @@ import { Button } from &apos;astro-pure/user&apos;
     applyTip: {
       name: theme.title,
       desc: theme.description || &apos;Null&apos;,
-      url: &apos;https://astro-pure.js.org/&apos;,
-      avatar: &apos;https://astro-pure.js.org/favicon/favicon.ico&apos;
+      url: &apos;https://@yohn-maistre/astro-pure-fork.js.org/&apos;,
+      avatar: &apos;https://@yohn-maistre/astro-pure-fork.js.org/favicon/favicon.ico&apos;
     }
   },
 }
@@ -1061,7 +1061,7 @@ const headings = [
 &amp;#x3C;/PageLayout&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/li&gt;
-&lt;/ol&gt;</content:encoded></item><item><title>Other Integrations</title><link>https://astro-pure.js.org/mind-garden/integrations/others</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/integrations/others</guid><description>Other integrations that help improve your site</description><content:encoded>&lt;p&gt;import { Aside, Tabs, TabItem, Steps } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;/ol&gt;</content:encoded></item><item><title>Other Integrations</title><link>https://astro-pure.js.org/mind-garden/en/integrations/others</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/others</guid><description>Other integrations that help improve your site</description><content:encoded>&lt;p&gt;import { Aside, Tabs, TabItem, Steps } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;&lt;code&gt;medium-zoom&lt;/code&gt;&lt;/h2&gt;
 &lt;p&gt;Checkout &lt;a href=&quot;https://github.com/francoischalifour/medium-zoom&quot;&gt;medium-zoom&lt;/a&gt; for more.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
@@ -1158,7 +1158,7 @@ import config from &apos;@/site-config&apos;
 &lt;p&gt;Problem: Errors during build time when processing LaTeX syntax.&lt;/p&gt;
 &lt;p&gt;Solution: Ensure that your LaTeX is correctly formatted and that there are no syntax errors in your markdown files. LaTeX syntax errors can break the parser and cause build failures.&lt;/p&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</content:encoded></item><item><title>Authoring Content</title><link>https://astro-pure.js.org/mind-garden/setup/content</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/setup/content</guid><description>Making your own content</description><content:encoded>&lt;p&gt;import { Aside } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;/ul&gt;</content:encoded></item><item><title>Authoring Content</title><link>https://astro-pure.js.org/mind-garden/en/setup/content</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/setup/content</guid><description>Making your own content</description><content:encoded>&lt;p&gt;import { Aside } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;p&gt;Astro helps you &lt;a href=&quot;https://docs.astro.build/en/guides/content/&quot;&gt;author and present your content&lt;/a&gt;. You can write a blog post directly in Astro using Markdown/MDX, or fetch your content from a headless CMS. Astro lets you build a site around your content: you can add a layout to your pages, create an index of posts, and set up an RSS feed to allow readers to subscribe.&lt;/p&gt;
 &lt;h2&gt;Writing Content&lt;/h2&gt;
 &lt;p&gt;In Astro, you can author your content in a variety of ways:&lt;/p&gt;
@@ -1280,14 +1280,14 @@ heroImage: { src: &apos;./thumbnail.jpg&apos; } # will used to social-image
 This is the first section of the privacy policy.
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h3&gt;HTML Pages&lt;/h3&gt;
-&lt;p&gt;Files with the &lt;code&gt;.html&lt;/code&gt; file extension can be placed in the &lt;code&gt;src/pages/&lt;/code&gt; directory and used directly as pages on your site. Note that some key Astro features are not supported in &lt;a href=&quot;https://docs.astro.build/en/basics/astro-components/#html-components&quot;&gt;HTML Components&lt;/a&gt;.&lt;/p&gt;</content:encoded></item><item><title>Deployment</title><link>https://astro-pure.js.org/mind-garden/setup/deployment</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/setup/deployment</guid><description>Deploy your site to various platforms</description><content:encoded>&lt;p&gt;import { Aside, Steps } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;p&gt;Files with the &lt;code&gt;.html&lt;/code&gt; file extension can be placed in the &lt;code&gt;src/pages/&lt;/code&gt; directory and used directly as pages on your site. Note that some key Astro features are not supported in &lt;a href=&quot;https://docs.astro.build/en/basics/astro-components/#html-components&quot;&gt;HTML Components&lt;/a&gt;.&lt;/p&gt;</content:encoded></item><item><title>Deployment</title><link>https://astro-pure.js.org/mind-garden/en/setup/deployment</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/setup/deployment</guid><description>Deploy your site to various platforms</description><content:encoded>&lt;p&gt;import { Aside, Steps } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Package Mode&lt;/h2&gt;
 &lt;p&gt;This theme which &gt;= v4.0.0 has integrated NPM package mode. Recommended way is remove local package file, and install the theme integration from NPM. If there&apos;s some reason you want to change the package content, you should link local package to your theme template. A &lt;code&gt;bun&lt;/code&gt; method is integrated. You should:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Add environment variable &lt;code&gt;BUN_LINK_PKG=true&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;Run &lt;code&gt;bun pure check&lt;/code&gt; to link the package automatically.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;This method can also work on Deployment for other platforms like &apos;Vercel&apos;. All you need is to add the environment variable to build options on your platform control settings. The build command &lt;code&gt;astro-pure check &amp;#x26;&amp;#x26; astro check &amp;#x26;&amp;#x26; astro build&lt;/code&gt; will automatically link the package.&lt;/p&gt;
+&lt;p&gt;This method can also work on Deployment for other platforms like &apos;Vercel&apos;. All you need is to add the environment variable to build options on your platform control settings. The build command &lt;code&gt;@yohn-maistre/astro-pure-fork check &amp;#x26;&amp;#x26; astro check &amp;#x26;&amp;#x26; astro build&lt;/code&gt; will automatically link the package.&lt;/p&gt;
 &lt;h2&gt;Deployment Mode&lt;/h2&gt;
 &lt;p&gt;Astro had a very fantastic support for deployment. Check &lt;a href=&quot;https://docs.astro.build/en/guides/deploy/&quot;&gt;Deploy your Astro Site&lt;/a&gt; for more.&lt;/p&gt;
 &lt;h3&gt;Vercel&lt;/h3&gt;
@@ -1378,7 +1378,128 @@ carefully.&lt;/p&gt;
 &lt;li&gt;Add base paths in &lt;code&gt;src/assets/styles/app.css&lt;/code&gt; for all url in &lt;code&gt;@font-face&lt;/code&gt; property.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ol&gt;</content:encoded></item><item><title>Text-to-Speech (TTS) Fine-tuning</title><link>https://astro-pure.js.org/mind-garden/training-and-fine-tuning/text-to-speech-fine-tuning</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/training-and-fine-tuning/text-to-speech-fine-tuning</guid><description>Learn how to fine-tune Text-to-Speech (TTS) models to adapt them to your specific dataset, use case, or desired style and tone.</description><content:encoded>&lt;h1&gt;Text-to-Speech (TTS) Fine-tuning&lt;/h1&gt;
+&lt;/ol&gt;</content:encoded></item><item><title>Getting Started</title><link>https://astro-pure.js.org/mind-garden/en/setup/getting-started</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/setup/getting-started</guid><description>Get started with the Astro Theme Pure</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+&lt;h2&gt;Installation&lt;/h2&gt;
+&lt;p&gt;Two way to install. &quot;Template&quot; way is lightweight and simple, but hard to update; while &quot;Fork&quot; way is easy to update but needs some skills for git.&lt;/p&gt;
+&lt;h3&gt;Install Using Template&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Install the theme&lt;/p&gt;
+&lt;p&gt;Execute the following command in the your user directory to install the theme:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-toml&quot;&gt;[install]
+registry = &quot;&amp;#x3C;npm mirror site&gt;&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For details about other PM mirror configs, you may need to see their official documents.&lt;/p&gt;
+&lt;p&gt;By default, this command will use the template repository’s main branch. To use a different branch name, pass it as part of the &lt;code&gt;--template&lt;/code&gt; argument: &lt;code&gt;cworld1/astro-theme-pure#&amp;#x3C;branch&gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Answer the questions and follow the instructions of the CLI wizard.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;VOILA!&lt;/p&gt;
+&lt;p&gt;You can now &lt;a href=&quot;https://docs.astro.build/en/install-and-setup/#start-the-astro-dev-server&quot;&gt;start the Astro dev server&lt;/a&gt; and see a live preview of your project while you make it your own!&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;Install Using Fork&lt;/h3&gt;
+&lt;p&gt;You only need to &lt;a href=&quot;https://github.com/cworld1/astro-theme-pure/fork&quot;&gt;click fork button at theme repository&lt;/a&gt; to create your project; then clone the forked repository to your local machine.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;git clone https://github.com/&amp;#x3C;your-username&gt;/astro-theme-pure.git
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then, you can start the Astro dev server and see a live preview of your project while you make it your own!&lt;/p&gt;
+&lt;h2&gt;Start the Dev Server&lt;/h2&gt;
+&lt;p&gt;Go to your project directory:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd ./&amp;#x3C;your-project&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Next, please read the configuration notes first and continue configuring the theme.&lt;/p&gt;
+&lt;h2&gt;Migrate to Astro&lt;/h2&gt;
+&lt;p&gt;See &lt;a href=&quot;https://docs.astro.build/en/guides/migrate-to-astro/&quot;&gt;Astro: Migrate an existing project to Astro&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Theme File Structure&lt;/h2&gt;
+&lt;p&gt;The theme file structure is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;public&lt;/code&gt;: Static resources that will be copied to the root directory&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;src&lt;/code&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;assets&lt;/code&gt;: Static resources&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;components&lt;/code&gt;: Components used in the theme, also include user-like components, like &lt;code&gt;Card&lt;/code&gt;, &lt;code&gt;Collapse&lt;/code&gt;, &lt;code&gt;Spoiler&lt;/code&gt;, etc.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;layouts&lt;/code&gt;: Basic site layouts&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;pages&lt;/code&gt;: Pages like &lt;code&gt;404&lt;/code&gt;, &lt;code&gt;about&lt;/code&gt;, &lt;code&gt;blog&lt;/code&gt;, &lt;code&gt;docs&lt;/code&gt;, &lt;code&gt;index&lt;/code&gt;, etc.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;plugins&lt;/code&gt;: Extended plugins used in the theme&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;types&lt;/code&gt;: Typescript type definitions&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;utils&lt;/code&gt;: Utilities&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;site.config.ts&lt;/code&gt;: Theme configuration file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;astro.config.mjs&lt;/code&gt;: Astro configuration file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;eslint.config.mjs&lt;/code&gt;: ESLint configuration file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;prettier.config.mjs&lt;/code&gt;: Prettier configuration file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;uno.config.ts&lt;/code&gt;: UnoCSS configuration file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tsconfig.json&lt;/code&gt;: Typescript configuration file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;package.json&lt;/code&gt;: Package information&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Simple Setup&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Remove docs files&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Remove the &lt;code&gt;src/pages/docs&lt;/code&gt; directory&lt;/li&gt;
+&lt;li&gt;Remove the menu declaration in &lt;code&gt;src/site.config.ts&lt;/code&gt;:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const theme: ThemeUserConfig = {
+   // ...
+   /** Configure the header of your site. */
+   header: {
+      menu: [
+         { title: &apos;Blog&apos;, link: &apos;/blog&apos; },
+         { title: &apos;Docs&apos;, link: &apos;/docs&apos; }, // [!code --]
+         // ...
+      ],
+   },
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Remove the Content Collection for docs in &lt;code&gt;src/content.config.ts&lt;/code&gt;:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;const docs = defineCollection({ // [!code --]
+loader: glob({ base: &apos;./src/content/docs&apos;, pattern: &apos;**/*.{md,mdx}&apos; }), // [!code --]
+schema: ({ image }) =&gt; // [!code --]
+   z.object({ // [!code --]
+      ... // [!code --]
+   }) // [!code --]
+}) // [!code --]
+export const collections = { blog, docs } // [!code --]
+export const collections = { blog } // [!code ++]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Remove &lt;code&gt;packages&lt;/code&gt; directory (this will be imported by our NPM package)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Change the site favicon.&lt;/p&gt;
+&lt;p&gt;Replace the &lt;code&gt;public/favicon/*&lt;/code&gt; files with your own favicon.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Replace your avatar image.&lt;/p&gt;
+&lt;p&gt;Replace the &lt;code&gt;src/assets/avatar.png&lt;/code&gt; file with your own avatar image.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Configure the site&lt;/p&gt;
+&lt;p&gt;You can configure your project inside the &lt;code&gt;src/site.config.ts&lt;/code&gt; configuration file:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const theme: ThemeUserConfig = {
+   author: &apos;CWorld&apos;,
+   title: &apos;Astro Theme Pure&apos;,
+   site: &apos;https://@yohn-maistre/astro-pure-fork.js.org&apos;,
+   description: &apos;Stay hungry, stay foolish&apos;,
+   // ...
+}
+
+export const integ: IntegrationUserConfig = { /* ... */ }
+// ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Typescript Syntax&lt;/p&gt;
+&lt;p&gt;The configuration file &lt;code&gt;site.config.ts&lt;/code&gt; uses Typescript syntax. If you are not familiar with TS syntax, please read about it &lt;a href=&quot;https://learnxinyminutes.com/docs/typescript/&quot;&gt;here&lt;/a&gt; first.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</content:encoded></item><item><title>Text-to-Speech (TTS) Fine-tuning</title><link>https://astro-pure.js.org/mind-garden/en/training-and-fine-tuning/text-to-speech-fine-tuning</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/training-and-fine-tuning/text-to-speech-fine-tuning</guid><description>Learn how to fine-tune Text-to-Speech (TTS) models to adapt them to your specific dataset, use case, or desired style and tone.</description><content:encoded>&lt;h1&gt;Text-to-Speech (TTS) Fine-tuning&lt;/h1&gt;
 &lt;p&gt;Fine-tuning TTS models allows them to adapt to your specific dataset, use case, or desired style and tone. The goal is to customize these models to clone voices, adapt speaking styles and tones, support new languages, handle specific tasks and more. We also support &lt;strong&gt;Speech-to-Text (STT)&lt;/strong&gt; models like OpenAI&apos;s Whisper.&lt;/p&gt;
 &lt;p&gt;With &lt;a href=&quot;https://github.com/unslothai/unsloth&quot;&gt;Unsloth&lt;/a&gt;, you can fine-tune TTS models 1.5x faster with 50% less memory than other implementations with Flash Attention 2. This support includes Sesame CSM, Orpheus, and models supported by transformers (e.g. CrisperWhisper, Spark and more).&lt;/p&gt;
 &lt;p&gt;:::info
@@ -1562,128 +1683,7 @@ tokenizer.save_pretrained(&quot;lora_model&quot;)
 &lt;p&gt;People say you can clone a voice with just 30 seconds of audio using models like XTTS - no training required. That’s technically true, but it misses the point.&lt;/p&gt;
 &lt;p&gt;Zero-shot voice cloning, which is also available in models like Orpheus and CSM, is an approximation. It captures the general &lt;strong&gt;tone and timbre&lt;/strong&gt; of a speaker’s voice, but it doesn’t reproduce the full expressive range. You lose details like speaking speed, phrasing, vocal quirks, and the subtleties of prosody - things that give a voice its &lt;strong&gt;personality and uniqueness&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;If you just want a different voice and are fine with the same delivery patterns, zero-shot is usually good enough. But the speech will still follow the &lt;strong&gt;model’s style&lt;/strong&gt;, not the speaker’s.&lt;/p&gt;
-&lt;p&gt;For anything more personalized or expressive, you need training with methods like LoRA to truly capture how someone speaks.&lt;/p&gt;</content:encoded></item><item><title>Getting Started</title><link>https://astro-pure.js.org/mind-garden/setup/getting-started</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/setup/getting-started</guid><description>Get started with the Astro Theme Pure</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;astro-pure/user&apos;&lt;/p&gt;
-&lt;h2&gt;Installation&lt;/h2&gt;
-&lt;p&gt;Two way to install. &quot;Template&quot; way is lightweight and simple, but hard to update; while &quot;Fork&quot; way is easy to update but needs some skills for git.&lt;/p&gt;
-&lt;h3&gt;Install Using Template&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Install the theme&lt;/p&gt;
-&lt;p&gt;Execute the following command in the your user directory to install the theme:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-toml&quot;&gt;[install]
-registry = &quot;&amp;#x3C;npm mirror site&gt;&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;For details about other PM mirror configs, you may need to see their official documents.&lt;/p&gt;
-&lt;p&gt;By default, this command will use the template repository’s main branch. To use a different branch name, pass it as part of the &lt;code&gt;--template&lt;/code&gt; argument: &lt;code&gt;cworld1/astro-theme-pure#&amp;#x3C;branch&gt;&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Answer the questions and follow the instructions of the CLI wizard.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;VOILA!&lt;/p&gt;
-&lt;p&gt;You can now &lt;a href=&quot;https://docs.astro.build/en/install-and-setup/#start-the-astro-dev-server&quot;&gt;start the Astro dev server&lt;/a&gt; and see a live preview of your project while you make it your own!&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Install Using Fork&lt;/h3&gt;
-&lt;p&gt;You only need to &lt;a href=&quot;https://github.com/cworld1/astro-theme-pure/fork&quot;&gt;click fork button at theme repository&lt;/a&gt; to create your project; then clone the forked repository to your local machine.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;git clone https://github.com/&amp;#x3C;your-username&gt;/astro-theme-pure.git
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Then, you can start the Astro dev server and see a live preview of your project while you make it your own!&lt;/p&gt;
-&lt;h2&gt;Start the Dev Server&lt;/h2&gt;
-&lt;p&gt;Go to your project directory:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd ./&amp;#x3C;your-project&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Next, please read the configuration notes first and continue configuring the theme.&lt;/p&gt;
-&lt;h2&gt;Migrate to Astro&lt;/h2&gt;
-&lt;p&gt;See &lt;a href=&quot;https://docs.astro.build/en/guides/migrate-to-astro/&quot;&gt;Astro: Migrate an existing project to Astro&lt;/a&gt;.&lt;/p&gt;
-&lt;h2&gt;Theme File Structure&lt;/h2&gt;
-&lt;p&gt;The theme file structure is as follows:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;public&lt;/code&gt;: Static resources that will be copied to the root directory&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;src&lt;/code&gt;:
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;assets&lt;/code&gt;: Static resources&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;components&lt;/code&gt;: Components used in the theme, also include user-like components, like &lt;code&gt;Card&lt;/code&gt;, &lt;code&gt;Collapse&lt;/code&gt;, &lt;code&gt;Spoiler&lt;/code&gt;, etc.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;layouts&lt;/code&gt;: Basic site layouts&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;pages&lt;/code&gt;: Pages like &lt;code&gt;404&lt;/code&gt;, &lt;code&gt;about&lt;/code&gt;, &lt;code&gt;blog&lt;/code&gt;, &lt;code&gt;docs&lt;/code&gt;, &lt;code&gt;index&lt;/code&gt;, etc.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;plugins&lt;/code&gt;: Extended plugins used in the theme&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;types&lt;/code&gt;: Typescript type definitions&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;utils&lt;/code&gt;: Utilities&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;site.config.ts&lt;/code&gt;: Theme configuration file&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;astro.config.mjs&lt;/code&gt;: Astro configuration file&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;eslint.config.mjs&lt;/code&gt;: ESLint configuration file&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;prettier.config.mjs&lt;/code&gt;: Prettier configuration file&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;uno.config.ts&lt;/code&gt;: UnoCSS configuration file&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;tsconfig.json&lt;/code&gt;: Typescript configuration file&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;package.json&lt;/code&gt;: Package information&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2&gt;Simple Setup&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Remove docs files&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Remove the &lt;code&gt;src/pages/docs&lt;/code&gt; directory&lt;/li&gt;
-&lt;li&gt;Remove the menu declaration in &lt;code&gt;src/site.config.ts&lt;/code&gt;:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const theme: ThemeUserConfig = {
-   // ...
-   /** Configure the header of your site. */
-   header: {
-      menu: [
-         { title: &apos;Blog&apos;, link: &apos;/blog&apos; },
-         { title: &apos;Docs&apos;, link: &apos;/docs&apos; }, // [!code --]
-         // ...
-      ],
-   },
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Remove the Content Collection for docs in &lt;code&gt;src/content.config.ts&lt;/code&gt;:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;const docs = defineCollection({ // [!code --]
-loader: glob({ base: &apos;./src/content/docs&apos;, pattern: &apos;**/*.{md,mdx}&apos; }), // [!code --]
-schema: ({ image }) =&gt; // [!code --]
-   z.object({ // [!code --]
-      ... // [!code --]
-   }) // [!code --]
-}) // [!code --]
-export const collections = { blog, docs } // [!code --]
-export const collections = { blog } // [!code ++]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Remove &lt;code&gt;packages&lt;/code&gt; directory (this will be imported by our NPM package)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Change the site favicon.&lt;/p&gt;
-&lt;p&gt;Replace the &lt;code&gt;public/favicon/*&lt;/code&gt; files with your own favicon.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Replace your avatar image.&lt;/p&gt;
-&lt;p&gt;Replace the &lt;code&gt;src/assets/avatar.png&lt;/code&gt; file with your own avatar image.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Configure the site&lt;/p&gt;
-&lt;p&gt;You can configure your project inside the &lt;code&gt;src/site.config.ts&lt;/code&gt; configuration file:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const theme: ThemeUserConfig = {
-   author: &apos;CWorld&apos;,
-   title: &apos;Astro Theme Pure&apos;,
-   site: &apos;https://astro-pure.js.org&apos;,
-   description: &apos;Stay hungry, stay foolish&apos;,
-   // ...
-}
-
-export const integ: IntegrationUserConfig = { /* ... */ }
-// ...
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Typescript Syntax&lt;/p&gt;
-&lt;p&gt;The configuration file &lt;code&gt;site.config.ts&lt;/code&gt; uses Typescript syntax. If you are not familiar with TS syntax, please read about it &lt;a href=&quot;https://learnxinyminutes.com/docs/typescript/&quot;&gt;here&lt;/a&gt; first.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;</content:encoded></item><item><title>Configuration</title><link>https://astro-pure.js.org/mind-garden/setup/configuration</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/setup/configuration</guid><description>Configuration files</description><content:encoded>&lt;h2&gt;Theme Configuration&lt;/h2&gt;
+&lt;p&gt;For anything more personalized or expressive, you need training with methods like LoRA to truly capture how someone speaks.&lt;/p&gt;</content:encoded></item><item><title>Configuration</title><link>https://astro-pure.js.org/mind-garden/en/setup/configuration</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/setup/configuration</guid><description>Configuration files</description><content:encoded>&lt;h2&gt;Theme Configuration&lt;/h2&gt;
 &lt;p&gt;File: &lt;code&gt;src/site.config.ts&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;pending update...&lt;/p&gt;
 &lt;h2&gt;Astro Configuration&lt;/h2&gt;
@@ -1703,7 +1703,7 @@ export const integ: IntegrationUserConfig = { /* ... */ }
 &lt;p&gt;It is a utility-first CSS framework building custom designs. Theme also uses its preset &lt;code&gt;typography&lt;/code&gt; to make type settings.&lt;/p&gt;
 &lt;p&gt;Checkout &lt;a href=&quot;/mind-garden/integrations/unocss&quot;&gt;UnoCSS &amp;#x26; Styles &lt;/a&gt; for more info.&lt;/p&gt;
 &lt;h2&gt;Typescript Configuration&lt;/h2&gt;
-&lt;p&gt;File: &lt;code&gt;tsconfig.json&lt;/code&gt;&lt;/p&gt;</content:encoded></item><item><title>FAQs</title><link>https://astro-pure.js.org/mind-garden/advanced/faq</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/advanced/faq</guid><description>Frequently asked questions</description><content:encoded>&lt;h2&gt;Routes&lt;/h2&gt;
+&lt;p&gt;File: &lt;code&gt;tsconfig.json&lt;/code&gt;&lt;/p&gt;</content:encoded></item><item><title>FAQs</title><link>https://astro-pure.js.org/mind-garden/en/advanced/faq</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/advanced/faq</guid><description>Frequently asked questions</description><content:encoded>&lt;h2&gt;Routes&lt;/h2&gt;
 &lt;h3&gt;Blog specific route&lt;/h3&gt;
 &lt;p&gt;Routing blogs format like &lt;code&gt;/blog/:year/:id&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;See &lt;a href=&quot;https://github.com/cworld1/astro-theme-pure/discussions/37#discussioncomment-11905851&quot;&gt;4.0.2-beta如何使文章链接中包含年份&lt;/a&gt;.&lt;/p&gt;
@@ -1721,7 +1721,7 @@ To allow this host, add &quot;xxx&quot; to `preview.allowedHosts` in vite.config
 &lt;p&gt;See &lt;a href=&quot;https://github.com/vitejs/vite/issues/19242&quot;&gt;option server.allowedHosts doesn&apos;t take into account &quot;true&quot;&lt;/a&gt;&lt;/p&gt;
 &lt;h2&gt;Packages&lt;/h2&gt;
 &lt;h3&gt;Problem with &lt;code&gt;BUN_LINK_PKG&lt;/code&gt;&lt;/h3&gt;
-&lt;p&gt;See &lt;a href=&quot;https://github.com/cworld1/astro-theme-pure/issues/51&quot;&gt;BUN_LINK_PKG 环境变量无法设置成功&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title>UnoCSS &amp; Styles</title><link>https://astro-pure.js.org/mind-garden/integrations/unocss</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/integrations/unocss</guid><description>Change the appearance of the site &amp; create custom styles</description><content:encoded>&lt;h2&gt;UnoCSS Change Appearance&lt;/h2&gt;
+&lt;p&gt;See &lt;a href=&quot;https://github.com/cworld1/astro-theme-pure/issues/51&quot;&gt;BUN_LINK_PKG 环境变量无法设置成功&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title>UnoCSS &amp; Styles</title><link>https://astro-pure.js.org/mind-garden/en/integrations/unocss</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/unocss</guid><description>Change the appearance of the site &amp; create custom styles</description><content:encoded>&lt;h2&gt;UnoCSS Change Appearance&lt;/h2&gt;
 &lt;p&gt;You can customize the theme default UnoCSS palette by modifying the CSS file at &lt;code&gt;src/assets/styles/app.css&lt;/code&gt;. For example, if you want to change the default theme color, you can modify the following code:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-css&quot;&gt;:root {
   /* ... */
