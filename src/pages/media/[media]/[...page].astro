@@ -1,0 +1,84 @@
+---
+import PageLayout from '../../../layouts/BaseLayout.astro';
+import MediaList from '../../../components/media/medialist.astro';
+import { type Media, sortMediaByDate } from '../../../utils/sortMedia.ts';
+import mediaData from '../../../../public/media.json';
+
+export async function getStaticPaths() {
+  const allMedia: Media[] = mediaData.media;
+  
+  const mediaByYear: { [year: number]: Media[] } = {};
+  allMedia.forEach(item => {
+    const year = new Date(item.date).getFullYear();
+    if (!mediaByYear[year]) {
+      mediaByYear[year] = [];
+    }
+    mediaByYear[year].push(item);
+  });
+
+  return Object.keys(mediaByYear).map(year => ({
+    params: { media: `year=${year}` },
+  }));
+}
+
+const { media: mediaParam } = Astro.params;
+let year = 0;
+if (mediaParam) {
+  const match = mediaParam.match(/year=(\d{4})/);
+  if (match && match[1]) {
+    year = parseInt(match[1], 10);
+  }
+}
+
+const allMedia: Media[] = mediaData.media;
+const yearMedia = allMedia.filter(item => new Date(item.date).getFullYear() === year);
+const sortedYearMedia = sortMediaByDate(yearMedia);
+
+const recommendedMedia = sortedYearMedia.filter(item => item.recommend).slice(0, 10);
+
+const allYears = [...new Set(allMedia.map(item => new Date(item.date).getFullYear()))].sort((a, b) => b - a);
+---
+
+<PageLayout meta={{ title: `${year} Media List`, description: `Display all media for ${year}` }} highlightColor='#4AA32E'>
+  <main class='flex w-full flex-col items-center py-8'>
+    <div id='content' class='animate text-lg flex flex-col items-center gap-y-10 md:w-4/5 lg:w-5/6'>
+      {/* Page title */}
+      <div class='text-center mb-10'>
+        <h1 class='text-4xl font-bold mb-4'>🎬 {year} Media</h1>
+      </div>
+
+      {/* Recommended section */}
+      {recommendedMedia.length > 0 && (
+        <MediaList media={recommendedMedia} title="Recommended" />
+      )}
+
+      {/* Year media listing */}
+      {sortedYearMedia.length > 0 ? (
+        <MediaList media={sortedYearMedia} title={`${year} Media`} />
+      ) : (
+        <div class='text-center py-10'>
+          <p class='text-lg text-muted-foreground'>No media data found for this year</p>
+        </div>
+      )}
+
+      {/* Previous years links */}
+      <section class='mb-12'>
+        <div class='text-center'>
+          <span class='text-lg font-medium mr-2'>Other years:</span>
+          {allYears.map(y => (
+            <a href={`/media/year=${y}`} class='text-primary hover:text-primary/80 mx-1'>{y}</a>
+          ))}
+        </div>
+      </section>
+
+    </div>
+  </main>
+</PageLayout>
+
+<script>
+  import { initMediaInteractions } from '../../../utils/mediaInteraction.ts';
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    initMediaInteractions();
+  });
+</script>

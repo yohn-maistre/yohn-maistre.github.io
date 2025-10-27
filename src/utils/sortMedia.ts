@@ -1,5 +1,5 @@
 
-export interface Movie {
+export interface Media {
   type: string;
   title: string;
   score: number;
@@ -13,6 +13,6 @@ export interface Movie {
   genre: string;
 }
 
-export const sortMoviesByDate = (media: Movie[]): Movie[] => {
+export const sortMediaByDate = (media: Media[]): Media[] => {
   return media.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };

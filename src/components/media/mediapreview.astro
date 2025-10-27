@@ -1,17 +1,17 @@
 ---
 interface Props {
-  movie: any;
+  media: any;
   uniqueId: string;
 }
 
-const { movie, uniqueId } = Astro.props;
+const { media, uniqueId } = Astro.props;
 ---
 
-<div class='group relative overflow-hidden rounded-lg cursor-pointer transition-all duration-300 hover:shadow-xl' title={movie.title} data-movie-id={uniqueId}>
+<div class='group relative overflow-hidden rounded-lg cursor-pointer transition-all duration-300 hover:shadow-xl' title={media.title} data-media-id={uniqueId}>
   <div class='aspect-[2/3] w-full overflow-hidden bg-background sm:min-w-[80px]'>
     <img 
-      src={movie.cover} 
-      alt={movie.title} 
+      src={media.cover} 
+      alt={media.title} 
       class='h-full w-full object-cover transition-transform duration-500 group-hover:scale-110'
       loading={'lazy'}
       decoding='async'
@@ -19,10 +19,10 @@ const { movie, uniqueId } = Astro.props;
     />
   </div>
   <div class='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3'>
-    <p class='text-white bg-[rgba(25,29,39,0.6)] text-sm font-medium line-clamp-1 p-1 rounded'>{movie.title}</p>
+    <p class='text-white bg-[rgba(25,29,39,0.6)] text-sm font-medium line-clamp-1 p-1 rounded'>{media.title}</p>
   </div>
   <button 
-    class='movie-item-btn absolute inset-0'
+    class='media-item-btn absolute inset-0'
     data-dialog-id={uniqueId}
   ></button>
 </div>

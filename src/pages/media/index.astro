@@ -1,10 +1,10 @@
 ---
 import { TOC } from 'astro-pure/components/pages';
 import CommonPage from '../../layouts/CommonPage.astro';
-import MovieList from '../../components/movies/movielist.astro';
+import MediaList from '../../components/media/medialist.astro';
 import mediaData from '../../../public/media.json' assert { type: 'json' };
 import { getMovieDetails, getBookDetails } from '../../utils/getMediaDetails.ts';
-import { sortMoviesByDate } from '../../utils/sortMedia.ts';
+import { sortMediaByDate } from '../../utils/sortMedia.ts';
 
 const pageTitle = "Movies & Books";
 
@@ -41,33 +41,33 @@ const headings = [
   <h2 id="movies">Movies</h2>
 
   <h3 id="movies-favorites">All-Time Favorites</h3>
-  <MovieList movies={sortMoviesByDate(movies.filter(item => item.favorite))} />
+  <MediaList media={sortMediaByDate(movies.filter(item => item.favorite))} />
 
   {movieGenres.map(genre => (
     <>
       <h3 id={`movies-${genre.toLowerCase()}`}>{genre}</h3>
-      <MovieList movies={sortMoviesByDate(movies.filter(item => item.genre === genre && !item.favorite))} />
+      <MediaList media={sortMediaByDate(movies.filter(item => item.genre === genre && !item.favorite))} />
     </>
   ))}
 
   <h2 id="books">Books</h2>
 
   <h3 id="books-favorites">All-Time Favorites</h3>
-  <MovieList movies={sortMoviesByDate(books.filter(item => item.favorite))} />
+  <MediaList media={sortMediaByDate(books.filter(item => item.favorite))} />
 
   {bookGenres.map(genre => (
     <>
       <h3 id={`books-${genre.toLowerCase()}`}>{genre}</h3>
-      <MovieList movies={sortMoviesByDate(books.filter(item => item.genre === genre && !item.favorite))} />
+      <MediaList media={sortMediaByDate(books.filter(item => item.genre === genre && !item.favorite))} />
     </>
   ))}
 
 </CommonPage>
 
 <script>
-  import { initMovieInteractions } from '../../utils/movieInteraction.ts';
+  import { initMediaInteractions } from '../../utils/mediaInteraction.ts';
   
   document.addEventListener('DOMContentLoaded', () => {
-    initMovieInteractions();
+    initMediaInteractions();
   });
 </script>

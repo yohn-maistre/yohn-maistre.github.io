@@ -2,20 +2,20 @@
 import { Button, Icon } from '../../../packages/pure/components/user';
 
 interface Props {
-  movie: any;
+  media: any;
   uniqueId: string;
 }
 
-const { movie, uniqueId } = Astro.props;
+const { media, uniqueId } = Astro.props;
 ---
 
-<dialog id={uniqueId} class='movie-dialog fixed inset-0 z-50 m-auto max-w-3xl w-[90vw] max-h-[90vh] bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden'>
+<dialog id={uniqueId} class='media-dialog fixed inset-0 z-50 m-auto max-w-3xl w-[90vw] max-h-[90vh] bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden'>
   <div class='p-6'>
     <div class='aspect-[2/3] w-[40%] sm:w-[20%] mx-auto overflow-hidden rounded-lg shadow-md mb-3 mt-2'>
-      {movie.cover ? (
+      {media.cover ? (
         <img 
-          src={movie.cover} 
-          alt={movie.title} 
+          src={media.cover} 
+          alt={media.title} 
           class='h-full w-full object-cover'
           decoding='async'
           onerror="this.onerror=null; this.src='/cover/b1.png';"
@@ -29,25 +29,25 @@ const { movie, uniqueId } = Astro.props;
     <div class='flex flex-col items-center justify-between w-full'>
       <div class='w-full max-w-2xl max-h-[60vh] overflow-y-auto px-4 md:px-0 pb-8'>
         <div class='flex items-center justify-center mb-2'>
-          <h3 class='text-2xl font-bold text-foreground'>{movie.title}</h3>
+          <h3 class='text-2xl font-bold text-foreground'>{media.title}</h3>
           <span class='bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100 px-2 py-1 rounded-md text-sm font-bold ml-2'>
-            {movie.score}
+            {media.score}
           </span>
         </div>
         <p class='text-sm text-muted-foreground mb-4 text-center'>
-          {movie.date}
+          {media.date}
         </p>
         <div class='prose dark:prose-invert mb-6 text-justify'>
-          <p>{movie.comment}</p>
+          <p>{media.comment}</p>
         </div>
-        {movie.quote && (
+        {media.quote && (
           <blockquote class='border-l-4 border-amber-500 pl-4 text-muted-foreground my-4 text-justify'>
-            {movie.quote}
+            {media.quote}
           </blockquote>
         )}
       </div>
-      {movie.link && (
-        <Button href={movie.link} target='_blank' variant='button' class='self-center mt-4'>
+      {media.link && (
+        <Button href={media.link} target='_blank' variant='button' class='self-center mt-4'>
           <Icon name='link' class='mr-2 h-4 w-4' />
             View review
         </Button>
@@ -64,7 +64,7 @@ const { movie, uniqueId } = Astro.props;
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
     // Get all dialogs
-    const dialogs = document.querySelectorAll('.movie-dialog');
+    const dialogs = document.querySelectorAll('.media-dialog');
     
     dialogs.forEach(dialog => {
       const closeBtn = dialog.querySelector('.close-dialog');

@@ -1,7 +1,7 @@
-// Movie page interaction logic
-export const initMovieInteractions = () => {
+// Media page interaction logic
+export const initMediaInteractions = () => {
   // Add dialog close handlers
-  document.querySelectorAll('.movie-dialog').forEach(dialog => {
+  document.querySelectorAll('.media-dialog').forEach(dialog => {
     const closeBtn = dialog.querySelector('.close-dialog');
     if (closeBtn) {
       closeBtn.addEventListener('click', (e) => {
@@ -24,13 +24,13 @@ export const initMovieInteractions = () => {
       e.preventDefault();
       const year = btn.getAttribute('data-year');
       if (year) {
-        window.location.href = `/movies/year=${year}`;
+        window.location.href = `/media/year=${year}`;
       }
     });
   });
 
-  // Add click handler for movie items
-  document.querySelectorAll('.movie-item-btn').forEach(btn => {
+  // Add click handler for media items
+  document.querySelectorAll('.media-item-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const dialogId = btn.getAttribute('data-dialog-id');

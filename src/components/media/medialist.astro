@@ -1,6 +1,6 @@
 ---
-import MoviePreview from './moviepreview.astro'
-import MovieCard from './moviecard.astro'
+import MediaPreview from './mediapreview.astro'
+import MediaCard from './mediacard.astro'
 
 interface Media {
   type: string;
@@ -17,23 +17,23 @@ interface Media {
 }
 
 interface Props {
-  movies: Media[];
+  media: Media[];
   title?: string;
 }
 
-const { movies, title } = Astro.props;
+const { media, title } = Astro.props;
 ---
 
 <section class='mb-12 w-full'>
   {title && <h2 class='text-2xl font-bold mb-6 flex justify-center items-center gap-2'>{title}</h2>}
   
   <div class='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 justify-items-center'>
-    {movies.map((movie) => {
-      const uniqueId = `${movie.type}-${movie.title.replace(/\s+/g, '-').toLowerCase()}`;
+    {media.map((item) => {
+      const uniqueId = `${item.type}-${item.title.replace(/\s+/g, '-').toLowerCase()}`;
       return (
         <>
-          <MoviePreview movie={movie} uniqueId={uniqueId} />
-          <MovieCard movie={movie} uniqueId={uniqueId} />
+          <MediaPreview media={item} uniqueId={uniqueId} />
+          <MediaCard media={item} uniqueId={uniqueId} />
         </>
       );
     })}
