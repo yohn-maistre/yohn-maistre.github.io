@@ -1,0 +1,14 @@
+{
+  "home.title": "Home",
+  "home.location": "Jayapura",
+  "home.stack": "Stack",
+  "home.stack.languages": "Languages",
+  "home.stack.frontend": "Frontend",
+  "home.stack.backend": "Backend",
+  "home.stack.database": "Database",
+  "home.stack.ml_framework": "ML Framework",
+  "home.stack.orchestration": "Orchestration & Eval",
+  "home.stack.infrastructure": "Infrastructure",
+  "home.posts": "Posts",
+  "home.more_posts": "More posts"
+}

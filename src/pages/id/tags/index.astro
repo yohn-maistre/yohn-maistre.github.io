@@ -1,0 +1,49 @@
+---
+import { getBlogCollection, getUniqueTagsWithCount } from '@yohn-maistre/astro-pure-fork/server'
+import { Button } from '@yohn-maistre/astro-pure-fork/user'
+import { cn } from '@yohn-maistre/astro-pure-fork/utils'
+import PageLayout from '@/layouts/BaseLayout.astro'
+
+const allPosts = await getBlogCollection('id')
+const allTags = getUniqueTagsWithCount(allPosts)
+
+const meta = {
+  description: "Daftar semua topik yang pernah saya tulis di tulisan saya",
+  title: 'Semua Tag'
+}
+---
+
+<PageLayout {meta}>
+  <Button title='Kembali' href='/id/blog' variant='back' />
+  <main class='mt-6 lg:mt-10'>
+    <div id='content-header' class='animate'>
+      <h1 class='mb-6 text-3xl font-medium'>Tag</h1>
+    </div>
+
+    <div id='content' class='animate'>
+      {
+        allTags.length > 0 ? (
+          <ul class='flex flex-wrap gap-4'>
+            {allTags.map(([tag, val]) => (
+              <li>
+                <Button
+                  href={`/id/tags/${tag}`}
+                  variant='pill'
+                  class={cn(
+                    'items-start gap-x-1',
+                    val > 2 ? 'rounded-xl px-3 py-1 text-xl' : val > 1 && 'text-lg'
+                  )}
+                >
+                  {tag}
+                  <span class={val > 2 ? 'text-base' : 'text-xs'}>{val}</span>
+                </Button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Belum ada tag.</p>
+        )
+      }
+    </div>
+  </main>
+</PageLayout>

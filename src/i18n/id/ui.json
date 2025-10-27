@@ -1,0 +1,14 @@
+{
+  "home.title": "Beranda",
+  "home.location": "Jayapura",
+  "home.stack": "Tumpukan",
+  "home.stack.languages": "Bahasa",
+  "home.stack.frontend": "Frontend",
+  "home.stack.backend": "Backend",
+  "home.stack.database": "Basis Data",
+  "home.stack.ml_framework": "Kerangka Kerja ML",
+  "home.stack.orchestration": "Orkestrasi & Evaluasi",
+  "home.stack.infrastructure": "Infrastruktur",
+  "home.posts": "Tulisan",
+  "home.more_posts": "Lihat lebih banyak"
+}

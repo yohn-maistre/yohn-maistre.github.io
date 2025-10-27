@@ -1,10 +1,10 @@
 ---
 import { render, type CollectionEntry } from 'astro:content'
 
-import { MediumZoom } from 'astro-pure/advanced'
-import { TOC } from 'astro-pure/components/pages'
-import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
-import { Button } from 'astro-pure/user'
+import { MediumZoom } from '@yohn-maistre/astro-pure-fork/advanced'
+import { TOC } from '@yohn-maistre/astro-pure-fork/components/pages'
+import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import { Button } from '@yohn-maistre/astro-pure-fork/user'
 import PageLayout from '@/layouts/ContentLayout.astro'
 
 import DocsContents from './DocsContents.astro'
@@ -12,7 +12,7 @@ import DocsContents from './DocsContents.astro'
 export const prerender = true
 
 export async function getStaticPaths() {
-  const posts = sortMDByDate(await getBlogCollection('mind-garden'))
+  const posts = sortMDByDate(await getBlogCollection(undefined, 'mind-garden'))
   return posts.map((post) => ({
     params: { id: post.id },
     props: { post }

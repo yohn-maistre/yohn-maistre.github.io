@@ -1,4 +1,4 @@
-import type { CardListData, Config, IntegrationUserConfig, ThemeUserConfig } from 'astro-pure/types'
+import type { CardListData, Config, IntegrationUserConfig, ThemeUserConfig } from '@yohn-maistre/astro-pure-fork/types'
 
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
@@ -104,7 +104,7 @@ export const theme: ThemeUserConfig = {
 
 export const integ: IntegrationUserConfig = {
   // Links management
-  // See: https://astro-pure.js.org/docs/integrations/links
+  // See: https://@yohn-maistre/astro-pure-fork.js.org/docs/integrations/links
   links: {
     // Friend logbook
     logbook: [
@@ -118,14 +118,14 @@ export const integ: IntegrationUserConfig = {
     applyTip: [
       { name: 'Name', val: theme.title },
       { name: 'Desc', val: theme.description || 'Null' },
-      { name: 'Link', val: 'https://astro-pure.js.org/' },
-      { name: 'Avatar', val: 'https://astro-pure.js.org/favicon/favicon.ico' }
+      { name: 'Link', val: 'https://@yohn-maistre/astro-pure-fork.js.org/' },
+      { name: 'Avatar', val: 'https://@yohn-maistre/astro-pure-fork.js.org/favicon/favicon.ico' }
     ]
   },
   // Enable page search function
   pagefind: true,
   // Add a random quote to the footer (default on homepage footer)
-  // See: https://astro-pure.js.org/docs/integrations/advanced#web-content-render
+  // See: https://@yohn-maistre/astro-pure-fork.js.org/docs/integrations/advanced#web-content-render
   quote: {
     // https://developer.hitokoto.cn/sentence/#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
     // server: 'https://v1.hitokoto.cn/?c=i',
@@ -144,7 +144,7 @@ export const integ: IntegrationUserConfig = {
     inlineCodeBlockStyle: 'modern'
   },
   // A lightbox library that can add zoom effect
-  // See: https://astro-pure.js.org/docs/integrations/others#medium-zoom
+  // See: https://@yohn-maistre/astro-pure-fork.js.org/docs/integrations/others#medium-zoom
   mediumZoom: {
     enable: true, // disable it will not load the whole library
     selector: '.prose .zoomable',

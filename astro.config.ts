@@ -1,5 +1,5 @@
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
-import AstroPureIntegration from 'astro-pure'
+import AstroPureIntegration from '@yohn-maistre/astro-pure-fork'
 import react from '@astrojs/react'
 import icon from 'astro-icon'
 // import tailwind from '@astrojs/tailwind'
@@ -28,6 +28,13 @@ import config from './src/site.config.ts'
 export default defineConfig({
   // Top-Level Options
   site: 'https://astro-pure.js.org',
+  i18n: {
+    locales: ['en', 'id'],
+    defaultLocale: 'en',
+    routing: {
+      prefixDefaultLocale: false
+    }
+  },
   // Deploy to a sub path; See https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
   // base: '/astro-pure/',
   trailingSlash: 'never',

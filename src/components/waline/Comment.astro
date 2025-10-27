@@ -3,7 +3,7 @@ import config from '../../site.config'
 
 import '@waline/client/style'
 
-import { cn } from 'astro-pure/utils'
+import { cn } from '@yohn-maistre/astro-pure-fork/utils'
 
 const { class: className } = Astro.props
 ---
@@ -21,7 +21,7 @@ const { class: className } = Astro.props
 <script>
   import { init as walineInit } from '@waline/client'
   import type { WalineEmojiPresets } from '@waline/client'
-  import config from 'virtual:config'
+  import config from 'virtual:pure-config'
 
   const walineConfig = config.integ.waline
 

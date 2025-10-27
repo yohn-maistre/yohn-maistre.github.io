@@ -3,7 +3,7 @@ import type { ImageMetadata } from 'astro'
 import { Image } from 'astro:assets'
 import type { HTMLTag, Polymorphic } from 'astro/types'
 
-import { cn } from 'astro-pure/utils'
+import { cn } from '@yohn-maistre/astro-pure-fork/utils'
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
   heading: string

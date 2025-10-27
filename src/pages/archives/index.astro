@@ -1,12 +1,12 @@
 ---
-import { PostPreview } from 'astro-pure/components/pages'
-import { getBlogCollection, groupCollectionsByYear, sortMDByDate } from 'astro-pure/server'
-import { Button } from 'astro-pure/user'
+import { PostPreview } from '@yohn-maistre/astro-pure-fork/components/pages'
+import { getBlogCollection, groupCollectionsByYear, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import { Button } from '@yohn-maistre/astro-pure-fork/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 
 export const prerender = true
-
-const allPosts = await getBlogCollection()
+const { currentLocale } = Astro
+const allPosts = await getBlogCollection(currentLocale)
 const allPostsByDate = sortMDByDate(allPosts)
 const allPostsByYear = groupCollectionsByYear(allPostsByDate)
 

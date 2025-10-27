@@ -8,9 +8,9 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
-import config from 'virtual:config'
+import config from 'virtual:pure-config'
 
-import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
 
 // Get dynamic import of images as a map collection
 const imagesGlob = import.meta.glob<{ default: ImageMetadata }>(

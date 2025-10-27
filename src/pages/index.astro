@@ -1,10 +1,10 @@
 ---
 import { Image } from 'astro:assets'
 
-import { Quote } from 'astro-pure/advanced'
-import { PostPreview } from 'astro-pure/components/pages'
-import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
-import { Button, Card, Icon, Label } from 'astro-pure/user'
+import { Quote } from '@yohn-maistre/astro-pure-fork/advanced'
+import { PostPreview } from '@yohn-maistre/astro-pure-fork/components/pages'
+import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import { Button, Card, Icon, Label } from '@yohn-maistre/astro-pure-fork/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import BentoGrid from '@/components/bento/BentoGrid.astro'
 import Clock from '@/components/home/Clock.tsx'
@@ -14,6 +14,10 @@ import SkillLayout from '@/components/home/SkillLayout.astro'
 import avatar from '@/assets/avatar.png'
 
 import config from '../site.config'
+import { getLangFromUrl, useTranslations } from '@/lib/i18n';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const languages = ['Python', 'HTML', 'CSS', 'JS/TS', 'R', 'MATLAB']
 const frontend = ['Next.js', 'TailwindCSS', 'UnoCSS', 'Astro.js', 'Svelte', 'Vite', 'Three.js']
@@ -37,7 +41,7 @@ const allPosts = await getBlogCollection()
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 ---
 
-<PageLayout meta={{ title: 'Home' }} highlightColor='#659EB9'>
+<PageLayout meta={{ title: t('home.title') }} highlightColor='#659EB9'>
   <main class='flex w-full flex-col items-center'>
     <section class='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
       <Image
@@ -50,7 +54,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
       <div class='flex flex-col items-center gap-y-4'>
         <h1 class='text-3xl font-bold'>{config.author}</h1>
         <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
-          <Label title='Jayapura'>
+          <Label title={t('home.location')}>
             <Icon name='location' class='size-5' slot='icon' />
           </Label>
           <!-- <Label title='GitHub' as='a' href='https://github.com/yohn-maistre' target='_blank'>
@@ -94,14 +98,14 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         <Button title='More about me' class='w-fit self-end' href='/about' variant='ahead' />
       </Section> -->
 
-      <Section title='Stack'>
-        <SkillLayout title='Languages' skills={languages} />
-        <SkillLayout title='Frontend' skills={frontend} />
-        <SkillLayout title='Backend' skills={backend} />
-        <SkillLayout title='Database' skills={database} />
-        <SkillLayout title='ML Framework' skills={machineLearning} />
-        <SkillLayout title='Orchestration & Eval' skills={orchestration} />
-        <SkillLayout title='Infrastructure' skills={infrastructure} />
+      <Section title={t('home.stack')}>
+        <SkillLayout title={t('home.stack.languages')} skills={languages} />
+        <SkillLayout title={t('home.stack.frontend')} skills={frontend} />
+        <SkillLayout title={t('home.stack.backend')} skills={backend} />
+        <SkillLayout title={t('home.stack.database')} skills={database} />
+        <SkillLayout title={t('home.stack.ml_framework')} skills={machineLearning} />
+        <SkillLayout title={t('home.stack.orchestration')} skills={orchestration} />
+        <SkillLayout title={t('home.stack.infrastructure')} skills={infrastructure} />
       </Section>
 
       <!-- <Section title='Projects'>
@@ -135,7 +139,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 
       {
         allPostsByDate.length > 0 && (
-          <Section title='Posts'>
+          <Section title={t('home.posts')}>
             <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
               {allPostsByDate.map((p) => (
                 <li class='flex flex-col gap-x-2 sm:flex-row'>
@@ -143,7 +147,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
                 </li>
               ))}
             </ul>
-            <Button title='More posts' class='w-fit self-end' href='/blog' variant='ahead' />
+            <Button title={t('home.more_posts')} class='w-fit self-end' href='/blog' variant='ahead' />
           </Section>
         )
       }

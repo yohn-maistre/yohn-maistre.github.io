@@ -1,0 +1,112 @@
+---
+import { Image } from 'astro:assets'
+
+import { Quote } from '@yohn-maistre/astro-pure-fork/advanced'
+import { PostPreview } from '@yohn-maistre/astro-pure-fork/components/pages'
+import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import { Button, Card, Icon, Label } from '@yohn-maistre/astro-pure-fork/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import BentoGrid from '@/components/bento/BentoGrid.astro'
+import Clock from '@/components/home/Clock.tsx'
+import ProjectCard from '@/components/home/ProjectCard.astro'
+import Section from '@/components/home/Section.astro'
+import SkillLayout from '@/components/home/SkillLayout.astro'
+import avatar from '@/assets/avatar.png'
+
+import config from '../../site.config'
+
+const languages = ['Python', 'HTML', 'CSS', 'JS/TS', 'R', 'MATLAB']
+const frontend = ['Next.js', 'TailwindCSS', 'UnoCSS', 'Astro.js', 'Svelte', 'Vite', 'Three.js']
+const backend = ['Node.js', 'Bun', 'Django', 'Flask', 'REST', 'FastAPI']
+const database = ['PostgreSQL', 'pgVector', 'FAISS', 'Chroma', 'Pinecone', 'Supabase', 'GraphQL']
+const machineLearning = ['PyTorch']
+const orchestration = [
+  'Google ADK',
+  'OpenAI Agent SDK',
+  'LangGraph',
+  'PyDantic',
+  'CrewAI',
+  'n8n',
+  'Weights & Biases',
+  'Comet'
+]
+const infrastructure = ['AWS', 'GCP', 'Vercel', 'Heroku']
+
+const MAX_POSTS = 4
+const allPosts = await getBlogCollection()
+const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+---
+
+<PageLayout meta={{ title: 'Beranda' }} highlightColor='#659EB9'>
+  <main class='flex w-full flex-col items-center'>
+    <section class='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
+      <Image
+        src={avatar}
+        alt='profile'
+        class='h-28 w-auto rounded-full border p-1'
+        loading='eager'
+      />
+
+      <div class='flex flex-col items-center gap-y-4'>
+        <h1 class='text-3xl font-bold'>{config.author}</h1>
+        <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
+          <Label title='Jayapura'>
+            <Icon name='location' class='size-5' slot='icon' />
+          </Label>
+          <!-- <Label title='GitHub' as='a' href='https://github.com/yohn-maistre' target='_blank'>
+            <Icon name='github' class='size-5' slot='icon' />
+          </Label> -->
+          <div class='flex items-center gap-x-2'>
+            <!-- <Icon name='clock' class='size-5' /> -->
+            <Clock client:visible />
+          </div>
+        </div>
+      </div>
+
+      {/* Link to Abstraksl Website */}
+      <a
+        href='https://abstraksi.io'
+        target='_blank'
+        class='flex flex-row items-center gap-x-3 rounded-full border bg-background px-4 py-2 text-sm shadow-sm transition-shadow hover:shadow-md'
+      >
+        <span class='relative flex items-center justify-center'>
+          <span
+            class='absolute size-2 animate-ping rounded-full border border-red-400 bg-red-400 opacity-75'
+          ></span>
+          <span class='size-2 rounded-full bg-red-400'></span>
+        </span>
+        <p class='font-medium text-muted-foreground'>/Abs•trak•si/</p>
+      </a>
+    </section>
+    <div id='bento' class='animate mb-20 flex flex-col gap-y-10'>
+      <BentoGrid />
+    </div>
+
+    <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
+      <Section title='Tumpukan'>
+        <SkillLayout title='Languages' skills={languages} />
+        <SkillLayout title='Frontend' skills={frontend} />
+        <SkillLayout title='Backend' skills={backend} />
+        <SkillLayout title='Database' skills={database} />
+        <SkillLayout title='ML Framework' skills={machineLearning} />
+        <SkillLayout title='Orchestration & Eval' skills={orchestration} />
+        <SkillLayout title='Infrastructure' skills={infrastructure} />
+      </Section>
+
+      {
+        allPostsByDate.length > 0 && (
+          <Section title='Tulisan'>
+            <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+              {allPostsByDate.map((p) => (
+                <li class='flex flex-col gap-x-2 sm:flex-row'>
+                  <PostPreview post={p} detailed />
+                </li>
+              ))}
+            </ul>
+            <Button title='Lihat lebih banyak' class='w-fit self-end' href='/blog' variant='ahead' />
+          </Section>
+        )
+      }
+    </div>
+  </main>
+</PageLayout>

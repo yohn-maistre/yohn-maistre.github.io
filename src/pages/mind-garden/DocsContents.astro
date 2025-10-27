@@ -1,13 +1,17 @@
 ---
 import { type CollectionEntry } from 'astro:content'
 
-import { getBlogCollection } from 'astro-pure/server'
-import { cn } from 'astro-pure/utils'
+import { getBlogCollection } from '@yohn-maistre/astro-pure-fork/server'
+import { cn } from '@yohn-maistre/astro-pure-fork/utils'
 
 export const prerender = true
 export const partial = true
 
-const docsCollection = (await getBlogCollection('mind-garden')) as CollectionEntry<'mind-garden'>[]
+const url = Astro.request.url;
+const lang = new URL(url).pathname.split('/')[1];
+const locale = ['en', 'id'].includes(lang) ? lang : 'en';
+
+const docsCollection = (await getBlogCollection(locale, 'mind-garden')) as CollectionEntry<'mind-garden'>[]
 // Group docs by id first part (setup, integrations, advanced, etc.)
 const docsByCate = docsCollection.reduce((acc: { [key: string]: typeof docsCollection }, doc) => {
   const id = doc.id.split('/')[0]
