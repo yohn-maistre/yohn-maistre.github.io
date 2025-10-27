@@ -1280,128 +1280,7 @@ heroImage: { src: &apos;./thumbnail.jpg&apos; } # will used to social-image
 This is the first section of the privacy policy.
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h3&gt;HTML Pages&lt;/h3&gt;
-&lt;p&gt;Files with the &lt;code&gt;.html&lt;/code&gt; file extension can be placed in the &lt;code&gt;src/pages/&lt;/code&gt; directory and used directly as pages on your site. Note that some key Astro features are not supported in &lt;a href=&quot;https://docs.astro.build/en/basics/astro-components/#html-components&quot;&gt;HTML Components&lt;/a&gt;.&lt;/p&gt;</content:encoded></item><item><title>Getting Started</title><link>https://astro-pure.js.org/mind-garden/setup/getting-started</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/setup/getting-started</guid><description>Get started with the Astro Theme Pure</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;astro-pure/user&apos;&lt;/p&gt;
-&lt;h2&gt;Installation&lt;/h2&gt;
-&lt;p&gt;Two way to install. &quot;Template&quot; way is lightweight and simple, but hard to update; while &quot;Fork&quot; way is easy to update but needs some skills for git.&lt;/p&gt;
-&lt;h3&gt;Install Using Template&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Install the theme&lt;/p&gt;
-&lt;p&gt;Execute the following command in the your user directory to install the theme:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-toml&quot;&gt;[install]
-registry = &quot;&amp;#x3C;npm mirror site&gt;&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;For details about other PM mirror configs, you may need to see their official documents.&lt;/p&gt;
-&lt;p&gt;By default, this command will use the template repository’s main branch. To use a different branch name, pass it as part of the &lt;code&gt;--template&lt;/code&gt; argument: &lt;code&gt;cworld1/astro-theme-pure#&amp;#x3C;branch&gt;&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Answer the questions and follow the instructions of the CLI wizard.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;VOILA!&lt;/p&gt;
-&lt;p&gt;You can now &lt;a href=&quot;https://docs.astro.build/en/install-and-setup/#start-the-astro-dev-server&quot;&gt;start the Astro dev server&lt;/a&gt; and see a live preview of your project while you make it your own!&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Install Using Fork&lt;/h3&gt;
-&lt;p&gt;You only need to &lt;a href=&quot;https://github.com/cworld1/astro-theme-pure/fork&quot;&gt;click fork button at theme repository&lt;/a&gt; to create your project; then clone the forked repository to your local machine.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;git clone https://github.com/&amp;#x3C;your-username&gt;/astro-theme-pure.git
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Then, you can start the Astro dev server and see a live preview of your project while you make it your own!&lt;/p&gt;
-&lt;h2&gt;Start the Dev Server&lt;/h2&gt;
-&lt;p&gt;Go to your project directory:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd ./&amp;#x3C;your-project&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Next, please read the configuration notes first and continue configuring the theme.&lt;/p&gt;
-&lt;h2&gt;Migrate to Astro&lt;/h2&gt;
-&lt;p&gt;See &lt;a href=&quot;https://docs.astro.build/en/guides/migrate-to-astro/&quot;&gt;Astro: Migrate an existing project to Astro&lt;/a&gt;.&lt;/p&gt;
-&lt;h2&gt;Theme File Structure&lt;/h2&gt;
-&lt;p&gt;The theme file structure is as follows:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;public&lt;/code&gt;: Static resources that will be copied to the root directory&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;src&lt;/code&gt;:
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;assets&lt;/code&gt;: Static resources&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;components&lt;/code&gt;: Components used in the theme, also include user-like components, like &lt;code&gt;Card&lt;/code&gt;, &lt;code&gt;Collapse&lt;/code&gt;, &lt;code&gt;Spoiler&lt;/code&gt;, etc.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;layouts&lt;/code&gt;: Basic site layouts&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;pages&lt;/code&gt;: Pages like &lt;code&gt;404&lt;/code&gt;, &lt;code&gt;about&lt;/code&gt;, &lt;code&gt;blog&lt;/code&gt;, &lt;code&gt;docs&lt;/code&gt;, &lt;code&gt;index&lt;/code&gt;, etc.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;plugins&lt;/code&gt;: Extended plugins used in the theme&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;types&lt;/code&gt;: Typescript type definitions&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;utils&lt;/code&gt;: Utilities&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;site.config.ts&lt;/code&gt;: Theme configuration file&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;astro.config.mjs&lt;/code&gt;: Astro configuration file&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;eslint.config.mjs&lt;/code&gt;: ESLint configuration file&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;prettier.config.mjs&lt;/code&gt;: Prettier configuration file&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;uno.config.ts&lt;/code&gt;: UnoCSS configuration file&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;tsconfig.json&lt;/code&gt;: Typescript configuration file&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;package.json&lt;/code&gt;: Package information&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2&gt;Simple Setup&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Remove docs files&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Remove the &lt;code&gt;src/pages/docs&lt;/code&gt; directory&lt;/li&gt;
-&lt;li&gt;Remove the menu declaration in &lt;code&gt;src/site.config.ts&lt;/code&gt;:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const theme: ThemeUserConfig = {
-   // ...
-   /** Configure the header of your site. */
-   header: {
-      menu: [
-         { title: &apos;Blog&apos;, link: &apos;/blog&apos; },
-         { title: &apos;Docs&apos;, link: &apos;/docs&apos; }, // [!code --]
-         // ...
-      ],
-   },
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Remove the Content Collection for docs in &lt;code&gt;src/content.config.ts&lt;/code&gt;:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;const docs = defineCollection({ // [!code --]
-loader: glob({ base: &apos;./src/content/docs&apos;, pattern: &apos;**/*.{md,mdx}&apos; }), // [!code --]
-schema: ({ image }) =&gt; // [!code --]
-   z.object({ // [!code --]
-      ... // [!code --]
-   }) // [!code --]
-}) // [!code --]
-export const collections = { blog, docs } // [!code --]
-export const collections = { blog } // [!code ++]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Remove &lt;code&gt;packages&lt;/code&gt; directory (this will be imported by our NPM package)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Change the site favicon.&lt;/p&gt;
-&lt;p&gt;Replace the &lt;code&gt;public/favicon/*&lt;/code&gt; files with your own favicon.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Replace your avatar image.&lt;/p&gt;
-&lt;p&gt;Replace the &lt;code&gt;src/assets/avatar.png&lt;/code&gt; file with your own avatar image.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Configure the site&lt;/p&gt;
-&lt;p&gt;You can configure your project inside the &lt;code&gt;src/site.config.ts&lt;/code&gt; configuration file:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const theme: ThemeUserConfig = {
-   author: &apos;CWorld&apos;,
-   title: &apos;Astro Theme Pure&apos;,
-   site: &apos;https://astro-pure.js.org&apos;,
-   description: &apos;Stay hungry, stay foolish&apos;,
-   // ...
-}
-
-export const integ: IntegrationUserConfig = { /* ... */ }
-// ...
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Typescript Syntax&lt;/p&gt;
-&lt;p&gt;The configuration file &lt;code&gt;site.config.ts&lt;/code&gt; uses Typescript syntax. If you are not familiar with TS syntax, please read about it &lt;a href=&quot;https://learnxinyminutes.com/docs/typescript/&quot;&gt;here&lt;/a&gt; first.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;</content:encoded></item><item><title>Deployment</title><link>https://astro-pure.js.org/mind-garden/setup/deployment</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/setup/deployment</guid><description>Deploy your site to various platforms</description><content:encoded>&lt;p&gt;import { Aside, Steps } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;p&gt;Files with the &lt;code&gt;.html&lt;/code&gt; file extension can be placed in the &lt;code&gt;src/pages/&lt;/code&gt; directory and used directly as pages on your site. Note that some key Astro features are not supported in &lt;a href=&quot;https://docs.astro.build/en/basics/astro-components/#html-components&quot;&gt;HTML Components&lt;/a&gt;.&lt;/p&gt;</content:encoded></item><item><title>Deployment</title><link>https://astro-pure.js.org/mind-garden/setup/deployment</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/setup/deployment</guid><description>Deploy your site to various platforms</description><content:encoded>&lt;p&gt;import { Aside, Steps } from &apos;astro-pure/user&apos;&lt;/p&gt;
 &lt;h2&gt;Package Mode&lt;/h2&gt;
 &lt;p&gt;This theme which &gt;= v4.0.0 has integrated NPM package mode. Recommended way is remove local package file, and install the theme integration from NPM. If there&apos;s some reason you want to change the package content, you should link local package to your theme template. A &lt;code&gt;bun&lt;/code&gt; method is integrated. You should:&lt;/p&gt;
 &lt;ol&gt;
@@ -1683,7 +1562,128 @@ tokenizer.save_pretrained(&quot;lora_model&quot;)
 &lt;p&gt;People say you can clone a voice with just 30 seconds of audio using models like XTTS - no training required. That’s technically true, but it misses the point.&lt;/p&gt;
 &lt;p&gt;Zero-shot voice cloning, which is also available in models like Orpheus and CSM, is an approximation. It captures the general &lt;strong&gt;tone and timbre&lt;/strong&gt; of a speaker’s voice, but it doesn’t reproduce the full expressive range. You lose details like speaking speed, phrasing, vocal quirks, and the subtleties of prosody - things that give a voice its &lt;strong&gt;personality and uniqueness&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;If you just want a different voice and are fine with the same delivery patterns, zero-shot is usually good enough. But the speech will still follow the &lt;strong&gt;model’s style&lt;/strong&gt;, not the speaker’s.&lt;/p&gt;
-&lt;p&gt;For anything more personalized or expressive, you need training with methods like LoRA to truly capture how someone speaks.&lt;/p&gt;</content:encoded></item><item><title>Configuration</title><link>https://astro-pure.js.org/mind-garden/setup/configuration</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/setup/configuration</guid><description>Configuration files</description><content:encoded>&lt;h2&gt;Theme Configuration&lt;/h2&gt;
+&lt;p&gt;For anything more personalized or expressive, you need training with methods like LoRA to truly capture how someone speaks.&lt;/p&gt;</content:encoded></item><item><title>Getting Started</title><link>https://astro-pure.js.org/mind-garden/setup/getting-started</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/setup/getting-started</guid><description>Get started with the Astro Theme Pure</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;astro-pure/user&apos;&lt;/p&gt;
+&lt;h2&gt;Installation&lt;/h2&gt;
+&lt;p&gt;Two way to install. &quot;Template&quot; way is lightweight and simple, but hard to update; while &quot;Fork&quot; way is easy to update but needs some skills for git.&lt;/p&gt;
+&lt;h3&gt;Install Using Template&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Install the theme&lt;/p&gt;
+&lt;p&gt;Execute the following command in the your user directory to install the theme:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-toml&quot;&gt;[install]
+registry = &quot;&amp;#x3C;npm mirror site&gt;&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For details about other PM mirror configs, you may need to see their official documents.&lt;/p&gt;
+&lt;p&gt;By default, this command will use the template repository’s main branch. To use a different branch name, pass it as part of the &lt;code&gt;--template&lt;/code&gt; argument: &lt;code&gt;cworld1/astro-theme-pure#&amp;#x3C;branch&gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Answer the questions and follow the instructions of the CLI wizard.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;VOILA!&lt;/p&gt;
+&lt;p&gt;You can now &lt;a href=&quot;https://docs.astro.build/en/install-and-setup/#start-the-astro-dev-server&quot;&gt;start the Astro dev server&lt;/a&gt; and see a live preview of your project while you make it your own!&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;Install Using Fork&lt;/h3&gt;
+&lt;p&gt;You only need to &lt;a href=&quot;https://github.com/cworld1/astro-theme-pure/fork&quot;&gt;click fork button at theme repository&lt;/a&gt; to create your project; then clone the forked repository to your local machine.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;git clone https://github.com/&amp;#x3C;your-username&gt;/astro-theme-pure.git
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then, you can start the Astro dev server and see a live preview of your project while you make it your own!&lt;/p&gt;
+&lt;h2&gt;Start the Dev Server&lt;/h2&gt;
+&lt;p&gt;Go to your project directory:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;cd ./&amp;#x3C;your-project&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Next, please read the configuration notes first and continue configuring the theme.&lt;/p&gt;
+&lt;h2&gt;Migrate to Astro&lt;/h2&gt;
+&lt;p&gt;See &lt;a href=&quot;https://docs.astro.build/en/guides/migrate-to-astro/&quot;&gt;Astro: Migrate an existing project to Astro&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Theme File Structure&lt;/h2&gt;
+&lt;p&gt;The theme file structure is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;public&lt;/code&gt;: Static resources that will be copied to the root directory&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;src&lt;/code&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;assets&lt;/code&gt;: Static resources&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;components&lt;/code&gt;: Components used in the theme, also include user-like components, like &lt;code&gt;Card&lt;/code&gt;, &lt;code&gt;Collapse&lt;/code&gt;, &lt;code&gt;Spoiler&lt;/code&gt;, etc.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;layouts&lt;/code&gt;: Basic site layouts&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;pages&lt;/code&gt;: Pages like &lt;code&gt;404&lt;/code&gt;, &lt;code&gt;about&lt;/code&gt;, &lt;code&gt;blog&lt;/code&gt;, &lt;code&gt;docs&lt;/code&gt;, &lt;code&gt;index&lt;/code&gt;, etc.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;plugins&lt;/code&gt;: Extended plugins used in the theme&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;types&lt;/code&gt;: Typescript type definitions&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;utils&lt;/code&gt;: Utilities&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;site.config.ts&lt;/code&gt;: Theme configuration file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;astro.config.mjs&lt;/code&gt;: Astro configuration file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;eslint.config.mjs&lt;/code&gt;: ESLint configuration file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;prettier.config.mjs&lt;/code&gt;: Prettier configuration file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;uno.config.ts&lt;/code&gt;: UnoCSS configuration file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tsconfig.json&lt;/code&gt;: Typescript configuration file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;package.json&lt;/code&gt;: Package information&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Simple Setup&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Remove docs files&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Remove the &lt;code&gt;src/pages/docs&lt;/code&gt; directory&lt;/li&gt;
+&lt;li&gt;Remove the menu declaration in &lt;code&gt;src/site.config.ts&lt;/code&gt;:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const theme: ThemeUserConfig = {
+   // ...
+   /** Configure the header of your site. */
+   header: {
+      menu: [
+         { title: &apos;Blog&apos;, link: &apos;/blog&apos; },
+         { title: &apos;Docs&apos;, link: &apos;/docs&apos; }, // [!code --]
+         // ...
+      ],
+   },
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Remove the Content Collection for docs in &lt;code&gt;src/content.config.ts&lt;/code&gt;:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;const docs = defineCollection({ // [!code --]
+loader: glob({ base: &apos;./src/content/docs&apos;, pattern: &apos;**/*.{md,mdx}&apos; }), // [!code --]
+schema: ({ image }) =&gt; // [!code --]
+   z.object({ // [!code --]
+      ... // [!code --]
+   }) // [!code --]
+}) // [!code --]
+export const collections = { blog, docs } // [!code --]
+export const collections = { blog } // [!code ++]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Remove &lt;code&gt;packages&lt;/code&gt; directory (this will be imported by our NPM package)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Change the site favicon.&lt;/p&gt;
+&lt;p&gt;Replace the &lt;code&gt;public/favicon/*&lt;/code&gt; files with your own favicon.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Replace your avatar image.&lt;/p&gt;
+&lt;p&gt;Replace the &lt;code&gt;src/assets/avatar.png&lt;/code&gt; file with your own avatar image.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Configure the site&lt;/p&gt;
+&lt;p&gt;You can configure your project inside the &lt;code&gt;src/site.config.ts&lt;/code&gt; configuration file:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const theme: ThemeUserConfig = {
+   author: &apos;CWorld&apos;,
+   title: &apos;Astro Theme Pure&apos;,
+   site: &apos;https://astro-pure.js.org&apos;,
+   description: &apos;Stay hungry, stay foolish&apos;,
+   // ...
+}
+
+export const integ: IntegrationUserConfig = { /* ... */ }
+// ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Typescript Syntax&lt;/p&gt;
+&lt;p&gt;The configuration file &lt;code&gt;site.config.ts&lt;/code&gt; uses Typescript syntax. If you are not familiar with TS syntax, please read about it &lt;a href=&quot;https://learnxinyminutes.com/docs/typescript/&quot;&gt;here&lt;/a&gt; first.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</content:encoded></item><item><title>Configuration</title><link>https://astro-pure.js.org/mind-garden/setup/configuration</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/setup/configuration</guid><description>Configuration files</description><content:encoded>&lt;h2&gt;Theme Configuration&lt;/h2&gt;
 &lt;p&gt;File: &lt;code&gt;src/site.config.ts&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;pending update...&lt;/p&gt;
 &lt;h2&gt;Astro Configuration&lt;/h2&gt;
