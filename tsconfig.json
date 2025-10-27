@@ -1,0 +1,23 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "compilerOptions": {
+    // Basic
+    "allowJs": true,
+    // Building for a library
+    "declaration": true,
+    // Code runs in the DOM
+    "lib": ["es2022", "dom", "dom.iterable"],
+
+    // Others
+    "baseUrl": ".",
+    "strictNullChecks": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    // Paths
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules", "**/node_modules/*", ".vscode", "dist", "public/scripts/*", "test/*"]
+}

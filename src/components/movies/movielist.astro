@@ -1,0 +1,41 @@
+---
+import MoviePreview from './moviepreview.astro'
+import MovieCard from './moviecard.astro'
+
+interface Media {
+  type: string;
+  title: string;
+  score: number;
+  date: string;
+  comment: string;
+  quote: string;
+  cover: string;
+  link: string;
+  recommend: boolean;
+  favorite: boolean;
+  genre: string;
+}
+
+interface Props {
+  movies: Media[];
+  title?: string;
+}
+
+const { movies, title } = Astro.props;
+---
+
+<section class='mb-12 w-full'>
+  {title && <h2 class='text-2xl font-bold mb-6 flex justify-center items-center gap-2'>{title}</h2>}
+  
+  <div class='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 justify-items-center'>
+    {movies.map((movie) => {
+      const uniqueId = `${movie.type}-${movie.title.replace(/\s+/g, '-').toLowerCase()}`;
+      return (
+        <>
+          <MoviePreview movie={movie} uniqueId={uniqueId} />
+          <MovieCard movie={movie} uniqueId={uniqueId} />
+        </>
+      );
+    })}
+  </div>
+</section>

@@ -1,0 +1,142 @@
+---
+title: 'Fine-tuning TTS Models'
+description: A technical guide to fine-tuning Text-to-Speech (TTS) models with Unsloth.
+---
+
+import { Steps, Aside, Tabs, TabItem } from 'astro-pure/user'
+
+## Fine-tuning TTS Models: A Practical Guide
+
+This is a straight-to-the-point guide on fine-tuning Text-to-Speech (TTS) models. We'll be using [Unsloth](https://github.com/unslothai/unsloth) to speed up the process. The goal is to customize a TTS model for a specific voice or style.
+
+### Fine-tuning vs. Zero-shot
+
+<Aside type='note'>
+Zero-shot cloning is fast but often robotic. It captures tone but not the nuances of speech. Fine-tuning is more involved but produces a much more realistic and expressive voice.
+</Aside>
+
+### Model Selection
+
+Smaller models are generally better for TTS due to lower latency. Models under 3B parameters are a good starting point.
+
+<Tabs>
+<TabItem label='Sesame-CSM (1B)'>
+**CSM-1B** is a base model. It needs audio context for each speaker to perform well. Fine-tuning from a base model like this requires more compute, but offers more control.
+</TabItem>
+<TabItem label='Orpheus-TTS (3B)'>
+**Orpheus-TTS** is a fine-tuned model that excels at generating realistic speech with built-in emotional cues. It's easier to get good results out of the box with this one.
+</TabItem>
+<TabItem label='Other Models'>
+Unsloth also supports other models like **CrisperWhisper**, **Spark**, **Llasa-TTS**, and **Oute-TTS**.
+</TabItem>
+</Tabs>
+
+### Loading the Model
+
+Here’s how to load a model using Unsloth. We're using LoRA 16-bit, but you have other options.
+
+```python
+from unsloth import FastModel
+
+model, tokenizer = FastModel.from_pretrained(
+    model_name = "unsloth/orpheus-3b-0.1-pretrained",
+    load_in_4bit=False,  # Use False for LoRA 16-bit
+    # load_in_8bit=True, # Or use 8-bit
+    # full_finetuning=True # Or full fine-tuning
+)
+```
+
+### Dataset Preparation
+
+A good dataset is critical. You'll need audio clips and their corresponding transcripts.
+
+<Steps>
+
+1.  **Choose Your Dataset.**
+    You can use a pre-existing one from Hugging Face or create your own. The [*Elise* dataset](https://huggingface.co/datasets/MrDragonFox/Elise) is a good example. It has two variants:
+    *   `MrDragonFox/Elise`: Includes emotion tags like `<sigh>` and `<laughs>`.
+    *   `Jinsaryko/Elise`: A base version without emotion tags.
+
+2.  **Prepare a Custom Dataset (Optional).**
+    If you have your own audio, organize it in a folder and create a CSV or TSV file with `filename` and `text` columns.
+
+    ```
+    filename,text
+    0001.wav,Hello there!
+    0002.wav,<sigh> I am very tired.
+    ```
+
+3.  **Load and Process the Data.**
+    Here's an example using the `datasets` library to load and prepare the data.
+
+    ```python
+    from datasets import load_dataset, Audio
+
+    # For a Hugging Face dataset
+    dataset = load_dataset("MrDragonFox/Elise", split="train")
+
+    # For a custom CSV
+    # dataset = load_dataset("csv", data_files="mydata.csv", split="train")
+
+    # Set the sampling rate (Orpheus expects 24kHz)
+    dataset = dataset.cast_column("audio", Audio(sampling_rate=24000))
+    ```
+
+</Steps>
+
+<Aside type='tip'>
+Proper annotation and normalization of your dataset are more important than just focusing on tone and pitch.
+</Aside>
+
+### The Fine-tuning Process
+
+Now, let's fine-tune the model.
+
+<Steps>
+
+1.  **Configure the Trainer.**
+
+    ```python
+    from transformers import TrainingArguments,Trainer,DataCollatorForSeq2Seq
+    from unsloth import is_bfloat16_supported
+
+    trainer = Trainer(
+        model = model,
+        train_dataset = dataset,
+        args = TrainingArguments(
+            per_device_train_batch_size = 1,
+            gradient_accumulation_steps = 4,
+            warmup_steps = 5,
+            max_steps = 60, # Set to a low number for testing
+            learning_rate = 2e-4,
+            fp16 = not is_bfloat16_supported(),
+            bf16 = is_bfloat16_supported(),
+            logging_steps = 1,
+            optim = "adamw_8bit",
+            weight_decay = 0.01,
+            lr_scheduler_type = "linear",
+            seed = 3407,
+            output_dir = "outputs",
+            report_to = "none",
+        ),
+    )
+    ```
+
+2.  **Run the Training.**
+
+    ```python
+    trainer.train()
+    ```
+
+3.  **Save the LoRA Adapters.**
+
+    ```python
+    model.save_pretrained("lora_model")
+    tokenizer.save_pretrained("lora_model")
+    ```
+
+</Steps>
+
+<Aside type='caution'>
+**Audio Tokenization:** Fine-tuning a TTS model properly requires audio tokens for the training labels. The Orpheus repository has a script for this. Unsloth might abstract this away, but if not, you'll need to handle the audio tokenization yourself.
+</Aside>

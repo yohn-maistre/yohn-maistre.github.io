@@ -1,0 +1,248 @@
+---
+title: Text-to-Speech (TTS) Fine-tuning
+description: Learn how to fine-tune Text-to-Speech (TTS) models to adapt them to your specific dataset, use case, or desired style and tone.
+---
+
+# Text-to-Speech (TTS) Fine-tuning
+
+Fine-tuning TTS models allows them to adapt to your specific dataset, use case, or desired style and tone. The goal is to customize these models to clone voices, adapt speaking styles and tones, support new languages, handle specific tasks and more. We also support **Speech-to-Text (STT)** models like OpenAI's Whisper.
+
+With [Unsloth](https://github.com/unslothai/unsloth), you can fine-tune TTS models 1.5x faster with 50% less memory than other implementations with Flash Attention 2. This support includes Sesame CSM, Orpheus, and models supported by transformers (e.g. CrisperWhisper, Spark and more).
+
+:::info
+Zero-shot cloning captures tone but misses pacing and expression, often sounding robotic and unnatural. Fine-tuning delivers far more accurate and realistic voice replication. [Read more here](#fine-tuning-voice-models-vs-zero-shot-voice-cloning).
+:::
+
+We've uploaded TTS models (original and quantized variants) to our [Hugging Face page](https://huggingface.co/collections/unsloth/text-to-speech-tts-models-68007ab12522e96be1e02155).
+
+### Fine-tuning Notebooks:
+
+| [Sesame-CSM (1B)](https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Sesame_CSM_(1B)-TTS.ipynb) | [Orpheus-TTS (3B)](https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Orpheus_(3B)-TTS.ipynb) | [Whisper Large V3](https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Whisper.ipynb) Speech-to-Text (STT) |
+| --- | --- | --- |
+| [Spark-TTS (0.5B)](https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Spark_TTS_(0_5B).ipynb)   | [Llasa-TTS (1B)](https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Llasa_TTS_(1B).ipynb)     | [Oute-TTS (1B)](https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Oute_TTS_(1B).ipynb)                 |
+
+:::success
+If you notice that the output duration reaches a maximum of 10 seconds, increase`max_new_tokens = 125` from its default value of 125. Since 125 tokens corresponds to 10 seconds of audio, you'll need to set a higher value for longer outputs.
+:::
+
+### Choosing and Loading a TTS Model
+
+For TTS, smaller models are often preferred due to lower latency and faster inference for end users. Fine-tuning a model under 3B parameters is often ideal, and our primary examples uses Sesame-CSM (1B) and Orpheus-TTS (3B), a Llama-based speech model.
+
+#### Sesame-CSM (1B) Details
+
+**CSM-1B** is a base model, while **Orpheus-ft** is fine-tuned on 8 professional voice actors, making voice consistency the key difference. CSM requires audio context for each speaker to perform well, whereas Orpheus-ft has this consistency built in.
+
+Fine-tuning from a base model like CSM generally needs more compute, while starting from a fine-tuned model like Orpheus-ft offers better results out of the box.
+
+To help with CSM, we’ve added new sampling options and an example showing how to use audio context for improved voice consistency.
+
+#### Orpheus-TTS (3B) Details
+
+Orpheus is pre-trained on a large speech corpus and excels at generating realistic speech with built-in support for emotional cues like laughs and sighs. Its architecture makes it one of the easiest TTS models to utilize and train as it can be exported via llama.cpp meaning it has great compatibility across all inference engines. For unsupported models, you'll only be able to save the LoRA adapter safetensors.
+
+#### Loading the models
+
+Because voice models are usually small in size, you can train the models using LoRA 16-bit or full fine-tuning FFT which may provide higher quality results. To load it in LoRA 16-bit:
+
+```python
+from unsloth import FastModel
+
+model_name = "unsloth/orpheus-3b-0.1-pretrained"
+model, tokenizer = FastModel.from_pretrained(
+    model_name,
+    load_in_4bit=False  # use 4-bit precision (QLoRA)
+)
+```
+
+When this runs, Unsloth will download the model weights if you prefer 8-bit, you could use `load_in_8bit = True`, or for full fine-tuning set `full_finetuning = True` (ensure you have enough VRAM). You can also replace the model name with other TTS models.
+
+:::info
+**Note:** Orpheus’s tokenizer already includes special tokens for audio output (more on this later). You do *not* need a separate vocoder – Orpheus will output audio tokens directly, which can be decoded to a waveform.
+:::
+
+### Preparing Your Dataset
+
+At minimum, a TTS fine-tuning dataset consists of **audio clips and their corresponding transcripts** (text). Let’s use the [*Elise* dataset](https://huggingface.co/datasets/MrDragonFox/Elise) which is \~3 hour single-speaker English speech corpus. There are two variants:
+
+*   [`MrDragonFox/Elise`](https://huggingface.co/datasets/MrDragonFox/Elise) – an augmented version with **emotion tags** (e.g. \<sigh>, \<laughs>) embedded in the transcripts. These tags in angle brackets indicate expressions (laughter, sighs, etc.) and are treated as special tokens by Orpheus’s tokenizer
+*   [`Jinsaryko/Elise`](https://huggingface.co/datasets/Jinsaryko/Elise) – base version with transcripts without special tags.
+
+The dataset is organized with one audio and transcript per entry. On Hugging Face, these datasets have fields such as `audio` (the waveform), `text` (the transcription), and some metadata (speaker name, pitch stats, etc.). We need to feed Unsloth a dataset of audio-text pairs.
+
+:::success
+Instead of solely focusing on tone, cadence, and pitch, the priority should be ensuring your dataset is fully annotated and properly normalized.
+:::
+
+:::info
+With some models like **Sesame-CSM-1B**, you might notice voice variation across generations using speaker ID 0 because it's a **base model**—it doesn’t have fixed voice identities. Speaker ID tokens mainly help maintain **consistency within a conversation**, not across separate generations.
+
+To get a consistent voice, provide **contextual examples**, like a few reference audio clips or prior utterances. This helps the model mimic the desired voice more reliably. Without this, variation is expected, even with the same speaker ID.
+:::
+
+**Option 1: Using Hugging Face Datasets library** – We can load the Elise dataset using Hugging Face’s `datasets` library:
+
+```python
+from datasets import load_dataset, Audio
+
+# Load the Elise dataset (e.g., the version with emotion tags)
+dataset = load_dataset("MrDragonFox/Elise", split="train")
+print(len(dataset), "samples")  # ~1200 samples in Elise
+
+# Ensure all audio is at 24 kHz sampling rate (Orpheus’s expected rate)
+dataset = dataset.cast_column("audio", Audio(sampling_rate=24000))
+```
+
+This will download the dataset (\~328 MB for \~1.2k samples). Each item in `dataset` is a dictionary with at least:
+
+*   `"audio"`: the audio clip (waveform array and metadata like sampling rate), and
+*   `"text"`: the transcript string
+
+Orpheus supports tags like `<laugh>`, `<chuckle>`, `<sigh>`, `<cough>`, `<sniffle>`, `<groan>`, `<yawn>`, `<gasp>`, etc. For example: `"I missed you <laugh> so much!"`.  These tags are enclosed in angle brackets and will be treated as special tokens by the model (they match [Orpheus’s expected tags](https://github.com/canopyai/Orpheus-TTS) like `<laugh>` and `<sigh>`. During training, the model will learn to associate these tags with the corresponding audio patterns. The Elise dataset with tags already has many of these (e.g., 336 occurrences of “laughs”, 156 of “sighs”, etc. as listed in its card). If your dataset lacks such tags but you want to incorporate them, you can manually annotate the transcripts where the audio contains those expressions.
+
+**Option 2: Preparing a custom dataset** – If you have your own audio files and transcripts:
+
+*   Organize audio clips (WAV/FLAC files) in a folder.
+*   Create a CSV or TSV file with columns for file path and transcript. For example:
+
+    ```
+    filename,text
+    0001.wav,Hello there!
+    0002.wav,<sigh> I am very tired.
+    ```
+*   Use `load_dataset("csv", data_files="mydata.csv", split="train")` to load it. You might need to tell the dataset loader how to handle audio paths. An alternative is using the `datasets.Audio` feature to load audio data on the fly:
+
+    ```python
+    from datasets import Audio
+    dataset = load_dataset("csv", data_files="mydata.csv", split="train")
+    dataset = dataset.cast_column("filename", Audio(sampling_rate=24000))
+    ```
+
+    Then `dataset[i]["audio"]` will contain the audio array.
+*   **Ensure transcripts are normalized** (no unusual characters that the tokenizer might not know, except the emotion tags if used). Also ensure all audio have a consistent sampling rate (resample them if necessary to the target rate the model expects, e.g. 24kHz for Orpheus).
+
+In summary, for **dataset preparation**:
+
+*   You need a **list of (audio, text)** pairs.
+*   Use the HF `datasets` library to handle loading and optional preprocessing (like resampling).
+*   Include any **special tags** in the text that you want the model to learn (ensure they are in `<angle_brackets>` format so the model treats them as distinct tokens).
+*   (Optional) If multi-speaker, you could include a speaker ID token in the text or use a separate speaker embedding approach, but that’s beyond this basic guide (Elise is single-speaker).
+
+### Fine-Tuning TTS with Unsloth
+
+Now, let’s start fine-tuning! We’ll illustrate using Python code (which you can run in a Jupyter notebook, Colab, etc.).
+
+**Step 1: Load the Model and Dataset**
+
+In all our  TTS notebooks, we enable LoRA (16-bit) training and disable QLoRA (4-bit) training with: `load_in_4bit = False`. This is so the model can usually learn your dataset better and have higher accuracy.
+
+```python
+from unsloth import FastLanguageModel
+import torch
+dtype = None # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
+load_in_4bit = False # Use 4bit quantization to reduce memory usage. Can be False.
+
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name = "unsloth/orpheus-3b-0.1-ft",
+    max_seq_length= 2048, # Choose any for long context!
+    dtype = dtype,
+    load_in_4bit = load_in_4bit,
+    #token = "hf_...", # use one if using gated models like meta-llama/Llama-2-7b-hf
+)
+
+from datasets import load_dataset
+dataset = load_dataset("MrDragonFox/Elise", split = "train")
+```
+
+:::info
+If memory is very limited or if dataset is large, you can stream or load in chunks. Here, 3h of audio easily fits in RAM. If using your own dataset CSV, load it similarly.
+:::
+
+**Step 2: Advanced - Preprocess the data for training (Optional)**
+
+We need to prepare inputs for the Trainer. For text-to-speech, one approach is to train the model in a causal manner: concatenate text and audio token IDs as the target sequence. However, since Orpheus is a decoder-only LLM that outputs audio, we can feed the text as input (context) and have the audio token ids as labels. In practice, Unsloth’s integration might do this automatically if the model’s config identifies it as text-to-speech. If not, we can do something like:
+
+```python
+# Tokenize the text transcripts
+def preprocess_function(example):
+    # Tokenize the text (keep the special tokens like <laugh> intact)
+    tokens = tokenizer(example["text"], return_tensors="pt")
+    # Flatten to list of token IDs
+    input_ids = tokens["input_ids"].squeeze(0)
+    # The model will generate audio tokens after these text tokens.
+    # For training, we can set labels equal to input_ids (so it learns to predict next token).
+    # But that only covers text tokens predicting the next text token (which might be an audio token or end).
+    # A more sophisticated approach: append a special token indicating start of audio, and let the model generate the rest.
+    # For simplicity, use the same input as labels (the model will learn to output the sequence given itself).
+    return {"input_ids": input_ids, "labels": input_ids}
+
+train_data = dataset.map(preprocess_function, remove_columns=dataset.column_names)
+```
+
+:::info
+The above is a simplification. In reality, to fine-tune Orpheus properly, you would need the *audio tokens as part of the training labels*. Orpheus’s pre-training likely involved converting audio to discrete tokens (via an audio codec) and training the model to predict those given the preceding text. For fine-tuning on new voice data, you would similarly need to obtain the audio tokens for each clip (using Orpheus’s audio codec). The Orpheus GitHub provides a script for data processing – it encodes audio into sequences of `<custom_token_x>` tokens.
+:::
+
+However, **Unsloth may abstract this away**: if the model is a FastModel with an associated processor that knows how to handle audio, it might automatically encode the audio in the dataset to tokens. If not, you’d have to manually encode each audio clip to token IDs (using Orpheus’s codebook). This is an advanced step beyond this guide, but keep in mind that simply using text tokens won’t teach the model the actual audio – it needs to match the audio patterns.
+
+Let's assume Unsloth provides a way to feed audio directly (for example, by setting `processor` and passing the audio array). If Unsloth does not yet support automatic audio tokenization, you might need to use the Orpheus repository’s `encode_audio` function to get token sequences for the audio, then use those as labels. (The dataset entries do have `phonemes` and some acoustic features which suggests a pipeline.)
+
+**Step 3: Set up training arguments and Trainer**
+
+```python
+from transformers import TrainingArguments,Trainer,DataCollatorForSeq2Seq
+from unsloth import is_bfloat16_supported
+
+trainer = Trainer(
+    model = model,
+    train_dataset = dataset,
+    args = TrainingArguments(
+        per_device_train_batch_size = 1,
+        gradient_accumulation_steps = 4,
+        warmup_steps = 5,
+        # num_train_epochs = 1, # Set this for 1 full training run.
+        max_steps = 60,
+        learning_rate = 2e-4,
+        fp16 = not is_bfloat16_supported(),
+        bf16 = is_bfloat16_supported(),
+        logging_steps = 1,
+        optim = "adamw_8bit",
+        weight_decay = 0.01,
+        lr_scheduler_type = "linear",
+        seed = 3407,
+        output_dir = "outputs",
+        report_to = "none", # Use this for WandB etc
+    ),
+)
+```
+
+We do 60 steps to speed things up, but you can set `num_train_epochs=1` for a full run, and turn off `max_steps=None`. Using a per\_device\_train\_batch\_size >1 may lead to errors if multi-GPU setup to avoid issues, ensure CUDA\_VISIBLE\_DEVICES is set to a single GPU (e.g., CUDA\_VISIBLE\_DEVICES=0). Adjust as needed.
+
+**Step 4: Begin fine-tuning**
+
+This will start the training loop. You should see logs of loss every 50 steps (as set by `logging_steps`). The training might take some time depending on GPU – for example, on a Colab T4 GPU, a few epochs on 3h of data may take 1-2 hours. Unsloth’s optimizations will make it faster than standard HF training.
+
+**Step 5: Save the fine-tuned model**
+
+After training completes (or if you stop it mid-way when you feel it’s sufficient), save the model. This ONLY saves the LoRA adapters, and not the full model. To save to 16bit or GGUF, scroll down!
+
+```python
+model.save_pretrained("lora_model")  # Local saving
+tokenizer.save_pretrained("lora_model")
+# model.push_to_hub("your_name/lora_model", token = "...") # Online saving
+# tokenizer.push_to_hub("your_name/lora_model", token = "...") # Online saving
+```
+
+This saves the model weights (for LoRA, it might save only adapter weights if the base is not fully fine-tuned). If you used `--push_model` in CLI or `trainer.push_to_hub()`, you could upload it to Hugging Face Hub directly.
+
+Now you should have a fine-tuned TTS model in the directory. The next step is to test it out and if supported, you can use llama.cpp to convert it into a GGUF file.
+
+### Fine-tuning Voice models vs. Zero-shot voice cloning
+
+People say you can clone a voice with just 30 seconds of audio using models like XTTS - no training required. That’s technically true, but it misses the point.
+
+Zero-shot voice cloning, which is also available in models like Orpheus and CSM, is an approximation. It captures the general **tone and timbre** of a speaker’s voice, but it doesn’t reproduce the full expressive range. You lose details like speaking speed, phrasing, vocal quirks, and the subtleties of prosody - things that give a voice its **personality and uniqueness**.
+
+If you just want a different voice and are fine with the same delivery patterns, zero-shot is usually good enough. But the speech will still follow the **model’s style**, not the speaker’s.
+
+For anything more personalized or expressive, you need training with methods like LoRA to truly capture how someone speaks.

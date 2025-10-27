@@ -1,0 +1,86 @@
+---
+import { Button, Icon } from '../../../packages/pure/components/user';
+
+interface Props {
+  movie: any;
+  uniqueId: string;
+}
+
+const { movie, uniqueId } = Astro.props;
+---
+
+<dialog id={uniqueId} class='movie-dialog fixed inset-0 z-50 m-auto max-w-3xl w-[90vw] max-h-[90vh] bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden'>
+  <div class='p-6'>
+    <div class='aspect-[2/3] w-[40%] sm:w-[20%] mx-auto overflow-hidden rounded-lg shadow-md mb-3 mt-2'>
+      {movie.cover ? (
+        <img 
+          src={movie.cover} 
+          alt={movie.title} 
+          class='h-full w-full object-cover'
+          decoding='async'
+          onerror="this.onerror=null; this.src='/cover/b1.png';"
+        />
+      ) : (
+        <div class="h-full w-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+          <p class="text-gray-500 dark:text-gray-400 text-sm">No cover available</p>
+        </div>
+      )}
+    </div>
+    <div class='flex flex-col items-center justify-between w-full'>
+      <div class='w-full max-w-2xl max-h-[60vh] overflow-y-auto px-4 md:px-0 pb-8'>
+        <div class='flex items-center justify-center mb-2'>
+          <h3 class='text-2xl font-bold text-foreground'>{movie.title}</h3>
+          <span class='bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100 px-2 py-1 rounded-md text-sm font-bold ml-2'>
+            {movie.score}
+          </span>
+        </div>
+        <p class='text-sm text-muted-foreground mb-4 text-center'>
+          {movie.date}
+        </p>
+        <div class='prose dark:prose-invert mb-6 text-justify'>
+          <p>{movie.comment}</p>
+        </div>
+        {movie.quote && (
+          <blockquote class='border-l-4 border-amber-500 pl-4 text-muted-foreground my-4 text-justify'>
+            {movie.quote}
+          </blockquote>
+        )}
+      </div>
+      {movie.link && (
+        <Button href={movie.link} target='_blank' variant='button' class='self-center mt-4'>
+          <Icon name='link' class='mr-2 h-4 w-4' />
+            View review
+        </Button>
+      )}
+    </div>
+  </div>
+  <div class='absolute top-4 right-4'>
+    <button class='close-dialog text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-0' aria-label='Close dialog'>
+      ✕
+    </button>
+  </div>
+</dialog>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Get all dialogs
+    const dialogs = document.querySelectorAll('.movie-dialog');
+    
+    dialogs.forEach(dialog => {
+      const closeBtn = dialog.querySelector('.close-dialog');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dialog.close();
+        });
+      }
+      
+      // Close when clicking outside the dialog
+      dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) {
+          dialog.close();
+        }
+      });
+    });
+  });
+</script>
