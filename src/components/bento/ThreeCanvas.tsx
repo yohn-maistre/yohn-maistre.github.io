@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
 
 interface ThreeCanvasProps {
   modelPath: string
@@ -82,6 +83,9 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
     // GLTF Loader
     const loader = new GLTFLoader()
+    const dracoLoader = new DRACOLoader()
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/')
+    loader.setDRACOLoader(dracoLoader)
     loader.load(
       modelPath,
       (gltf) => {
