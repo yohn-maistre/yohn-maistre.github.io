@@ -50,14 +50,14 @@ import Link from '@/components/Link.astro'
 
   <div class='relative overflow-hidden [grid-area:g] sm:aspect-square size-full'>
     <div style={{ width: '100%', height: '100%' }}>
-      <DiscordPresence client:load />
+      <DiscordPresence client:visible />
     </div>
   </div>
 
   <div
     class='three-canvas-container has-overlay relative flex aspect-[6/5] items-center justify-center overflow-hidden p-4 [grid-area:e] hover:bg-none sm:aspect-[2.1/1] xl:aspect-auto'
   >
-    <SplineCanvas client:only='react' />
+    <SplineCanvas client:visible />
     {
       /* <ThreeCanvas
       client:load
@@ -122,12 +122,12 @@ import Link from '@/components/Link.astro'
         class="overlay absolute inset-0 z-0 size-full rounded-3xl bg-[url('/bento/spotify.webp')] bg-cover bg-center bg-no-repeat transition-opacity duration-200 xl:opacity-0"
       >
       </div>
-      <SpotifyPresence client:load />
+      <SpotifyPresence client:visible />
     </div>
   </div>
 
   <div class='aspect-[1/2.1] [grid-area:h] xl:aspect-auto' aria-hidden='true'>
-    <HousePostCanvas client:only='react' />
+    <HousePostCanvas client:visible />
   </div>
 
   <div
@@ -157,7 +157,7 @@ import Link from '@/components/Link.astro'
 
   <div class='aspect-square [grid-area:j] size-full'>
     <div style={{ width: '100%', height: '100%' }}>
-      <WakatimeGraph omitLanguages={['Markdown', 'JSON']} client:load />
+      <WakatimeGraph omitLanguages={['Markdown', 'JSON']} client:visible />
     </div>
   </div>
 
