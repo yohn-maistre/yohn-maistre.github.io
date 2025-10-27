@@ -15,7 +15,7 @@ Zero-shot cloning captures tone but misses pacing and expression, often sounding
 
 We've uploaded TTS models (original and quantized variants) to our [Hugging Face page](https://huggingface.co/collections/unsloth/text-to-speech-tts-models-68007ab12522e96be1e02155).
 
-### Fine-tuning Notebooks:
+## Fine-tuning Notebooks:
 
 | [Sesame-CSM (1B)](https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Sesame_CSM_(1B)-TTS.ipynb) | [Orpheus-TTS (3B)](https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Orpheus_(3B)-TTS.ipynb) | [Whisper Large V3](https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Whisper.ipynb) Speech-to-Text (STT) |
 | --- | --- | --- |
@@ -25,11 +25,11 @@ We've uploaded TTS models (original and quantized variants) to our [Hugging Face
 If you notice that the output duration reaches a maximum of 10 seconds, increase`max_new_tokens = 125` from its default value of 125. Since 125 tokens corresponds to 10 seconds of audio, you'll need to set a higher value for longer outputs.
 :::
 
-### Choosing and Loading a TTS Model
+## Choosing and Loading a TTS Model
 
 For TTS, smaller models are often preferred due to lower latency and faster inference for end users. Fine-tuning a model under 3B parameters is often ideal, and our primary examples uses Sesame-CSM (1B) and Orpheus-TTS (3B), a Llama-based speech model.
 
-#### Sesame-CSM (1B) Details
+### Sesame-CSM (1B) Details
 
 **CSM-1B** is a base model, while **Orpheus-ft** is fine-tuned on 8 professional voice actors, making voice consistency the key difference. CSM requires audio context for each speaker to perform well, whereas Orpheus-ft has this consistency built in.
 
@@ -37,11 +37,11 @@ Fine-tuning from a base model like CSM generally needs more compute, while start
 
 To help with CSM, we’ve added new sampling options and an example showing how to use audio context for improved voice consistency.
 
-#### Orpheus-TTS (3B) Details
+### Orpheus-TTS (3B) Details
 
 Orpheus is pre-trained on a large speech corpus and excels at generating realistic speech with built-in support for emotional cues like laughs and sighs. Its architecture makes it one of the easiest TTS models to utilize and train as it can be exported via llama.cpp meaning it has great compatibility across all inference engines. For unsupported models, you'll only be able to save the LoRA adapter safetensors.
 
-#### Loading the models
+### Loading the models
 
 Because voice models are usually small in size, you can train the models using LoRA 16-bit or full fine-tuning FFT which may provide higher quality results. To load it in LoRA 16-bit:
 
@@ -61,7 +61,7 @@ When this runs, Unsloth will download the model weights if you prefer 8-bit, you
 **Note:** Orpheus’s tokenizer already includes special tokens for audio output (more on this later). You do *not* need a separate vocoder – Orpheus will output audio tokens directly, which can be decoded to a waveform.
 :::
 
-### Preparing Your Dataset
+## Preparing Your Dataset
 
 At minimum, a TTS fine-tuning dataset consists of **audio clips and their corresponding transcripts** (text). Let’s use the [*Elise* dataset](https://huggingface.co/datasets/MrDragonFox/Elise) which is \~3 hour single-speaker English speech corpus. There are two variants:
 
@@ -128,7 +128,7 @@ In summary, for **dataset preparation**:
 *   Include any **special tags** in the text that you want the model to learn (ensure they are in `<angle_brackets>` format so the model treats them as distinct tokens).
 *   (Optional) If multi-speaker, you could include a speaker ID token in the text or use a separate speaker embedding approach, but that’s beyond this basic guide (Elise is single-speaker).
 
-### Fine-Tuning TTS with Unsloth
+## Fine-Tuning TTS with Unsloth
 
 Now, let’s start fine-tuning! We’ll illustrate using Python code (which you can run in a Jupyter notebook, Colab, etc.).
 
@@ -237,7 +237,7 @@ This saves the model weights (for LoRA, it might save only adapter weights if th
 
 Now you should have a fine-tuned TTS model in the directory. The next step is to test it out and if supported, you can use llama.cpp to convert it into a GGUF file.
 
-### Fine-tuning Voice models vs. Zero-shot voice cloning
+## Fine-tuning Voice models vs. Zero-shot voice cloning
 
 People say you can clone a voice with just 30 seconds of audio using models like XTTS - no training required. That’s technically true, but it misses the point.
 
