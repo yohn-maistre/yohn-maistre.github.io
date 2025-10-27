@@ -61,22 +61,22 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
       directionalLight.position.set(5, 5, 5)
       scene.add(directionalLight)
     } else if (lighting === 'studio') {
-      const ambientLight = new THREE.AmbientLight(0xffffff, 10)
-      scene.add(ambientLight)
+      // const ambientLight = new THREE.AmbientLight(0xffffff, 10)
+      // scene.add(ambientLight)
 
-      const spotLight = new THREE.SpotLight(0xffffff, 1000, 200, Math.PI / 4, 0.5)
+      const spotLight = new THREE.SpotLight(0xffffff, 1000, 20, Math.PI / 4, 0.5)
       spotLight.position.set(0, 50, 50)
       scene.add(spotLight)
 
-      const blueLight = new THREE.PointLight(0x0000ff, 5000, 200)
-      blueLight.position.set(-50, 25, 50)
-      scene.add(blueLight)
+      // const blueLight = new THREE.PointLight(0x0000ff, 5000, 200)
+      // blueLight.position.set(-50, 25, 50)
+      // scene.add(blueLight)
 
-      const redLight = new THREE.PointLight(0xff0000, 5000, 200)
-      redLight.position.set(50, 25, 50)
-      scene.add(redLight)
+      // const redLight = new THREE.PointLight(0xff0000, 5000, 200)
+      // redLight.position.set(50, 25, 50)
+      // scene.add(redLight)
 
-      const frontSpotLight = new THREE.SpotLight(0xffffff, 10000, 200, Math.PI / 3, 0.5)
+      const frontSpotLight = new THREE.SpotLight(0xffffff, 10000, 20, Math.PI / 4, 0.5)
       frontSpotLight.position.set(0, 0, 50)
       scene.add(frontSpotLight)
     }
@@ -92,8 +92,8 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
         model = gltf.scene
         model.traverse((child) => {
           if (child instanceof THREE.Mesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
+            child.castShadow = false;
+            child.receiveShadow = false;
           }
         });
         const box = new THREE.Box3().setFromObject(model)
