@@ -57,7 +57,7 @@ import Link from '@/components/Link.astro'
   <div
     class='three-canvas-container has-overlay relative flex aspect-[6/5] items-center justify-center overflow-hidden p-4 [grid-area:e] hover:bg-none sm:aspect-[2.1/1] xl:aspect-auto'
   >
-    <SplineCanvas client:visible />
+    <SplineCanvas client:load />
     {
       /* <ThreeCanvas
       client:load
@@ -127,7 +127,7 @@ import Link from '@/components/Link.astro'
   </div>
 
   <div class='aspect-[1/2.1] [grid-area:h] xl:aspect-auto' aria-hidden='true'>
-    <HousePostCanvas client:visible />
+    <HousePostCanvas client:load />
   </div>
 
   <div
