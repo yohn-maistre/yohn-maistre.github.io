@@ -20,6 +20,8 @@ jobs:
 
       - name: Build project
         run: bun run build
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

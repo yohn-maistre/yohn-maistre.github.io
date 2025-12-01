@@ -82,27 +82,6 @@ const menuTranslations: Record<string, Record<string, string>> = {
   </div>
 </header-component>
 
-{/* buttons */}
-<div class='z-30 flex gap-x-4 group-[.not-top]:gap-x-2' style='transition:gap 0.3s'>
-  <LanguageToggle client:load />
-  <button
-    id='toggleDarkMode'
-    class='group/dark box-content size-5 rounded-md border p-1.5 transition-colors hover:bg-border sm:group-[.not-top]:rounded-xl'
-  >
-    <span class='sr-only'>Dark Theme</span>
-    <Icon class='system size-5 group-hover/dark:text-primary' name='computer' />
-    <Icon class='light hidden size-5 group-hover/dark:text-primary' name='sun' />
-    <Icon class='dark hidden size-5 group-hover/dark:text-primary' name='moon' />
-  </button>
-  <button
-    id='toggleMenu'
-    class='rounded-md border p-1.5 transition-colors hover:bg-border sm:hidden sm:group-[.not-top]:rounded-xl'
-  >
-    <span class='sr-only'>Menu</span>
-    <Icon class='size-5' name='menu' />
-  </button>
-</div>
-
 {/* Use inline to load icon quicker firstly */}
 <script is:inline>
   const toggleDarkModeElement = document.getElementById('toggleDarkMode')
