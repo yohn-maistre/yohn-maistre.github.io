@@ -55,6 +55,9 @@ export function LanguageToggle() {
     
     if (basePath === '' || basePath === '/') {
       basePath = '/';
+    } else {
+      // Remove trailing slash for consistent comparison
+      basePath = basePath.replace(/\/$/, '');
     }
     
     // Check if this page exists in Indonesian
@@ -63,10 +66,13 @@ export function LanguageToggle() {
     
     // If switching to Indonesian and page doesn't exist, fallback to homepage
     if (targetLocale !== defaultLocale && !indonesianPages.includes(basePath)) {
+      console.log('[LanguageToggle] Page not in indonesianPages, redirecting to homepage. basePath:', basePath);
       return getLocalizedPath('/', targetLocale, defaultLocale);
     }
     
-    return getLocalizedPath(basePath, targetLocale, defaultLocale);
+    const finalUrl = getLocalizedPath(basePath, targetLocale, defaultLocale);
+    console.log('[LanguageToggle] Regular page - basePath:', basePath, 'targetLocale:', targetLocale, 'finalUrl:', finalUrl);
+    return finalUrl;
   };
 
   return (
