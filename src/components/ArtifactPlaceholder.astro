@@ -1,0 +1,35 @@
+---
+// src/components/ArtifactPlaceholder.astro
+// Props:
+// - modelUrl: string (absolute or relative public path to .glb)
+// - lqip: string (path to small preview jpg/png; keep tiny)
+// - alt: string
+// - id: string (optional)
+const { modelUrl, lqip, alt = 'Artifact preview', id = 'artifact-1', aspect = 1 } = Astro.props;
+---
+<div id={id} class="artifact-card" data-model={modelUrl}>
+  <!-- Preload hint for LCP-like discoverability (if this component is near top) -->
+  <link rel="preload" as="image" href={lqip} />
+
+  <div class="placeholder" aria-hidden="true">
+    <img
+      src={lqip}
+      alt={alt}
+      width="400" height={Math.round(400 / aspect)}
+      loading="eager"
+      fetchpriority="high"
+      style="width:100%;height:100%;object-fit:cover;filter:blur(8px);transform:scale(1.02)"
+    />
+  </div>
+
+  <div class="three-mount" data-model={modelUrl} />
+
+  <button class="load-cta" type="button" aria-label="Load 3D model">Load 3D</button>
+</div>
+
+<style>
+.artifact-card { position: relative; width: 100%; }
+.artifact-card::before { content: ""; display:block; padding-top: calc(100%); } /* square; override via aspect */
+.placeholder, .three-mount { position:absolute; inset:0; display:grid; place-items:center; }
+.load-cta { position:absolute; right:12px; bottom:12px; z-index:10; }
+</style>

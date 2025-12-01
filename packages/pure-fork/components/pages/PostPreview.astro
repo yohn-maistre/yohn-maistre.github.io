@@ -37,7 +37,18 @@ const postDate = data.updatedDate ?? data.publishDate
       !detailed && 'sm:flex-row',
       detailed && data.heroImage && 'max-md:pt-24'
     )}
-    href={`/blog/${id}`}
+    href={(() => {
+      const { collection } = post
+      // Normalize Windows paths
+      const normalizedId = id.replace(/\\/g, '/')
+
+      const isId = normalizedId.startsWith('id/')
+      // Strip locale prefix (id/ or en/)
+      const cleanId = normalizedId.replace(/^(id|en)\//, '')
+
+      if (isId) return `/id/${collection}/${cleanId}`
+      return `/${collection}/${cleanId}`
+    })()}
     data-astro-prefetch
   >
     {

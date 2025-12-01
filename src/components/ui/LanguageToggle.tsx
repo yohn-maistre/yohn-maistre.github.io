@@ -8,6 +8,9 @@ import {
   DropdownMenuTrigger,
 } from './dropdown-menu';
 
+// Import our i18n utilities
+import { getLocalizedPath, parseContentUrl, getContentPath } from '@/lib/i18n-utils';
+
 export function LanguageToggle() {
   const languages = [
     {
@@ -15,32 +18,55 @@ export function LanguageToggle() {
       code: 'en',
     },
     {
-      name: 'Indonesian',
+      name: 'Bahasa Indonesia',
       code: 'id',
     },
   ];
 
-  const getLocalizedUrl = (code: string) => {
-    const path = window.location.pathname;
-    const pathParts = path.split('/');
-    const currentLocale = pathParts[1];
-
-    if (languages.some(lang => lang.code === currentLocale)) {
-      if (code === 'en') {
-        // Switching to the default locale, so remove the locale from the path
-        pathParts.splice(1, 1);
-        return pathParts.join('/') || '/';
-      } else {
-        pathParts[1] = code;
-        return pathParts.join('/');
-      }
-    } else {
-      // We are on the default locale, so we are switching to a non-default locale
-      if (path === '/') {
-        return `/${code}`;
-      }
-      return `/${code}${path}`;
+  const getLocalizedUrl = (targetLocale: string) => {
+    const pathname = window.location.pathname;
+    const defaultLocale = 'en';
+    
+    // Parse content URL
+    const contentInfo = parseContentUrl(pathname);
+    
+    if (contentInfo) {
+      // For content pages (blog/mind-garden), build the URL
+      // Note: Content might not exist in target locale, will 404 gracefully
+      const contentUrl = getContentPath(
+        contentInfo.collection, 
+        contentInfo.slug, 
+        targetLocale, 
+        defaultLocale
+      );
+      return contentUrl;
     }
+    
+    // For regular pages
+    const pathParts = pathname.split('/').filter(Boolean);
+    const hasLocalePrefix = pathParts.length > 0 && languages.some(lang => lang.code === pathParts[0]);
+    
+    let basePath: string;
+    if (hasLocalePrefix) {
+      basePath = '/' + pathParts.slice(1).join('/');
+    } else {
+      basePath = pathname;
+    }
+    
+    if (basePath === '' || basePath === '/') {
+      basePath = '/';
+    }
+    
+    // Check if this page exists in Indonesian
+    // Known Indonesian pages - all main pages now exist
+    const indonesianPages = ['/', '/archives', '/blog', '/mind-garden', '/tags', '/about', '/projects', '/media', '/links', '/search'];
+    
+    // If switching to Indonesian and page doesn't exist, fallback to homepage
+    if (targetLocale !== defaultLocale && !indonesianPages.includes(basePath)) {
+      return getLocalizedPath('/', targetLocale, defaultLocale);
+    }
+    
+    return getLocalizedPath(basePath, targetLocale, defaultLocale);
   };
 
   return (

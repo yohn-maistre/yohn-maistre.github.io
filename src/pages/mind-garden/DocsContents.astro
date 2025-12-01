@@ -1,20 +1,30 @@
 ---
 import { type CollectionEntry } from 'astro:content'
-
 import { getBlogCollection } from '@yohn-maistre/astro-pure-fork/server'
 import { cn } from '@yohn-maistre/astro-pure-fork/utils'
 
 export const prerender = true
 export const partial = true
 
-const url = Astro.request.url;
-const lang = new URL(url).pathname.split('/')[1];
-const locale = ['en', 'id'].includes(lang) ? lang : 'en';
+const url = Astro.request.url
+const lang = new URL(url).pathname.split('/')[1]
+const locale = ['en', 'id'].includes(lang) ? lang : 'en'
 
-const docsCollection = (await getBlogCollection(locale, 'mind-garden')) as CollectionEntry<'mind-garden'>[]
+const docsCollection = (await getBlogCollection(
+  locale,
+  'mind-garden'
+)) as CollectionEntry<'mind-garden'>[]
+
+// Debug logs
+console.log(`[DocsContents] Locale: ${locale}, Found ${docsCollection.length} docs`)
+
 // Group docs by id first part (setup, integrations, advanced, etc.)
 const docsByCate = docsCollection.reduce((acc: { [key: string]: typeof docsCollection }, doc) => {
-  const id = doc.id.split('/')[0]
+  // doc.id is like 'en/gen-ai/file.mdx', so split('/')[1] gives 'gen-ai'
+  const parts = doc.id.split('/')
+  const id = parts.length > 1 ? parts[1] : parts[0]
+
+  console.log(`[DocsContents] Doc ID: ${doc.id}, Category: ${id}`)
   if (!acc[id]) acc[id] = [] as typeof docsCollection
   acc[id].push(doc)
   return acc
@@ -44,7 +54,17 @@ const { title = true, class: className, ...props } = Astro.props
               .sort((a, b) => a.data.order - b.data.order)
               .map((doc) => (
                 <li class='docs-item flex relative ms-2 px-3 py-1 text-foreground/75 transition-all rounded-2xl'>
-                  <a class='flex-1 hover:text-foreground' href={`/mind-garden/${doc.id}`}>
+                  <a
+                    class='flex-1 hover:text-foreground'
+                    href={(() => {
+                      const parts = doc.id.split('/')
+                      const isId = parts[0] === 'id'
+                      const cleanId = isId || parts[0] === 'en' ? parts.slice(1).join('/') : doc.id
+
+                      if (isId) return `/id/mind-garden/${cleanId}`
+                      return `/mind-garden/${cleanId}`
+                    })()}
+                  >
                     {doc.data.title}
                   </a>
                 </li>

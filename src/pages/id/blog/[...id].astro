@@ -7,11 +7,11 @@ import PostLayout from '@/layouts/BlogPost.astro'
 export const prerender = true
 
 export async function getStaticPaths() {
-  const posts = await getBlogCollection('en')
+  const posts = await getBlogCollection('id')
   const sortedPosts = sortMDByDate(posts)
   return sortedPosts.map((post) => ({
-    // Strip 'en/' prefix from slug to get clean URL: /blog/slug
-    params: { id: post.id.replace(/^en\//, '') },
+    // Strip 'id/' prefix from slug to get clean URL: /id/blog/slug
+    params: { id: post.id.replace(/^id\//, '') },
     props: { post, posts: sortedPosts }
   }))
 }

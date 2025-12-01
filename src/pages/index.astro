@@ -1,10 +1,11 @@
 ---
 import { Image } from 'astro:assets'
-
+import { getLangFromUrl, useTranslations } from '@/lib/i18n'
 import { Quote } from '@yohn-maistre/astro-pure-fork/advanced'
 import { PostPreview } from '@yohn-maistre/astro-pure-fork/components/pages'
 import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
 import { Button, Card, Icon, Label } from '@yohn-maistre/astro-pure-fork/user'
+
 import PageLayout from '@/layouts/BaseLayout.astro'
 import BentoGrid from '@/components/bento/BentoGrid.astro'
 import Clock from '@/components/home/Clock.tsx'
@@ -14,10 +15,9 @@ import SkillLayout from '@/components/home/SkillLayout.astro'
 import avatar from '@/assets/avatar.png'
 
 import config from '../site.config'
-import { getLangFromUrl, useTranslations } from '@/lib/i18n';
 
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
 
 const languages = ['Python', 'HTML', 'CSS', 'JS/TS', 'R', 'MATLAB']
 const frontend = ['Next.js', 'TailwindCSS', 'UnoCSS', 'Astro.js', 'Svelte', 'Vite', 'Three.js']
@@ -37,7 +37,8 @@ const orchestration = [
 const infrastructure = ['AWS', 'GCP', 'Vercel', 'Heroku']
 
 const MAX_POSTS = 4
-const allPosts = await getBlogCollection()
+// Filter blog posts by current locale
+const allPosts = await getBlogCollection(Astro.currentLocale ?? 'en')
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 ---
 
@@ -147,7 +148,12 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
                 </li>
               ))}
             </ul>
-            <Button title={t('home.more_posts')} class='w-fit self-end' href='/blog' variant='ahead' />
+            <Button
+              title={t('home.more_posts')}
+              class='w-fit self-end'
+              href='/blog'
+              variant='ahead'
+            />
           </Section>
         )
       }
