@@ -437,49 +437,6 @@ f: ^src\\pages\\terms\\.*\.md$
 
 ### Blog ###
 # Your own files
-&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Advanced Components</title><link>https://astro-pure.js.org/mind-garden/en/integrations/advanced</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/advanced</guid><description>Advanced components with advanced docs</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
-&lt;h2&gt;Web Content Render&lt;/h2&gt;
-&lt;h3&gt;Quote&lt;/h3&gt;
-&lt;p&gt;The &lt;code&gt;Quote&lt;/code&gt; component is a simple component that displays a random quote.&lt;/p&gt;
-&lt;p&gt;Config:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
-  // Add a random quote to the footer (default on homepage footer)
-  quote: {
-    // https://github.com/lukePeavey/quotable
-    server: &apos;https://api.quotable.io/quotes/random?maxLength=60&apos;, // [!code highlight:2]
-    target: `(data) =&gt; data[0].content || &apos;Error&apos;`
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;a href=&quot;https://github.com/lukePeavey/quotable&quot;&gt;Quotable&lt;/a&gt; is a open-source API that provides random English quotes.&lt;/p&gt;
-&lt;p&gt;For Chinese quotes, you can use &lt;a href=&quot;https://developer.hitokoto.cn/sentence/&quot;&gt;Hitokoto&lt;/a&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
-  quote: {
-    // https://developer.hitokoto.cn/sentence/#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
-    server: &apos;https://v1.hitokoto.cn/?c=i&apos;, // [!code highlight:2]
-    target: `(data) =&gt; data.hitokoto || &apos;Error&apos;`
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;GitHub Card&lt;/h3&gt;
-&lt;p&gt;The &lt;code&gt;GithubCard&lt;/code&gt; component is a simple component that displays a GitHub user card.&lt;/p&gt;
-&lt;h3&gt;Link Preview&lt;/h3&gt;
-&lt;p&gt;Preview any link inserted in the content.&lt;/p&gt;
-&lt;h2&gt;Data Transformer&lt;/h2&gt;
-&lt;h3&gt;QRCode&lt;/h3&gt;
-&lt;p&gt;&lt;/p&gt;
-&lt;p&gt;//  // default to render current page link
-&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;#x3C;/Fragment&gt;
-&amp;#x3C;/MdxRepl&gt;
-
-### Medium Zoom
-
-Try click the following image.
-
-![img](https://github.com/user-attachments/assets/6c42b061-df7e-4696-a29b-bff07fe17d88)
-
-See [Other Integrations#medium-zoom](/docs/integrations/others#medium-zoom).
 &lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Fine-tuning TTS Models</title><link>https://astro-pure.js.org/mind-garden/en/gen-ai/text-to-speech-fine-tuning</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/gen-ai/text-to-speech-fine-tuning</guid><description>A technical guide to fine-tuning Text-to-Speech (TTS) models with Unsloth.</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Fine-tuning TTS Models: A Practical Guide&lt;/h2&gt;
 &lt;p&gt;This is a straight-to-the-point guide on fine-tuning Text-to-Speech (TTS) models. We&apos;ll be using &lt;a href=&quot;https://github.com/unslothai/unsloth&quot;&gt;Unsloth&lt;/a&gt; to speed up the process. The goal is to customize a TTS model for a specific voice or style.&lt;/p&gt;
@@ -573,78 +530,50 @@ trainer = Trainer(
 tokenizer.save_pretrained(&quot;lora_model&quot;)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/li&gt;
-&lt;/ol&gt;</content:encoded></item><item><title>Comment System</title><link>https://astro-pure.js.org/mind-garden/en/integrations/comment</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/comment</guid><description>Comment system for pages at the bottom</description><content:encoded>&lt;p&gt;import { Aside } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
-&lt;h2&gt;Waline Comment System&lt;/h2&gt;
-&lt;p&gt;The theme&apos;s comment, read statistics, likes, and other functionalities are all provided by &lt;a href=&quot;https://waline.js.org/&quot;&gt;Waline&lt;/a&gt;.&lt;/p&gt;
-&lt;h3&gt;Remove&lt;/h3&gt;
-&lt;p&gt;If you have some reasons to remove the comment system, or just learn how to change to other comment systems, this section might help you. But if you want to know how to configure it, you can skip this section.&lt;/p&gt;
-&lt;p&gt;Remove it by the following steps:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;set &lt;code&gt;enable&lt;/code&gt; to &lt;code&gt;false&lt;/code&gt; in &lt;code&gt;src/site.config.ts&lt;/code&gt;.&lt;/p&gt;
+&lt;/ol&gt;</content:encoded></item><item><title>Advanced Components</title><link>https://astro-pure.js.org/mind-garden/en/integrations/advanced</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/advanced</guid><description>Advanced components with advanced docs</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+&lt;h2&gt;Web Content Render&lt;/h2&gt;
+&lt;h3&gt;Quote&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;Quote&lt;/code&gt; component is a simple component that displays a random quote.&lt;/p&gt;
+&lt;p&gt;Config:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
-  // ...
-  waline: {
-    enable: false // [!code highlight]
+  // Add a random quote to the footer (default on homepage footer)
+  quote: {
+    // https://github.com/lukePeavey/quotable
+    server: &apos;https://api.quotable.io/quotes/random?maxLength=60&apos;, // [!code highlight:2]
+    target: `(data) =&gt; data[0].content || &apos;Error&apos;`
   }
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Remove dependency &lt;code&gt;@waline/client&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;bun remove @waline/client
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Remove folder &lt;code&gt;src/components/waline&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Remove relative code in these layouts:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;src/layouts/CommonPage.astro&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;src/layouts/BlogPost.astro&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Remove relative config like &lt;code&gt;comment&lt;/code&gt; or &lt;code&gt;view&lt;/code&gt; configuring for the earlier edited layouts in these files:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;src/pages/about/index.astro&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;src/pages/links/index.astro&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;src/pages/projects/index.astro&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Other blog post frontmatter config if exists&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Deploy&lt;/h3&gt;
-&lt;p&gt;You can refer to its documentation for configuration, and it is recommended to use the &lt;a href=&quot;https://vercel.com/&quot;&gt;Vercel&lt;/a&gt; + &lt;a href=&quot;https://supabase.com/&quot;&gt;Supabase&lt;/a&gt; combination.&lt;/p&gt;
-&lt;h3&gt;Configuration&lt;/h3&gt;
-&lt;p&gt;Then you can configure the Waline comment system in the &lt;code&gt;integrationConfig.server&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/lukePeavey/quotable&quot;&gt;Quotable&lt;/a&gt; is a open-source API that provides random English quotes.&lt;/p&gt;
+&lt;p&gt;For Chinese quotes, you can use &lt;a href=&quot;https://developer.hitokoto.cn/sentence/&quot;&gt;Hitokoto&lt;/a&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
-  // ...
-  waline: {
-    enable: true,
-    // Server service link
-    server: &apos;https://astro-theme-pure-waline.arthals.ink/&apos;, // [!code highlight]
-    // Refer https://waline.js.org/en/guide/features/emoji.html
-    emoji: [&apos;bmoji&apos;, &apos;weibo&apos;],
-    // Refer https://waline.js.org/en/reference/client/props.html
-    additionalConfigs: {
-      pageview: true,
-      comment: true
-      // ...
-    }
+  quote: {
+    // https://developer.hitokoto.cn/sentence/#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
+    server: &apos;https://v1.hitokoto.cn/?c=i&apos;, // [!code highlight:2]
+    target: `(data) =&gt; data.hitokoto || &apos;Error&apos;`
   }
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;Usage&lt;/h3&gt;
-&lt;p&gt;You can call it manually in &lt;code&gt;.astro&lt;/code&gt; or &lt;code&gt;.mdx&lt;/code&gt; files.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-jsx&quot;&gt;import { Comment } from &apos;@/components/waline&apos;
+&lt;h3&gt;GitHub Card&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;GithubCard&lt;/code&gt; component is a simple component that displays a GitHub user card.&lt;/p&gt;
+&lt;h3&gt;Link Preview&lt;/h3&gt;
+&lt;p&gt;Preview any link inserted in the content.&lt;/p&gt;
+&lt;h2&gt;Data Transformer&lt;/h2&gt;
+&lt;h3&gt;QRCode&lt;/h3&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;//  // default to render current page link
+&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;#x3C;/Fragment&gt;
+&amp;#x3C;/MdxRepl&gt;
 
-// prettier-ignore
-&amp;#x3C;Comment /&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Render:&lt;/p&gt;
-&lt;p&gt;import { Comment } from &apos;@/components/waline&apos;&lt;/p&gt;</content:encoded></item><item><title>Shiki Code</title><link>https://astro-pure.js.org/mind-garden/en/integrations/code</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/code</guid><description>Some methods for better using shiki code</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+### Medium Zoom
+
+Try click the following image.
+
+![img](https://github.com/user-attachments/assets/6c42b061-df7e-4696-a29b-bff07fe17d88)
+
+See [Other Integrations#medium-zoom](/docs/integrations/others#medium-zoom).
+&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Shiki Code</title><link>https://astro-pure.js.org/mind-garden/en/integrations/code</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/code</guid><description>Some methods for better using shiki code</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Basic Usage&lt;/h2&gt;
 &lt;p&gt;For &lt;code&gt;.astro&lt;/code&gt; file:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-astro&quot;&gt;---
@@ -727,7 +656,78 @@ function draw(t,c) { ctx.fillStyle=c; ctx.fillRect(t%sz*sz+1,~~(t/sz)*sz+1,sz-2,
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;&amp;#x3C;/Fragment&gt;
 &amp;#x3C;/MdxRepl&gt;
-&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>User Components</title><link>https://astro-pure.js.org/mind-garden/en/integrations/components</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/components</guid><description>Easily extend your content page more interactive</description><content:encoded>&lt;p&gt;import { Aside, Tabs, TabItem, MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Comment System</title><link>https://astro-pure.js.org/mind-garden/en/integrations/comment</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/comment</guid><description>Comment system for pages at the bottom</description><content:encoded>&lt;p&gt;import { Aside } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+&lt;h2&gt;Waline Comment System&lt;/h2&gt;
+&lt;p&gt;The theme&apos;s comment, read statistics, likes, and other functionalities are all provided by &lt;a href=&quot;https://waline.js.org/&quot;&gt;Waline&lt;/a&gt;.&lt;/p&gt;
+&lt;h3&gt;Remove&lt;/h3&gt;
+&lt;p&gt;If you have some reasons to remove the comment system, or just learn how to change to other comment systems, this section might help you. But if you want to know how to configure it, you can skip this section.&lt;/p&gt;
+&lt;p&gt;Remove it by the following steps:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;set &lt;code&gt;enable&lt;/code&gt; to &lt;code&gt;false&lt;/code&gt; in &lt;code&gt;src/site.config.ts&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
+  // ...
+  waline: {
+    enable: false // [!code highlight]
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Remove dependency &lt;code&gt;@waline/client&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;bun remove @waline/client
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Remove folder &lt;code&gt;src/components/waline&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Remove relative code in these layouts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;src/layouts/CommonPage.astro&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;src/layouts/BlogPost.astro&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Remove relative config like &lt;code&gt;comment&lt;/code&gt; or &lt;code&gt;view&lt;/code&gt; configuring for the earlier edited layouts in these files:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;src/pages/about/index.astro&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;src/pages/links/index.astro&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;src/pages/projects/index.astro&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Other blog post frontmatter config if exists&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;Deploy&lt;/h3&gt;
+&lt;p&gt;You can refer to its documentation for configuration, and it is recommended to use the &lt;a href=&quot;https://vercel.com/&quot;&gt;Vercel&lt;/a&gt; + &lt;a href=&quot;https://supabase.com/&quot;&gt;Supabase&lt;/a&gt; combination.&lt;/p&gt;
+&lt;h3&gt;Configuration&lt;/h3&gt;
+&lt;p&gt;Then you can configure the Waline comment system in the &lt;code&gt;integrationConfig.server&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
+  // ...
+  waline: {
+    enable: true,
+    // Server service link
+    server: &apos;https://astro-theme-pure-waline.arthals.ink/&apos;, // [!code highlight]
+    // Refer https://waline.js.org/en/guide/features/emoji.html
+    emoji: [&apos;bmoji&apos;, &apos;weibo&apos;],
+    // Refer https://waline.js.org/en/reference/client/props.html
+    additionalConfigs: {
+      pageview: true,
+      comment: true
+      // ...
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Usage&lt;/h3&gt;
+&lt;p&gt;You can call it manually in &lt;code&gt;.astro&lt;/code&gt; or &lt;code&gt;.mdx&lt;/code&gt; files.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-jsx&quot;&gt;import { Comment } from &apos;@/components/waline&apos;
+
+// prettier-ignore
+&amp;#x3C;Comment /&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Render:&lt;/p&gt;
+&lt;p&gt;import { Comment } from &apos;@/components/waline&apos;&lt;/p&gt;</content:encoded></item><item><title>User Components</title><link>https://astro-pure.js.org/mind-garden/en/integrations/components</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/integrations/components</guid><description>Easily extend your content page more interactive</description><content:encoded>&lt;p&gt;import { Aside, Tabs, TabItem, MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;p&gt;Components let you easily reuse a piece of UI or styling consistently. You can use them not just in &lt;code&gt;.astro&lt;/code&gt; files, but also in &lt;code&gt;.mdx&lt;/code&gt; files.&lt;/p&gt;
 &lt;p&gt;For &lt;code&gt;.astro&lt;/code&gt;, you can directly import and use components and use. An example will also shown in the first section.&lt;/p&gt;
 &lt;h2&gt;Containers&lt;/h2&gt;
@@ -1158,7 +1158,105 @@ import config from &apos;@/site-config&apos;
 &lt;p&gt;Problem: Errors during build time when processing LaTeX syntax.&lt;/p&gt;
 &lt;p&gt;Solution: Ensure that your LaTeX is correctly formatted and that there are no syntax errors in your markdown files. LaTeX syntax errors can break the parser and cause build failures.&lt;/p&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</content:encoded></item><item><title>Authoring Content</title><link>https://astro-pure.js.org/mind-garden/en/setup/content</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/setup/content</guid><description>Making your own content</description><content:encoded>&lt;p&gt;import { Aside } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+&lt;/ul&gt;</content:encoded></item><item><title>Deployment</title><link>https://astro-pure.js.org/mind-garden/en/setup/deployment</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/setup/deployment</guid><description>Deploy your site to various platforms</description><content:encoded>&lt;p&gt;import { Aside, Steps } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+&lt;h2&gt;Package Mode&lt;/h2&gt;
+&lt;p&gt;This theme which &gt;= v4.0.0 has integrated NPM package mode. Recommended way is remove local package file, and install the theme integration from NPM. If there&apos;s some reason you want to change the package content, you should link local package to your theme template. A &lt;code&gt;bun&lt;/code&gt; method is integrated. You should:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Add environment variable &lt;code&gt;BUN_LINK_PKG=true&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Run &lt;code&gt;bun pure check&lt;/code&gt; to link the package automatically.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This method can also work on Deployment for other platforms like &apos;Vercel&apos;. All you need is to add the environment variable to build options on your platform control settings. The build command &lt;code&gt;@yohn-maistre/astro-pure-fork check &amp;#x26;&amp;#x26; astro check &amp;#x26;&amp;#x26; astro build&lt;/code&gt; will automatically link the package.&lt;/p&gt;
+&lt;h2&gt;Deployment Mode&lt;/h2&gt;
+&lt;p&gt;Astro had a very fantastic support for deployment. Check &lt;a href=&quot;https://docs.astro.build/en/guides/deploy/&quot;&gt;Deploy your Astro Site&lt;/a&gt; for more.&lt;/p&gt;
+&lt;h3&gt;Vercel&lt;/h3&gt;
+&lt;p&gt;This theme supports Vercel by default:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Push your code to your online Git repository (GitHub, GitLab, BitBucket).&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://vercel.com/new&quot;&gt;Import your project&lt;/a&gt; into Vercel.&lt;/li&gt;
+&lt;li&gt;Vercel will automatically detect Astro and configure the right settings.&lt;/li&gt;
+&lt;li&gt;Your application is deployed! (e.g. &lt;a href=&quot;https://astro.vercel.app/&quot;&gt;astro.vercel.app&lt;/a&gt;)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;And vercel also support static method:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;import vercelServerless from &apos;@astrojs/vercel/serverless&apos; // [!code --]
+import vercelStatic from &apos;@astrojs/vercel/static&apos;; // [!code ++]
+
+export default defineConfig({
+  //   ...
+  adapter: vercelServerless() // [!code --]
+  adapter: vercelStatic(), // [!code ++]
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Node server&lt;/h3&gt;
+&lt;p&gt;If you are deploying with Node.js locally, you need to install &lt;code&gt;@astrojs/node&lt;/code&gt; first:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;bun add &apos;@astrojs/node&apos;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then follow the comments in &lt;code&gt;astro.config.ts&lt;/code&gt; and modify like:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;import node from &apos;@astrojs/node&apos; // [!code ++]
+import vercelServerless from &apos;@astrojs/vercel/serverless&apos; // [!code --]
+
+export default defineConfig({
+  //   ...
+  adapter: vercelServerless(), // [!code --]
+  adapter: node({ mode: &apos;standalone&apos; }), // [!code ++]
+
+  integrations: [
+    // prettier-ignore
+    outputCopier({ // [!code --]
+      integ: [&apos;sitemap&apos;, &apos;pagefind&apos;] // [!code --]
+    }) // [!code --]
+  ]
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Bun server&lt;/h3&gt;
+&lt;p&gt;Bun also support static method.&lt;/p&gt;
+&lt;p&gt;Check &lt;a href=&quot;https://www.npmjs.com/package/@nurodev/astro-bun&quot;&gt;@nurodev/astro-bun&lt;/a&gt; for more.&lt;/p&gt;
+&lt;h3&gt;Static&lt;/h3&gt;
+&lt;p&gt;Remove all server adapter configuration in &lt;code&gt;astro.config.ts&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;import vercelServerless from &apos;@astrojs/vercel/serverless&apos; // [!code --]
+
+export default defineConfig({
+  //   ...
+  adapter: vercelServerless(), // [!code --]
+  output: &apos;server&apos; // [!code --]
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;GitHub Pages&lt;/h3&gt;
+&lt;p&gt;See &lt;a href=&quot;https://docs.astro.build/en/guides/deploy/github/&quot;&gt;Astro: Configure Astro for GitHub Pages&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For ones deploying on GitHub Pages with a base path, like &lt;code&gt;username.github.io/repo-name&lt;/code&gt;, please read &lt;a href=&quot;/mind-garden/setup/deployment#platform-with-base-path&quot;&gt;Deployment#Platform with Base Path&lt;/a&gt;.
+carefully.&lt;/p&gt;
+&lt;h2&gt;Platform with Base Path&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Astro provides basic support for a base path — see the &quot;base&quot; option in the configuration reference &lt;a href=&quot;https://docs.astro.build/en/reference/configuration-reference/#base&quot;&gt;Astro: base&lt;/a&gt; for more.&lt;/li&gt;
+&lt;li&gt;This theme will not support the base path, as it seriously break down the experience of remote developments. In general, deploying the template with a base path is not recommended because the homepage integrates lists, resume elements, and other features that rely on the template’s source structure.&lt;/li&gt;
+&lt;li&gt;If you follow the guide and modify the code, you can deploy with a base path, but you cannot use the same project copy to deploy both with and without a base path simultaneously. Proceed at your own risk; do not open issues about this unless you plan to contribute improvements to the docs.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Set the &lt;code&gt;base&lt;/code&gt; option in &lt;code&gt;astro.config.ts&lt;/code&gt; to your base path, for example:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export default defineConfig({
+  //   ...
+  base: &apos;/repo-name/&apos; // Replace with your repository name
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Update all internal links in Dynamic script files:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;src/components/BaseHead.astro&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;src/pages/mind-garden/DocsContent.astro&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;src/pages/rss.xml.ts&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;packages/pure/components/pages/PostPreview.astro&lt;/code&gt; (&lt;a href=&quot;/mind-garden/advanced/customize&quot;&gt;Customize Theme&lt;/a&gt; is required to make the change)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Update all static resource paths:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Add base paths in &lt;code&gt;src/site.config.ts&lt;/code&gt;. Especially the menu configs.&lt;/li&gt;
+&lt;li&gt;Add base paths in &lt;code&gt;src/plugins/shiki-transformers.ts&lt;/code&gt; for all &lt;code&gt;/icons/code.svg&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Add base paths in &lt;code&gt;src/assets/styles/app.css&lt;/code&gt; for all url in &lt;code&gt;@font-face&lt;/code&gt; property.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</content:encoded></item><item><title>Authoring Content</title><link>https://astro-pure.js.org/mind-garden/en/setup/content</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/setup/content</guid><description>Making your own content</description><content:encoded>&lt;p&gt;import { Aside } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;p&gt;Astro helps you &lt;a href=&quot;https://docs.astro.build/en/guides/content/&quot;&gt;author and present your content&lt;/a&gt;. You can write a blog post directly in Astro using Markdown/MDX, or fetch your content from a headless CMS. Astro lets you build a site around your content: you can add a layout to your pages, create an index of posts, and set up an RSS feed to allow readers to subscribe.&lt;/p&gt;
 &lt;h2&gt;Writing Content&lt;/h2&gt;
 &lt;p&gt;In Astro, you can author your content in a variety of ways:&lt;/p&gt;
@@ -1280,105 +1378,7 @@ heroImage: { src: &apos;./thumbnail.jpg&apos; } # will used to social-image
 This is the first section of the privacy policy.
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h3&gt;HTML Pages&lt;/h3&gt;
-&lt;p&gt;Files with the &lt;code&gt;.html&lt;/code&gt; file extension can be placed in the &lt;code&gt;src/pages/&lt;/code&gt; directory and used directly as pages on your site. Note that some key Astro features are not supported in &lt;a href=&quot;https://docs.astro.build/en/basics/astro-components/#html-components&quot;&gt;HTML Components&lt;/a&gt;.&lt;/p&gt;</content:encoded></item><item><title>Deployment</title><link>https://astro-pure.js.org/mind-garden/en/setup/deployment</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/setup/deployment</guid><description>Deploy your site to various platforms</description><content:encoded>&lt;p&gt;import { Aside, Steps } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
-&lt;h2&gt;Package Mode&lt;/h2&gt;
-&lt;p&gt;This theme which &gt;= v4.0.0 has integrated NPM package mode. Recommended way is remove local package file, and install the theme integration from NPM. If there&apos;s some reason you want to change the package content, you should link local package to your theme template. A &lt;code&gt;bun&lt;/code&gt; method is integrated. You should:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Add environment variable &lt;code&gt;BUN_LINK_PKG=true&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;Run &lt;code&gt;bun pure check&lt;/code&gt; to link the package automatically.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;This method can also work on Deployment for other platforms like &apos;Vercel&apos;. All you need is to add the environment variable to build options on your platform control settings. The build command &lt;code&gt;@yohn-maistre/astro-pure-fork check &amp;#x26;&amp;#x26; astro check &amp;#x26;&amp;#x26; astro build&lt;/code&gt; will automatically link the package.&lt;/p&gt;
-&lt;h2&gt;Deployment Mode&lt;/h2&gt;
-&lt;p&gt;Astro had a very fantastic support for deployment. Check &lt;a href=&quot;https://docs.astro.build/en/guides/deploy/&quot;&gt;Deploy your Astro Site&lt;/a&gt; for more.&lt;/p&gt;
-&lt;h3&gt;Vercel&lt;/h3&gt;
-&lt;p&gt;This theme supports Vercel by default:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Push your code to your online Git repository (GitHub, GitLab, BitBucket).&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://vercel.com/new&quot;&gt;Import your project&lt;/a&gt; into Vercel.&lt;/li&gt;
-&lt;li&gt;Vercel will automatically detect Astro and configure the right settings.&lt;/li&gt;
-&lt;li&gt;Your application is deployed! (e.g. &lt;a href=&quot;https://astro.vercel.app/&quot;&gt;astro.vercel.app&lt;/a&gt;)&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;And vercel also support static method:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;import vercelServerless from &apos;@astrojs/vercel/serverless&apos; // [!code --]
-import vercelStatic from &apos;@astrojs/vercel/static&apos;; // [!code ++]
-
-export default defineConfig({
-  //   ...
-  adapter: vercelServerless() // [!code --]
-  adapter: vercelStatic(), // [!code ++]
-})
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;Node server&lt;/h3&gt;
-&lt;p&gt;If you are deploying with Node.js locally, you need to install &lt;code&gt;@astrojs/node&lt;/code&gt; first:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;bun add &apos;@astrojs/node&apos;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Then follow the comments in &lt;code&gt;astro.config.ts&lt;/code&gt; and modify like:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;import node from &apos;@astrojs/node&apos; // [!code ++]
-import vercelServerless from &apos;@astrojs/vercel/serverless&apos; // [!code --]
-
-export default defineConfig({
-  //   ...
-  adapter: vercelServerless(), // [!code --]
-  adapter: node({ mode: &apos;standalone&apos; }), // [!code ++]
-
-  integrations: [
-    // prettier-ignore
-    outputCopier({ // [!code --]
-      integ: [&apos;sitemap&apos;, &apos;pagefind&apos;] // [!code --]
-    }) // [!code --]
-  ]
-})
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;Bun server&lt;/h3&gt;
-&lt;p&gt;Bun also support static method.&lt;/p&gt;
-&lt;p&gt;Check &lt;a href=&quot;https://www.npmjs.com/package/@nurodev/astro-bun&quot;&gt;@nurodev/astro-bun&lt;/a&gt; for more.&lt;/p&gt;
-&lt;h3&gt;Static&lt;/h3&gt;
-&lt;p&gt;Remove all server adapter configuration in &lt;code&gt;astro.config.ts&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;import vercelServerless from &apos;@astrojs/vercel/serverless&apos; // [!code --]
-
-export default defineConfig({
-  //   ...
-  adapter: vercelServerless(), // [!code --]
-  output: &apos;server&apos; // [!code --]
-})
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;GitHub Pages&lt;/h3&gt;
-&lt;p&gt;See &lt;a href=&quot;https://docs.astro.build/en/guides/deploy/github/&quot;&gt;Astro: Configure Astro for GitHub Pages&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;For ones deploying on GitHub Pages with a base path, like &lt;code&gt;username.github.io/repo-name&lt;/code&gt;, please read &lt;a href=&quot;/mind-garden/setup/deployment#platform-with-base-path&quot;&gt;Deployment#Platform with Base Path&lt;/a&gt;.
-carefully.&lt;/p&gt;
-&lt;h2&gt;Platform with Base Path&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;Astro provides basic support for a base path — see the &quot;base&quot; option in the configuration reference &lt;a href=&quot;https://docs.astro.build/en/reference/configuration-reference/#base&quot;&gt;Astro: base&lt;/a&gt; for more.&lt;/li&gt;
-&lt;li&gt;This theme will not support the base path, as it seriously break down the experience of remote developments. In general, deploying the template with a base path is not recommended because the homepage integrates lists, resume elements, and other features that rely on the template’s source structure.&lt;/li&gt;
-&lt;li&gt;If you follow the guide and modify the code, you can deploy with a base path, but you cannot use the same project copy to deploy both with and without a base path simultaneously. Proceed at your own risk; do not open issues about this unless you plan to contribute improvements to the docs.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Set the &lt;code&gt;base&lt;/code&gt; option in &lt;code&gt;astro.config.ts&lt;/code&gt; to your base path, for example:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export default defineConfig({
-  //   ...
-  base: &apos;/repo-name/&apos; // Replace with your repository name
-})
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Update all internal links in Dynamic script files:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;src/components/BaseHead.astro&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;src/pages/mind-garden/DocsContent.astro&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;src/pages/rss.xml.ts&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;packages/pure/components/pages/PostPreview.astro&lt;/code&gt; (&lt;a href=&quot;/mind-garden/advanced/customize&quot;&gt;Customize Theme&lt;/a&gt; is required to make the change)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Update all static resource paths:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Add base paths in &lt;code&gt;src/site.config.ts&lt;/code&gt;. Especially the menu configs.&lt;/li&gt;
-&lt;li&gt;Add base paths in &lt;code&gt;src/plugins/shiki-transformers.ts&lt;/code&gt; for all &lt;code&gt;/icons/code.svg&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;Add base paths in &lt;code&gt;src/assets/styles/app.css&lt;/code&gt; for all url in &lt;code&gt;@font-face&lt;/code&gt; property.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ol&gt;</content:encoded></item><item><title>Getting Started</title><link>https://astro-pure.js.org/mind-garden/en/setup/getting-started</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/setup/getting-started</guid><description>Get started with the Astro Theme Pure</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+&lt;p&gt;Files with the &lt;code&gt;.html&lt;/code&gt; file extension can be placed in the &lt;code&gt;src/pages/&lt;/code&gt; directory and used directly as pages on your site. Note that some key Astro features are not supported in &lt;a href=&quot;https://docs.astro.build/en/basics/astro-components/#html-components&quot;&gt;HTML Components&lt;/a&gt;.&lt;/p&gt;</content:encoded></item><item><title>Getting Started</title><link>https://astro-pure.js.org/mind-garden/en/setup/getting-started</link><guid isPermaLink="true">https://astro-pure.js.org/mind-garden/en/setup/getting-started</guid><description>Get started with the Astro Theme Pure</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Installation&lt;/h2&gt;
 &lt;p&gt;Two way to install. &quot;Template&quot; way is lightweight and simple, but hard to update; while &quot;Fork&quot; way is easy to update but needs some skills for git.&lt;/p&gt;
 &lt;h3&gt;Install Using Template&lt;/h3&gt;
