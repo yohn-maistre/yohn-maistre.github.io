@@ -9,7 +9,7 @@ tags:
   - Kedaulatan Adat
   - Teknologi
   - Pasca-Kapitalisme
-heroImage: { src: './thumbnail.jpg', color: '#4891B2' }
+heroImage: { src: './cover.jpg', color: '#4891B2' }
 language: 'Bahasa Indonesia'
 ---
 

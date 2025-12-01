@@ -1,0 +1,91 @@
+---
+import { TOC } from '@yohn-maistre/astro-pure-fork/components/pages'
+
+import mediaData from '../../../../public/media.json' with { type: 'json' }
+import MediaList from '../../../components/media/medialist.astro'
+import CommonPage from '../../../layouts/CommonPage.astro'
+import { getBookDetails, getMovieDetails } from '../../../utils/getMediaDetails.ts'
+import { sortMediaByDate } from '../../../utils/sortMedia.ts'
+
+const pageTitle = 'Film & Buku'
+
+const media = await Promise.all(
+  mediaData.media.map(async (item) => {
+    if (item.type === 'movie') {
+      const details = await getMovieDetails(item.title)
+      return { ...item, ...details }
+    } else if (item.type === 'book') {
+      const details = await getBookDetails(item.title, (item as any).author)
+      return { ...item, ...details }
+    }
+    return item
+  })
+)
+
+const movies = media.filter((item) => item.type === 'movie')
+const books = media.filter((item) => item.type === 'book')
+
+const movieGenres = [
+  ...new Set(
+    movies.map((item) => item.genre).filter((genre): genre is string => typeof genre === 'string')
+  )
+]
+const bookGenres = [
+  ...new Set(
+    books.map((item) => item.genre).filter((genre): genre is string => typeof genre === 'string')
+  )
+]
+
+const headings = [
+  { depth: 2, slug: 'movies', text: 'Movies' },
+  { depth: 3, slug: 'movies-favorites', text: 'All-Time Favorites' },
+  ...movieGenres.map((genre) => ({ depth: 3, slug: `movies-${genre.toLowerCase()}`, text: genre })),
+  { depth: 2, slug: 'books', text: 'Books' },
+  { depth: 3, slug: 'books-favorites', text: 'All-Time Favorites' },
+  ...bookGenres.map((genre) => ({ depth: 3, slug: `books-${genre.toLowerCase()}`, text: genre }))
+]
+---
+
+<CommonPage title={pageTitle} headings={headings}>
+  <TOC headings={headings} slot='sidebar' />
+
+  <h2 id='movies'>Movies</h2>
+
+  <h3 id='movies-favorites'>All-Time Favorites</h3>
+  <MediaList media={sortMediaByDate(movies.filter((item) => item.favorite))} />
+
+  {
+    movieGenres.map((genre) => (
+      <>
+        <h3 id={`movies-${genre.toLowerCase()}`}>{genre}</h3>
+        <MediaList
+          media={sortMediaByDate(movies.filter((item) => item.genre === genre && !item.favorite))}
+        />
+      </>
+    ))
+  }
+
+  <h2 id='books'>Books</h2>
+
+  <h3 id='books-favorites'>All-Time Favorites</h3>
+  <MediaList media={sortMediaByDate(books.filter((item) => item.favorite))} />
+
+  {
+    bookGenres.map((genre) => (
+      <>
+        <h3 id={`books-${genre.toLowerCase()}`}>{genre}</h3>
+        <MediaList
+          media={sortMediaByDate(books.filter((item) => item.genre === genre && !item.favorite))}
+        />
+      </>
+    ))
+  }
+</CommonPage>
+
+<script>
+  import { initMediaInteractions } from '../../../utils/mediaInteraction.ts'
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initMediaInteractions()
+  })
+</script>

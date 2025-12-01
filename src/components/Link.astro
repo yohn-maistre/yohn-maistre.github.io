@@ -1,23 +1,32 @@
 ---
+import { getLocalizedPath } from '../lib/i18n-utils.ts'
 import { cn } from '../lib/utils.ts'
 
 type Props = {
   href: string
   class?: string
   underline?: boolean
+  localize?: boolean // New prop to control automatic localization
   [key: string]: any
 }
 
-const { href, class: className, underline, ...rest } = Astro.props
+const { href, class: className, underline, localize = true, ...rest } = Astro.props
+
+// Get current locale from Astro
+const currentLocale = Astro.currentLocale ?? 'en'
+
+// Only localize if it's an internal link and localize prop is true
+const shouldLocalize = localize && href.startsWith('/') && !href.startsWith('http')
+const localizedHref = shouldLocalize ? getLocalizedPath(href, currentLocale) : href
 ---
 
 <a
-  href={href}
+  href={localizedHref}
   class={cn(
     'inline-block transition-colors duration-300 ease-in-out',
     underline &&
       'underline decoration-muted-foreground underline-offset-[3px] hover:decoration-foreground',
-    className,
+    className
   )}
   {...rest}
 >

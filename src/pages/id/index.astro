@@ -1,10 +1,10 @@
 ---
 import { Image } from 'astro:assets'
-
 import { Quote } from '@yohn-maistre/astro-pure-fork/advanced'
 import { PostPreview } from '@yohn-maistre/astro-pure-fork/components/pages'
 import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
 import { Button, Card, Icon, Label } from '@yohn-maistre/astro-pure-fork/user'
+
 import PageLayout from '@/layouts/BaseLayout.astro'
 import BentoGrid from '@/components/bento/BentoGrid.astro'
 import Clock from '@/components/home/Clock.tsx'
@@ -33,7 +33,8 @@ const orchestration = [
 const infrastructure = ['AWS', 'GCP', 'Vercel', 'Heroku']
 
 const MAX_POSTS = 4
-const allPosts = await getBlogCollection()
+// Filter blog posts by current locale
+const allPosts = await getBlogCollection(Astro.currentLocale ?? 'id')
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 ---
 
@@ -103,7 +104,12 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
                 </li>
               ))}
             </ul>
-            <Button title='Lihat lebih banyak' class='w-fit self-end' href='/blog' variant='ahead' />
+            <Button
+              title='Lihat lebih banyak'
+              class='w-fit self-end'
+              href='/id/blog'
+              variant='ahead'
+            />
           </Section>
         )
       }

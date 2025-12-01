@@ -1,0 +1,35 @@
+---
+import { PFSearch } from '@yohn-maistre/astro-pure-fork/components/pages'
+import { Button } from '@yohn-maistre/astro-pure-fork/user'
+
+import PageLayout from '@/layouts/BaseLayout.astro'
+
+import { integ } from '../../../site.config'
+
+const meta = {
+  description: 'Search relative posts of the whole blog',
+  title: 'Pencarian'
+}
+---
+
+<PageLayout {meta}>
+  <Button title='Kembali' href='/id/blog' variant='back' />
+  <main class='mt-6 lg:mt-10'>
+    <div id='content-header' class='animate'>
+      <h1 class='mb-6 text-3xl font-medium'>Pencarian</h1>
+    </div>
+
+    <div id='content' class='animate'>
+      {
+        integ.pagefind ? (
+          <>
+            <p>Enter a search term or phrase to search the blog.</p>
+            <PFSearch />
+          </>
+        ) : (
+          <p>Pagefind is disabled.</p>
+        )
+      }
+    </div>
+  </main>
+</PageLayout>

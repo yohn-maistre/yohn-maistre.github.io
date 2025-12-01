@@ -1,8 +1,21 @@
 ---
+import { getLocalizedPath } from '@/lib/i18n-utils.ts'
 import config from 'virtual:pure-config'
 
-import { Icon } from '../user'
 import { LanguageToggle } from '@/components/ui/LanguageToggle.tsx'
+
+import { Icon } from '../user'
+
+// Get current locale
+const currentLocale = Astro.currentLocale ?? 'en'
+
+const menuTranslations: Record<string, Record<string, string>> = {
+  Blog: { id: 'Blog' },
+  'Mind Garden': { id: 'Kebun Pikiran' },
+  Projects: { id: 'Proyek' },
+  'Movies & Books': { id: 'Film & Buku' },
+  About: { id: 'Tentang' }
+}
 ---
 
 <header-component
@@ -11,59 +24,38 @@ import { LanguageToggle } from '@/components/ui/LanguageToggle.tsx'
   <a
     class='z-30 text-xl font-semibold group-[.not-top]:ms-2 sm:group-[.not-top]:ms-3'
     style='transition:margin-inline 0.3s'
-    href='/'
+    href={getLocalizedPath('/', currentLocale)}
     aria-label='Brand'>{config.title}</a
   >
 
   <div class='flex items-center gap-x-2'>
     {/* Menu links */}
-    <div
-      id='headerExpandContent'
-      class='end-0 start-0 top-12 grid border border-transparent group-[.not-top]:rounded-xl group-[.expanded]:opacity-100 dark:group-[.expanded.not-top]:bg-muted max-sm:absolute max-sm:opacity-0 max-sm:group-[.not-top]:border-border max-sm:group-[.expanded.not-top]:bg-background max-sm:group-[.not-top]:px-4 max-sm:group-[.not-top]:py-2 sm:grid-rows-1'
-    >
-      <div class='flex flex-col items-center justify-center overflow-hidden sm:flex-row'>
-        {
-          config.header.menu.map((item) => (
-            <a
-              href={item.link}
-              class='w-full flex-none grow py-2 text-right font-medium transition-none hover:text-primary sm:w-fit sm:px-3'
-              aria-label='Nav menu item'
-            >
-              {item.title}
-            </a>
-          ))
-        }
-        <div class='flex w-full grow flex-row justify-end gap-x-3 sm:w-fit sm:gap-x-5'>
-          <a class='px-1 py-2 transition-none sm:px-2' href='/search' title='Search'>
-            <span class='sr-only'>Search</span>
-            <Icon name='search' class='size-5' />
-          </a>
-        </div>
-      </div>
-    </div>
-
-    {/* buttons */}
-    <div class='z-30 flex gap-x-4 group-[.not-top]:gap-x-2' style='transition:gap 0.3s'>
-      <LanguageToggle client:load />
-      <button
-        id='toggleDarkMode'
-        class='group/dark box-content size-5 rounded-md border p-1.5 transition-colors hover:bg-border sm:group-[.not-top]:rounded-xl'
-      >
-        <span class='sr-only'>Dark Theme</span>
-        <Icon class='system size-5 group-hover/dark:text-primary' name='computer' />
-        <Icon class='light hidden size-5 group-hover/dark:text-primary' name='sun' />
-        <Icon class='dark hidden size-5 group-hover/dark:text-primary' name='moon' />
-      </button>
-      <button
-        id='toggleMenu'
-        class='rounded-md border p-1.5 transition-colors hover:bg-border sm:hidden sm:group-[.not-top]:rounded-xl'
-      >
-        <span class='sr-only'>Menu</span>
-        <Icon class='size-5' name='menu' />
-      </button>
-    </div>
+    title='Search' >
+    <span class='sr-only'>Search</span>
+    <Icon name='search' class='size-5' />
   </div>
 </header-component>
+
+{/* buttons */}
+<div class='z-30 flex gap-x-4 group-[.not-top]:gap-x-2' style='transition:gap 0.3s'>
+  <LanguageToggle client:load />
+  <button
+    id='toggleDarkMode'
+    class='group/dark box-content size-5 rounded-md border p-1.5 transition-colors hover:bg-border sm:group-[.not-top]:rounded-xl'
+  >
+    <span class='sr-only'>Dark Theme</span>
+    <Icon class='system size-5 group-hover/dark:text-primary' name='computer' />
+    <Icon class='light hidden size-5 group-hover/dark:text-primary' name='sun' />
+    <Icon class='dark hidden size-5 group-hover/dark:text-primary' name='moon' />
+  </button>
+  <button
+    id='toggleMenu'
+    class='rounded-md border p-1.5 transition-colors hover:bg-border sm:hidden sm:group-[.not-top]:rounded-xl'
+  >
+    <span class='sr-only'>Menu</span>
+    <Icon class='size-5' name='menu' />
+  </button>
+</div>
 
 {/* Use inline to load icon quicker firstly */}
 <script is:inline>

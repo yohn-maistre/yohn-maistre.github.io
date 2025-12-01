@@ -1,0 +1,143 @@
+---
+import { Image } from 'astro:assets'
+import { Button, Collapse, Icon } from '@yohn-maistre/astro-pure-fork/user'
+
+import PageLayout from '@/layouts/CommonPage.astro'
+import ProjectSection from '@/components/projects/ProjectSection.astro'
+import KeyIcon from '@/assets/icons/key.svg'
+
+const headings = [
+  { depth: 2, slug: 'voice-ai', text: 'Voice & AI' },
+  { depth: 2, slug: 'data-science-ml', text: 'Data Science & ML' },
+  { depth: 2, slug: 'web-automation', text: 'Web & Automation' },
+  { depth: 2, slug: 'legacy-pocs', text: 'Legacy & POCs' },
+  { depth: 2, slug: 'personal', text: 'Personal' },
+  { depth: 2, slug: 'gpg-signature', text: 'GPG Signature' }
+]
+---
+
+<PageLayout title='Proyek' {headings} view>
+  <p>Aktivitas GitHub:</p>
+  <p>
+    <Image
+      src='https://ghchart.rshah.org/yohn-maistre'
+      alt='github activities'
+      inferSize
+      loading='lazy'
+    />
+  </p>
+  <p>
+    Jika Anda merasa akan berguna atau menarik untuk berkolaborasi dalam sebuah proyek, Anda bisa
+    menyumbang untuk mendukung pekerjaan saya atau menghubungi saya untuk mendiskusikan proyek.
+  </p>
+  <Button title='Lihat sponsorship' class='w-fit' href='#sponsorship'>
+    <Icon class='size-5' name='receive-money' slot='before' />
+  </Button>
+
+  <h2 id='voice-ai'>🗣️ Voice & AI</h2>
+  <ProjectSection
+    projects={[
+      {
+        name: '📝 Aksara',
+        description:
+          'Platform AI agent otonom yang menyediakan pakar digital on-demand untuk menangani tugas kognitif yang kompleks.',
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/aksara' }]
+      },
+      {
+        name: '🏛️ Philo-Fight-Club-AI',
+        description:
+          'Platform debat interaktif berbasis suara yang revolusioner di mana Anda menantang pikiran filosofis terhebat dalam sejarah melalui percakapan AI real-time.',
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/philo-fight-club-ai' }]
+      }
+    ]}
+  />
+
+  <h2 id='data-science-ml'>🔬 Data Science & ML</h2>
+  <ProjectSection
+    projects={[
+      {
+        name: '🫁 Respiratory-Diseases-Classifier',
+        description:
+          'Aplikasi web Streamlit untuk mengklasifikasikan penyakit paru-paru dengan rekaman suara pernapasan (.wav).',
+        links: [
+          {
+            type: 'github',
+            href: 'https://github.com/yohn-maistre/respiratory-diseases-classifier'
+          }
+        ]
+      }
+    ]}
+  />
+
+  <h2 id='web-automation'>⚙️ Web & Automation</h2>
+  <ProjectSection
+    projects={[
+      {
+        name: 'HN-Webhook',
+        description:
+          'Webhook Discord sederhana untuk mengambil 10 cerita teratas dan terbaik dari Hacker News',
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/hn-webhook' }]
+      }
+    ]}
+  />
+
+  <Collapse title='🗂️ Legacy & POCs'>
+    <ProjectSection
+      projects={[
+        {
+          name: 'forumanak-pb',
+          description: 'POC Website Forum Anak Papua Barat',
+          links: [{ type: 'github', href: 'https://github.com/yohn-maistre/forumanak-pb' }]
+        },
+        {
+          name: 'google-foobar-challenge',
+          description: 'Percobaan untuk tantangan foobar.withgoogle.',
+          links: [
+            { type: 'github', href: 'https://github.com/yohn-maistre/google-foobar-challenge' }
+          ]
+        }
+      ]}
+    />
+  </Collapse>
+
+  <h2 id='personal'>👤 Personal</h2>
+  <ProjectSection
+    projects={[
+      {
+        name: 'yohn-maistre.github.io',
+        description: 'Website portofolio pribadi saya.',
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/yohn-maistre.github.io' }]
+      }
+    ]}
+  />
+
+  <h2 id='gpg-signature'>GPG Signature</h2>
+  <p>
+    Anda dapat memverifikasi keaslian file yang saya tandatangani dengan memeriksa signature GPG.
+    Kunci GPG saya adalah <code>114514</code>, dan Anda dapat menemukannya di server kunci opengpg
+    atau mengunduhnya dari sana.
+  </p>
+  <Button href='https://keys.openpgp.org/search?q=114514' title='Lihat kunci saya' target='_blank'>
+    <KeyIcon class='size-5' slot='before' />
+  </Button>
+</PageLayout>
+
+<style>
+  .sponsorship-card {
+    & .sponsorship-card-img {
+      opacity: 0.3;
+      --un-blur: blur(4px);
+      filter: var(--un-blur);
+    }
+
+    &:hover {
+      & .sponsorship-card-icon {
+        opacity: 0;
+      }
+      & .sponsorship-card-img {
+        opacity: 1;
+        --un-blur: blur(0);
+      }
+    }
+  }
+</style>
