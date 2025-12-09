@@ -1,616 +1,76 @@
+import {
+  LiveKitRoom,
+  RoomAudioRenderer,
+  StartAudio,
+  BarVisualizer,
+  useVoiceAssistant,
+  ControlBar,
+} from '@livekit/components-react';
+import { useCallback, useState } from 'react';
+import '@livekit/components-styles';
 
-
-
-import { useSpeakingParticipants, LiveKitRoom, useRoomContext, useParticipants, useTracks, AudioTrack } from '@livekit/components-react';
-
-
-
-
-
-
-
-import { Room, RoomEvent, Participant } from 'livekit-client';
-
-
-
-
-
-
-
-import { useState, useEffect, useRef } from 'react';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import OrbAnimation from './OrbAnimation';
 
 export default function LiveKitAgent() {
-
-
-
-
-
-
-
   const [token, setToken] = useState('');
-
-
-
-
-
-
-
   const [serverUrl, setServerUrl] = useState('');
-
-
-
-
-
-
-
   const [started, setStarted] = useState(false);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const startAgent = async () => {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  const startAgent = useCallback(async () => {
+    try {
       const response = await fetch('/api/connection-details', {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         method: 'POST',
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        headers: {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          'Content-Type': 'application/json'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        body: JSON.stringify({})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
       });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       const data = await response.json();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       setToken(data.participantToken);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       setServerUrl(data.serverUrl);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       setStarted(true);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  const stopAgent = () => {
-
-
-
-
-
-
-
-    console.log('Stopping agent session...');
-
-
-
-
-
-
-
-    setStarted(false);
-
-
-
-
-
-
-
-    setToken('');
-
-
-
-
-
-
-
-    setServerUrl('');
-
-
-
-
-
-
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  return (
-
-
-
-
-
-
-
-    <div>
-
-
-
-
-
-
-
-      {!started && <button onClick={startAgent}>Start Agent</button>}
-
-
-
-
-
-
-
-      {started && token && serverUrl && (
-
-
-
-
-
-
-
-                  <LiveKitRoom
-
-
-
-
-
-
-
-                    token={token}
-
-
-
-
-
-
-
-                    serverUrl={serverUrl}
-
-
-
-
-
-
-
-                    connect={true}
-
-
-
-
-
-
-
-                    audio={true}
-
-
-
-
-
-
-
-                    onDisconnected={stopAgent}
-
-
-
-
-
-
-
-                  >
-
-
-
-
-
-
-
-          <AgentView />
-
-
-
-
-
-
-
-        </LiveKitRoom>
-
-
-
-
-
-
-
-      )}
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-  );
-
-
-
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function AgentView() {
-
-
-
-  const room = useRoomContext();
-
-
-
-  const participants = useParticipants();
-
-
-
-  const speakingParticipants = useSpeakingParticipants();
-
-
-
-  const tracks = useTracks();
-
-
-
-  const audioEl = useRef<HTMLAudioElement>(null);
-
-
-
-
-
-
-
-  const agentParticipant = participants.find((p) => !p.isLocal);
-
-
-
-  const agentAudioTrack = tracks.find(
-
-
-
-    (track) => track.participant.identity === agentParticipant?.identity && track.source === 'microphone',
-
-
-
-  );
-
-
-
-
-
-
-
-  useEffect(() => {
-
-
-
-    if (agentAudioTrack?.audioTrack && audioEl.current) {
-
-
-
-      agentAudioTrack.audioTrack.attach(audioEl.current);
-
-
-
+    } catch (error) {
+      console.error('Failed to connect:', error);
     }
+  }, []);
 
-
-
-  }, [agentAudioTrack]);
-
-
-
-
-
-
-
-  const isAgentSpeaking = agentParticipant && speakingParticipants.includes(agentParticipant);
-
-
-
-
-
-
+  const onDisconnected = useCallback(() => {
+    setStarted(false);
+    setToken('');
+    setServerUrl('');
+  }, []);
 
   return (
-
-
-
-    <div>
-
-
-
-      <audio ref={audioEl} autoPlay />
-
-
-
-      <div style={{ 
-
-
-
-        width: '50px', 
-
-
-
-        height: '50px', 
-
-
-
-        borderRadius: '50%', 
-
-
-
-        backgroundColor: isAgentSpeaking ? 'green' : 'red',
-
-
-
-        transition: 'background-color 0.5s ease'
-
-
-
-      }} />
-
-
-
-      <button onClick={() => room.disconnect()}>Stop Agent</button>
-
-
-
+    <div className="flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-3xl bg-secondary/25">
+      {!started ? (
+        <div className="flex h-full w-full items-center justify-center relative">
+             <OrbAnimation state="connecting" onConnect={startAgent} />
+        </div>
+      ) : (
+        <LiveKitRoom
+          token={token}
+          serverUrl={serverUrl}
+          connect={true}
+          audio={true}
+          video={false}
+          onDisconnected={onDisconnected}
+          className="flex h-full w-full flex-col items-center justify-center gap-4"
+        >
+          <div className="flex h-full w-full items-center justify-center">
+            <AgentVisualizer />
+          </div>
+          <RoomAudioRenderer />
+          <StartAudio label="Click to allow audio playback" />
+          <ControlBar 
+            controls={{ microphone: true, camera: false, screenShare: false, chat: false }}
+            style={{ '--lk-control-bar-button-icon-color': 'black' } as React.CSSProperties}
+          />
+        </LiveKitRoom>
+      )}
     </div>
-
-
-
   );
-
-
-
 }
+
+function AgentVisualizer() {
+  const { state, audioTrack } = useVoiceAssistant();
+  return <OrbAnimation state={state} audioTrack={audioTrack?.mediaStreamTrack} />;
+}
+

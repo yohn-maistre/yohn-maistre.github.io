@@ -40,6 +40,6 @@ bunfig.toml
 /src/content/blog/test.*
 /test/
 
-### GEMINI
-GEMINI*.md
-gemini-*.json
+# ### GEMINI
+# GEMINI*.md
+# gemini-*.json

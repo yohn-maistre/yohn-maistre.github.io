@@ -1,11 +1,12 @@
 ---
 import { SITE, SOCIAL_LINKS } from '@/consts'
+import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
 import { Icon } from 'astro-icon/components'
 
-import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
 import DiscordPresence from '@/components/bento/DiscordPresence.tsx'
 import GithubCalendar from '@/components/bento/GithubCalendar.tsx'
 import HousePostCanvas from '@/components/bento/HousePostCanvas.tsx'
+import LiveKitAgent from '@/components/bento/LiveKitAgent.tsx'
 import SplineCanvas from '@/components/bento/SplineCanvas.tsx'
 import SpotifyPresence from '@/components/bento/SpotifyPresence.tsx'
 import ThreeCanvas from '@/components/bento/ThreeCanvas.tsx'
@@ -57,7 +58,8 @@ import Link from '@/components/Link.astro'
   <div
     class='three-canvas-container has-overlay relative flex aspect-[6/5] items-center justify-center overflow-hidden p-4 [grid-area:e] hover:bg-none sm:aspect-[2.1/1] xl:aspect-auto'
   >
-    <SplineCanvas client:load />
+    <LiveKitAgent client:load />
+    {/* <SplineCanvas client:load /> */}
     {
       /* <ThreeCanvas
       client:load

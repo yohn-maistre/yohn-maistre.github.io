@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { AccessToken } from 'livekit-server-sdk';
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request }) => {
   const body = await request.text();
   const { room_config } = body ? JSON.parse(body) : { room_config: {} };
