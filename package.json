@@ -61,6 +61,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.24",
     "katex": "^0.16.25",
+    "livekit-client": "^2.16.0",
     "livekit-server-sdk": "^2.14.2",
     "lucide-react": "^0.545.0",
     "prettier-plugin-astro-organize-imports": "^0.4.11",
