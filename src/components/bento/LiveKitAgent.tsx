@@ -23,12 +23,22 @@ export default function LiveKitAgent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
       });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          alert('Agent is currently offline (API unreachable on static deployment). Try running locally!');
+          return;
+        }
+        throw new Error('Failed to fetch connection details');
+      }
+
       const data = await response.json();
       setToken(data.participantToken);
       setServerUrl(data.serverUrl);
       setStarted(true);
     } catch (error) {
       console.error('Failed to connect:', error);
+      alert('Failed to connect to agent. See console for details.');
     }
   }, []);
 
