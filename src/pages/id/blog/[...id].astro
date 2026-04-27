@@ -1,30 +1,51 @@
 ---
 import { render, type CollectionEntry } from 'astro:content'
-import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import {
+  getBlogCollection,
+  sortMDByDate,
+  stripLocaleFromId
+} from '@yohn-maistre/astro-pure-fork/server'
 
 import PostLayout from '@/layouts/BlogPost.astro'
+import TranslationPendingBanner from '@/components/TranslationPendingBanner.astro'
 
 export const prerender = true
 
 export async function getStaticPaths() {
-  const posts = await getBlogCollection('id')
-  const sortedPosts = sortMDByDate(posts)
-  return sortedPosts.map((post) => ({
-    // Strip 'id/' prefix from slug to get clean URL: /id/blog/slug
-    params: { id: post.id.replace(/^id\//, '') },
-    props: { post, posts: sortedPosts }
-  }))
+  // Enumerate every English post and pair it with its Indonesian translation
+  // when one exists. If not, the route still renders — it just shows the EN
+  // body with a "translation pending" banner above it.
+  const enPosts = await getBlogCollection('en')
+  const idPosts = await getBlogCollection('id')
+  const idBySlug = new Map(idPosts.map((p) => [stripLocaleFromId(p.id), p]))
+
+  const localePosts = enPosts.map((en) => idBySlug.get(stripLocaleFromId(en.id)) ?? en)
+  const sortedPosts = sortMDByDate(localePosts)
+
+  return enPosts.map((en) => {
+    const slug = stripLocaleFromId(en.id)
+    const idVersion = idBySlug.get(slug)
+    const post = idVersion ?? en
+    const isFallback = !idVersion
+    return {
+      params: { id: slug },
+      props: { post, posts: sortedPosts, isFallback, enHref: `/blog/${slug}` }
+    }
+  })
 }
 
 type Props = {
   post: CollectionEntry<'blog'>
   posts: CollectionEntry<'blog'>[]
+  isFallback: boolean
+  enHref: string
 }
 
-const { post, posts } = Astro.props
+const { post, posts, isFallback, enHref } = Astro.props
 const { Content, headings, remarkPluginFrontmatter } = await render(post)
 ---
 
 <PostLayout {post} {posts} {headings} {remarkPluginFrontmatter}>
+  {isFallback && <TranslationPendingBanner {enHref} />}
   <Content />
 </PostLayout>

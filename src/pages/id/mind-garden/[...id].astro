@@ -2,29 +2,46 @@
 import { render, type CollectionEntry } from 'astro:content'
 import { MediumZoom } from '@yohn-maistre/astro-pure-fork/advanced'
 import { TOC } from '@yohn-maistre/astro-pure-fork/components/pages'
-import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import {
+  getBlogCollection,
+  sortMDByDate,
+  stripLocaleFromId
+} from '@yohn-maistre/astro-pure-fork/server'
 import { Button } from '@yohn-maistre/astro-pure-fork/user'
 
 import PageLayout from '@/layouts/ContentLayout.astro'
+import TranslationPendingBanner from '@/components/TranslationPendingBanner.astro'
 
 import DocsContents from '../../mind-garden/DocsContents.astro'
 
 export const prerender = true
 
 export async function getStaticPaths() {
-  const posts = sortMDByDate(await getBlogCollection('id', 'mind-garden'))
-  return posts.map((post) => ({
-    // Strip 'id/' prefix from slug to get clean URL: /id/mind-garden/slug
-    params: { id: post.id.replace(/^id\//, '') },
-    props: { post }
-  }))
+  // EN-fallback: every EN doc gets an /id/mind-garden/<slug> route. If no ID
+  // translation exists, render the EN content with a notice banner.
+  const enDocs = await getBlogCollection('en', 'mind-garden')
+  const idDocs = await getBlogCollection('id', 'mind-garden')
+  const idBySlug = new Map(idDocs.map((d) => [stripLocaleFromId(d.id), d]))
+
+  return sortMDByDate(enDocs).map((en) => {
+    const slug = stripLocaleFromId(en.id)
+    const idVersion = idBySlug.get(slug)
+    const post = idVersion ?? en
+    const isFallback = !idVersion
+    return {
+      params: { id: slug },
+      props: { post, isFallback, enHref: `/mind-garden/${slug}` }
+    }
+  })
 }
 
 type Props = {
   post: CollectionEntry<'mind-garden'>
+  isFallback: boolean
+  enHref: string
 }
 
-const { post } = Astro.props
+const { post, isFallback, enHref } = Astro.props
 const { Content, headings } = await render(post)
 const { description, title } = post.data
 
@@ -43,7 +60,6 @@ const editPath = `https://github.com/yohn-maistre/yohn-maistre.github.io/edit/ma
     </h1>
     <div class='mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs leading-6 text-muted-foreground'>
       {
-        // Description
         description && (
           <blockquote class='text-sm italic text-muted-foreground'>
             <q>{description}</q>
@@ -53,10 +69,11 @@ const editPath = `https://github.com/yohn-maistre/yohn-maistre.github.io/edit/ma
     </div>
   </Fragment>
 
+  {isFallback && <TranslationPendingBanner {enHref} />}
   <Content />
 
   <div slot='bottom'>
-    <Button title='Edit on GitHub' href={editPath} class='px-3 py-2' style='font-size:1rem'>
+    <Button title='Edit di GitHub' href={editPath} class='px-3 py-2' style='font-size:1rem'>
       <svg
         slot='before'
         xmlns='http://www.w3.org/2000/svg'
@@ -72,7 +89,7 @@ const editPath = `https://github.com/yohn-maistre/yohn-maistre.github.io/edit/ma
           ></path></g
         ></svg
       >
-      Edit on GitHub
+      Edit di GitHub
     </Button>
     <div class='rounded-xl border px-4 py-3 mt-3 sm:py-4 md:mt-6'>
       <DocsContents />

@@ -3,7 +3,12 @@ import type { GetStaticPaths, Page } from 'astro'
 import type { CollectionEntry } from 'astro:content'
 
 import { Paginator, PostPreview } from '@yohn-maistre/astro-pure-fork/components/pages'
-import { getBlogCollection, getUniqueTags, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import {
+  getBlogCollection,
+  getUniqueTags,
+  sortMDByDate,
+  stripLocaleFromId
+} from '@yohn-maistre/astro-pure-fork/server'
 import { Button, Icon } from '@yohn-maistre/astro-pure-fork/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import config from '../../../site.config'
@@ -11,7 +16,15 @@ import config from '../../../site.config'
 export const prerender = true
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const collections = sortMDByDate(await getBlogCollection('id'))
+  // Show every EN post — preferring the ID translation when one exists.
+  // Untranslated posts still appear here and link to /id/blog/<slug>, where the
+  // dynamic route serves EN content with a "translation pending" banner.
+  const enPosts = await getBlogCollection('en')
+  const idPosts = await getBlogCollection('id')
+  const idBySlug = new Map(idPosts.map((p) => [stripLocaleFromId(p.id), p]))
+  const collections = sortMDByDate(
+    enPosts.map((en) => idBySlug.get(stripLocaleFromId(en.id)) ?? en)
+  )
   const uniqueTags = getUniqueTags(collections)
   const collectionsCount = collections.length
   return paginate(collections, {

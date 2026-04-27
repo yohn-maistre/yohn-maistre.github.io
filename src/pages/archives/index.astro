@@ -5,8 +5,7 @@ import { Button } from '@yohn-maistre/astro-pure-fork/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 
 export const prerender = true
-const { currentLocale } = Astro
-const allPosts = await getBlogCollection(currentLocale)
+const allPosts = await getBlogCollection('en')
 const allPostsByDate = sortMDByDate(allPosts)
 const allPostsByYear = groupCollectionsByYear(allPostsByDate)
 

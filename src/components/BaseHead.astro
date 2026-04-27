@@ -12,6 +12,15 @@ const { articleDate, description, ogImage, title } = Astro.props
 const siteTitle = `${title} ${config.titleDelimiter} ${config.title}`
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', Astro.url).href
+
+// hreflang alternates: build the EN and ID equivalents of the current path so
+// search engines can offer the right localized URL to each user.
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
+const stripIdPrefix = (p: string) => p.replace(/^\/id(\/|$)/, '/').replace(/\/$/, '') || '/'
+const enPath = stripIdPrefix(currentPath)
+const idPath = enPath === '/' ? '/id' : `/id${enPath}`
+const enUrl = new URL(enPath, Astro.site).href
+const idUrl = new URL(idPath, Astro.site).href
 ---
 
 <meta charset='utf-8' />
@@ -44,6 +53,11 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 
 {/* Canonical URL */}
 <link rel='canonical' href={canonicalURL} />
+
+{/* Locale alternates */}
+<link rel='alternate' hreflang='en' href={enUrl} />
+<link rel='alternate' hreflang='id' href={idUrl} />
+<link rel='alternate' hreflang='x-default' href={enUrl} />
 
 {/* Primary Meta Tags */}
 <meta content={siteTitle} name='title' />
@@ -82,12 +96,18 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 {/* Sitemap */}
 <link href='/sitemap-index.xml' rel='sitemap' />
 
-{/* RSS auto-discovery */}
+{/* RSS auto-discovery (one feed per locale) */}
 <link
   rel='alternate'
   type='application/rss+xml'
-  title={config.title}
+  title={`${config.title} (English)`}
   href={`${Astro.site}rss.xml`}
+/>
+<link
+  rel='alternate'
+  type='application/rss+xml'
+  title={`${config.title} (Bahasa Indonesia)`}
+  href={`${Astro.site}id/rss.xml`}
 />
 
 <meta content={Astro.generator} name='generator' />

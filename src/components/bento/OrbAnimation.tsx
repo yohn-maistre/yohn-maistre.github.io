@@ -66,10 +66,12 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
     const rows = 13;
     const grid = [rows, rows];
     const from = 'center';
-    
-    // Get viewport size relative to container
-    const rect = container.getBoundingClientRect();
-    const viewport = { w: rect.width * 0.5, h: rect.height * 0.5 };
+
+    // Mutable viewport — kept in sync via ResizeObserver below so the
+    // auto-move timeline tracks real container bounds when the user resizes
+    // the window or toggles devtools.
+    const initialRect = container.getBoundingClientRect();
+    const viewport = { w: initialRect.width * 0.5, h: initialRect.height * 0.5 };
     const cursor = cursorRef.current;
     
     const scaleStagger = stagger([2, 5], { ease: 'inQuad', grid, from });
@@ -255,17 +257,35 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
     container.addEventListener('mousemove', followPointer as any);
     container.addEventListener('touchmove', followPointer as any);
 
+    // Keep viewport bounds in sync. Without this, resizing the window or
+    // toggling devtools makes the orbs animate to off-screen coordinates
+    // (the original code captured `getBoundingClientRect` once at mount).
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const { width, height } = entry.contentRect;
+      viewport.w = width * 0.5;
+      viewport.h = height * 0.5;
+    });
+    resizeObserver.observe(container);
+
     return () => {
       mainLoop.pause();
       autoMove.pause();
       manualMovementTimeout.pause();
       if (loadingPulseInterval) clearInterval(loadingPulseInterval);
+      resizeObserver.disconnect();
       container.removeEventListener('mousemove', followPointer as any);
       container.removeEventListener('touchmove', followPointer as any);
     };
-    // Empty dependencies - effect only runs once on mount
-    // State changes handled via refs in the animation loop
-  }, []);  // ← Critical: empty deps prevent recreation on state change
+    // Empty dependency array is intentional: the animation must NOT tear down
+    // and rebuild every time the agent state or audio track changes (that
+    // would re-create 169 DOM nodes and reset the timeline 60+ times per
+    // session). Instead, prop changes are funneled through stateRef /
+    // isConnectingRef so the animation loop reads the latest values without
+    // restarting.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div 
@@ -290,19 +310,32 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
       
       {/* Grainy overlay */}
       <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ filter: 'url(#noise)' }}></div>
-      <svg className="hidden">
+      {/*
+        SVG filter source. Must NOT use `display: none` — Firefox (and some
+        WebKit builds) skip rendering filter primitives inside hidden SVGs,
+        which would break the grainy overlay above. Using zero-size +
+        absolute positioning keeps it out of layout while still letting the
+        filter resolve.
+      */}
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', pointerEvents: 'none' }}
+      >
         <filter id="noise">
           <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
         </filter>
       </svg>
       
-      <div 
-        ref={creatureRef} 
+      <div
+        ref={creatureRef}
         className="flex flex-wrap justify-center items-center"
         style={{
-          // fontSize: '0.2vh',  // Original zoom level
-          // fontSize: '0.12vh',  // First zoom out
-          fontSize: '0.08vh',  // Zoomed out further for more flight space
+          // The orb sizing is `em`-based and the parent fontSize drives the
+          // zoom level. Using `vh` alone meant tiny orbs on mobile portrait
+          // (~5px) and oversized ones on ultrawide. clamp() keeps it sane:
+          // floor of 0.04em, scales with viewport height, capped at 0.12em.
+          fontSize: 'clamp(0.04em, 0.08vh, 0.12em)',
           width: '150em',
           height: '150em'
         }}

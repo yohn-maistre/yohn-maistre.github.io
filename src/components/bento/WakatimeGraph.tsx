@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/chart'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getLanguageIcon } from '@/components/bento/LanguageIcons'
+import { BENTO } from '@/consts'
 
 interface Language {
   name: string
@@ -54,9 +55,7 @@ const WakatimeGraph = ({ omitLanguages = [] }: Props) => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch(
-      'https://wakatime.com/share/@jktrn/ef6e633b-589d-44f2-9ae6-0eb93445cf2a.json',
-    )
+    fetch(BENTO.WAKATIME_SHARE_URL)
       .then((response) => {
         if (!response.ok) throw new Error('Failed to fetch data')
         return response.json()

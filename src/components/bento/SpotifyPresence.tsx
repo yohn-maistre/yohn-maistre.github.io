@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { FaSpotify } from 'react-icons/fa'
 
 import { Skeleton } from '@/components/ui/skeleton'
+import { BENTO } from '@/consts'
 
 interface Track {
   name: string
@@ -18,7 +19,7 @@ const SpotifyPresence = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetch('https://lastfm-last-played.biancarosa.com.br/giyaibo/latest-song')
+    fetch(`https://lastfm-last-played.biancarosa.com.br/${BENTO.LASTFM_USERNAME}/latest-song`)
       .then((response) => response.json())
       .then((data) => {
         setDisplayData(data.track)

@@ -3,13 +3,14 @@ import { FaDiscord } from 'react-icons/fa'
 import { useLanyard } from 'react-use-lanyard'
 
 import AvatarComponent from '@/components/ui/avatar'
+import { BENTO } from '@/consts'
 
 import { cn, getElapsedTime } from '../../lib/utils.ts'
 import { Skeleton } from '../ui/skeleton'
 
 const DiscordPresence = () => {
   const { data: lanyard, isLoading } = useLanyard({
-    userId: '255315077501157376'
+    userId: BENTO.DISCORD_USER_ID
   })
 
   const mainActivity = useMemo(() => {
@@ -108,8 +109,8 @@ const DiscordPresence = () => {
             </div>
           </div>
           <div className='flex flex-col gap-y-1 rounded-xl bg-secondary/50 p-3'>
-            <span className='text-base leading-none'>jind0sh</span>
-            <span className='text-xs leading-none text-muted-foreground'>@jind0sh</span>
+            <span className='text-base leading-none'>{BENTO.DISCORD_DISPLAY_NAME}</span>
+            <span className='text-xs leading-none text-muted-foreground'>@{BENTO.DISCORD_USERNAME}</span>
           </div>
           <div className='flex grow rounded-xl bg-secondary/50 px-3 py-2'>
             {hasMainActivity && mainActivity && mainActivity.assets ? (
