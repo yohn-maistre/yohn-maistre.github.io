@@ -17,20 +17,28 @@ import DocsContents from '../../mind-garden/DocsContents.astro'
 export const prerender = true
 
 export async function getStaticPaths() {
-  // EN-fallback: every EN doc gets an /id/mind-garden/<slug> route. If no ID
-  // translation exists, render the EN content with a notice banner.
-  const enDocs = await getBlogCollection('en', 'mind-garden')
-  const idDocs = await getBlogCollection('id', 'mind-garden')
+  // Union of EN and ID slugs — see id/blog/[...id].astro for the full
+  // rationale. Ensures ID-only docs aren't orphaned out of the router.
+  const [enDocs, idDocs] = await Promise.all([
+    getBlogCollection('en', 'mind-garden'),
+    getBlogCollection('id', 'mind-garden')
+  ])
+  const enBySlug = new Map(enDocs.map((d) => [stripLocaleFromId(d.id), d]))
   const idBySlug = new Map(idDocs.map((d) => [stripLocaleFromId(d.id), d]))
+  const allSlugs = [...new Set([...enBySlug.keys(), ...idBySlug.keys()])]
 
-  return sortMDByDate(enDocs).map((en) => {
-    const slug = stripLocaleFromId(en.id)
+  return allSlugs.map((slug) => {
     const idVersion = idBySlug.get(slug)
-    const post = idVersion ?? en
-    const isFallback = !idVersion
+    const enVersion = enBySlug.get(slug)
+    const post = idVersion ?? enVersion!
+    const isFallback = !idVersion && !!enVersion
     return {
       params: { id: slug },
-      props: { post, isFallback, enHref: `/mind-garden/${slug}` }
+      props: {
+        post,
+        isFallback,
+        enHref: enVersion ? `/mind-garden/${slug}` : `/id/mind-garden/${slug}`
+      }
     }
   })
 }

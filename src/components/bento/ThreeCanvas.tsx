@@ -37,6 +37,33 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
     let rafId = 0
     let isDisposed = false
 
+    // material.dispose() does NOT dispose textures the material holds
+    // (.map, .normalMap, .roughnessMap, etc.) — each is a separate GPU
+    // resource. Walk every property of a material looking for things that
+    // quack like a Texture, then dispose them too.
+    const disposeMaterial = (material: THREE.Material) => {
+      for (const key in material) {
+        const value = (material as unknown as Record<string, unknown>)[key]
+        if (value && typeof value === 'object' && (value as THREE.Texture).isTexture) {
+          (value as THREE.Texture).dispose()
+        }
+      }
+      material.dispose()
+    }
+
+    const disposeObject = (root: THREE.Object3D) => {
+      root.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.geometry?.dispose()
+          if (Array.isArray(child.material)) {
+            child.material.forEach(disposeMaterial)
+          } else if (child.material) {
+            disposeMaterial(child.material)
+          }
+        }
+      })
+    }
+
     const camera = new THREE.PerspectiveCamera(
       75,
       mount.clientWidth / mount.clientHeight,
@@ -82,16 +109,7 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
         // The component may have unmounted while the model was loading. If so,
         // dispose what we just built so we don't leak GPU memory.
         if (isDisposed) {
-          gltf.scene.traverse((child) => {
-            if (child instanceof THREE.Mesh) {
-              child.geometry?.dispose()
-              if (Array.isArray(child.material)) {
-                child.material.forEach((m) => m.dispose())
-              } else {
-                child.material?.dispose()
-              }
-            }
-          })
+          disposeObject(gltf.scene)
           return
         }
 
@@ -150,16 +168,7 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
       // Dispose every loaded GPU resource so navigating away/back doesn't
       // leak WebGL contexts (browsers cap us at ~16).
-      scene.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          child.geometry?.dispose()
-          if (Array.isArray(child.material)) {
-            child.material.forEach((m) => m.dispose())
-          } else {
-            child.material?.dispose()
-          }
-        }
-      })
+      disposeObject(scene)
 
       controls.dispose()
       dracoLoader.dispose()

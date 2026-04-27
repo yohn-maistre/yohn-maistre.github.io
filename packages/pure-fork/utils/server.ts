@@ -34,7 +34,10 @@ export async function getBlogCollection(
   return await getCollection(contentType, (entry) => {
     const isProd = prod
     const isDraft = entry.data.draft
-    const [entryLocale] = entry.id.replace(/\\/g, '/').split('/')
+    // Match getLocaleFromId semantics: a file without a locale prefix
+    // (e.g. src/content/blog/post.md) defaults to 'en' instead of being
+    // silently filtered out of every locale.
+    const entryLocale = getLocaleFromId(entry.id)
 
     return (isProd ? !isDraft : true) && entryLocale === locale
   })
@@ -69,20 +72,31 @@ export function getLocaleFromId(id: string): Locale {
 }
 
 /**
- * Get the locale-preferred view of a collection: every EN entry, replaced by
- * its ID translation when one exists. Use this on ID listing pages so that
- * untranslated posts still appear (and link to the EN-fallback route).
+ * Get the locale-preferred view of a collection: union of every slug across
+ * locales, with the entry from the requested locale chosen when both exist.
+ *
+ * - EN-only slug → EN entry (will need TranslationPendingBanner on ID side)
+ * - ID-only slug → ID entry (an "ID-original" post; surfaces on both sides
+ *   so it isn't orphaned. Treat it as the canonical version.)
+ * - Both exist → return the requested locale's version
  */
 export async function getLocalePreferredCollection(
   locale: Locale,
   contentType: CollectionKey = 'blog'
 ) {
-  const enEntries = await getBlogCollection('en', contentType)
-  if (locale === 'en') return enEntries
+  const [enEntries, idEntries] = await Promise.all([
+    getBlogCollection('en', contentType),
+    getBlogCollection('id', contentType)
+  ])
 
-  const idEntries = await getBlogCollection('id', contentType)
-  const bySlug = new Map(idEntries.map((e) => [stripLocaleFromId(e.id), e]))
-  return enEntries.map((e) => bySlug.get(stripLocaleFromId(e.id)) ?? e)
+  const enBySlug = new Map(enEntries.map((e) => [stripLocaleFromId(e.id), e]))
+  const idBySlug = new Map(idEntries.map((e) => [stripLocaleFromId(e.id), e]))
+
+  const allSlugs = new Set<string>([...enBySlug.keys(), ...idBySlug.keys()])
+  const preferred = locale === 'id' ? idBySlug : enBySlug
+  const fallback = locale === 'id' ? enBySlug : idBySlug
+
+  return [...allSlugs].map((slug) => preferred.get(slug) ?? fallback.get(slug)!)
 }
 
 function getYearFromCollection<T extends CollectionKey>(

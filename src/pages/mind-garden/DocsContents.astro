@@ -1,6 +1,6 @@
 ---
 import { type CollectionEntry } from 'astro:content'
-import { getBlogCollection } from '@yohn-maistre/astro-pure-fork/server'
+import { getLocalePreferredCollection } from '@yohn-maistre/astro-pure-fork/server'
 import { cn } from '@yohn-maistre/astro-pure-fork/utils'
 
 export const prerender = true
@@ -10,17 +10,12 @@ const url = Astro.request.url
 const lang = new URL(url).pathname.split('/')[1]
 const locale: 'en' | 'id' = lang === 'id' ? 'id' : 'en'
 
-// EN-fallback: union all EN entries and the current-locale entries by slug.
-// Prefer the current-locale version when available so titles/descriptions
-// localize, but keep EN entries visible so ID nav doesn't shrink to one item.
-const enDocs = (await getBlogCollection('en', 'mind-garden')) as CollectionEntry<'mind-garden'>[]
-const localizedDocs = locale === 'en'
-  ? enDocs
-  : (await getBlogCollection('id', 'mind-garden')) as CollectionEntry<'mind-garden'>[]
-
-const stripLocale = (id: string) => id.replace(/\\/g, '/').replace(/^(en|id)\//, '')
-const localizedBySlug = new Map(localizedDocs.map((d) => [stripLocale(d.id), d]))
-const docsCollection = enDocs.map((en) => localizedBySlug.get(stripLocale(en.id)) ?? en)
+// Union of EN+ID by slug (helper handles orphan inclusion). On EN side,
+// current-locale = EN, so ID-only docs surface here too as canonical entries.
+const docsCollection = (await getLocalePreferredCollection(
+  locale,
+  'mind-garden'
+)) as CollectionEntry<'mind-garden'>[]
 
 // Group docs by category (the segment immediately after the locale prefix).
 const docsByCate = docsCollection.reduce((acc: { [key: string]: typeof docsCollection }, doc) => {

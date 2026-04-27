@@ -12,24 +12,37 @@ import TranslationPendingBanner from '@/components/TranslationPendingBanner.astr
 export const prerender = true
 
 export async function getStaticPaths() {
-  // Enumerate every English post and pair it with its Indonesian translation
-  // when one exists. If not, the route still renders — it just shows the EN
-  // body with a "translation pending" banner above it.
-  const enPosts = await getBlogCollection('en')
-  const idPosts = await getBlogCollection('id')
+  // Enumerate the *union* of EN and ID slugs so:
+  //   - EN-only post → ID route renders EN content with TranslationPendingBanner
+  //   - Both exist  → ID route renders ID content (no banner)
+  //   - ID-only post → ID route renders ID content as canonical (no banner,
+  //     no orphan invisibility)
+  const [enPosts, idPosts] = await Promise.all([
+    getBlogCollection('en'),
+    getBlogCollection('id')
+  ])
+  const enBySlug = new Map(enPosts.map((p) => [stripLocaleFromId(p.id), p]))
   const idBySlug = new Map(idPosts.map((p) => [stripLocaleFromId(p.id), p]))
+  const allSlugs = [...new Set([...enBySlug.keys(), ...idBySlug.keys()])]
 
-  const localePosts = enPosts.map((en) => idBySlug.get(stripLocaleFromId(en.id)) ?? en)
-  const sortedPosts = sortMDByDate(localePosts)
+  const sortedPosts = sortMDByDate(
+    allSlugs.map((slug) => idBySlug.get(slug) ?? enBySlug.get(slug)!)
+  )
 
-  return enPosts.map((en) => {
-    const slug = stripLocaleFromId(en.id)
+  return allSlugs.map((slug) => {
     const idVersion = idBySlug.get(slug)
-    const post = idVersion ?? en
-    const isFallback = !idVersion
+    const enVersion = enBySlug.get(slug)
+    const post = idVersion ?? enVersion!
+    const isFallback = !idVersion && !!enVersion
     return {
       params: { id: slug },
-      props: { post, posts: sortedPosts, isFallback, enHref: `/blog/${slug}` }
+      props: {
+        post,
+        posts: sortedPosts,
+        isFallback,
+        // Only meaningful when isFallback is true; harmless otherwise.
+        enHref: enVersion ? `/blog/${slug}` : `/id/blog/${slug}`
+      }
     }
   })
 }
