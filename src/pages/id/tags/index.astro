@@ -1,10 +1,10 @@
 ---
-import { getBlogCollection, getUniqueTagsWithCount } from '@yohn-maistre/astro-pure-fork/server'
+import { getLocalePreferredCollection, getUniqueTagsWithCount } from '@yohn-maistre/astro-pure-fork/server'
 import { Button } from '@yohn-maistre/astro-pure-fork/user'
 import { cn } from '@yohn-maistre/astro-pure-fork/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 
-const allPosts = await getBlogCollection('id')
+const allPosts = await getLocalePreferredCollection('id')
 const allTags = getUniqueTagsWithCount(allPosts)
 
 const meta = {

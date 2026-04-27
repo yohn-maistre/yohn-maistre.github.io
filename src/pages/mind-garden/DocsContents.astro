@@ -1,6 +1,6 @@
 ---
 import { type CollectionEntry } from 'astro:content'
-import { getBlogCollection } from '@yohn-maistre/astro-pure-fork/server'
+import { getLocalePreferredCollection } from '@yohn-maistre/astro-pure-fork/server'
 import { cn } from '@yohn-maistre/astro-pure-fork/utils'
 
 export const prerender = true
@@ -8,25 +8,21 @@ export const partial = true
 
 const url = Astro.request.url
 const lang = new URL(url).pathname.split('/')[1]
-const locale = ['en', 'id'].includes(lang) ? lang : 'en'
+const locale: 'en' | 'id' = lang === 'id' ? 'id' : 'en'
 
-const docsCollection = (await getBlogCollection(
+// Union of EN+ID by slug (helper handles orphan inclusion). On EN side,
+// current-locale = EN, so ID-only docs surface here too as canonical entries.
+const docsCollection = (await getLocalePreferredCollection(
   locale,
   'mind-garden'
 )) as CollectionEntry<'mind-garden'>[]
 
-// Debug logs
-console.log(`[DocsContents] Locale: ${locale}, Found ${docsCollection.length} docs`)
-
-// Group docs by id first part (setup, integrations, advanced, etc.)
+// Group docs by category (the segment immediately after the locale prefix).
 const docsByCate = docsCollection.reduce((acc: { [key: string]: typeof docsCollection }, doc) => {
-  // doc.id is like 'en/gen-ai/file.mdx', so split('/')[1] gives 'gen-ai'
-  const parts = doc.id.split('/')
-  const id = parts.length > 1 ? parts[1] : parts[0]
-
-  console.log(`[DocsContents] Doc ID: ${doc.id}, Category: ${id}`)
-  if (!acc[id]) acc[id] = [] as typeof docsCollection
-  acc[id].push(doc)
+  const parts = doc.id.replace(/\\/g, '/').split('/')
+  const category = parts.length > 1 ? parts[1] : parts[0]
+  if (!acc[category]) acc[category] = [] as typeof docsCollection
+  acc[category].push(doc)
   return acc
 }, {})
 
@@ -57,12 +53,13 @@ const { title = true, class: className, ...props } = Astro.props
                   <a
                     class='flex-1 hover:text-foreground'
                     href={(() => {
-                      const parts = doc.id.split('/')
-                      const isId = parts[0] === 'id'
-                      const cleanId = isId || parts[0] === 'en' ? parts.slice(1).join('/') : doc.id
-
-                      if (isId) return `/id/mind-garden/${cleanId}`
-                      return `/mind-garden/${cleanId}`
+                      // Always link to the *current* locale — the route handler
+                      // will fall back to EN content with a banner if no ID
+                      // translation exists yet.
+                      const cleanId = doc.id.replace(/\\/g, '/').replace(/^(en|id)\//, '')
+                      return locale === 'id'
+                        ? `/id/mind-garden/${cleanId}`
+                        : `/mind-garden/${cleanId}`
                     })()}
                   >
                     {doc.data.title}

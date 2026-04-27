@@ -31,12 +31,13 @@ export function LanguageToggle() {
     const contentInfo = parseContentUrl(pathname);
     
     if (contentInfo) {
-      // For content pages (blog/mind-garden), build the URL
-      // Note: Content might not exist in target locale, will 404 gracefully
+      // For content pages (blog/mind-garden), build the URL.
+      // The /id/* dynamic routes use EN-fallback so the user always lands on
+      // a real page — never a 404 — even when no translation exists yet.
       const contentUrl = getContentPath(
-        contentInfo.collection, 
-        contentInfo.slug, 
-        targetLocale, 
+        contentInfo.collection,
+        contentInfo.slug,
+        targetLocale,
         defaultLocale
       );
       return contentUrl;

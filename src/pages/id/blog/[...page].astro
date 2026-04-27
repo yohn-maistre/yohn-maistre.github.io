@@ -3,7 +3,11 @@ import type { GetStaticPaths, Page } from 'astro'
 import type { CollectionEntry } from 'astro:content'
 
 import { Paginator, PostPreview } from '@yohn-maistre/astro-pure-fork/components/pages'
-import { getBlogCollection, getUniqueTags, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import {
+  getLocalePreferredCollection,
+  getUniqueTags,
+  sortMDByDate
+} from '@yohn-maistre/astro-pure-fork/server'
 import { Button, Icon } from '@yohn-maistre/astro-pure-fork/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import config from '../../../site.config'
@@ -11,7 +15,11 @@ import config from '../../../site.config'
 export const prerender = true
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const collections = sortMDByDate(await getBlogCollection('id'))
+  // Union of EN+ID by slug, preferring ID. Untranslated posts still appear
+  // and link to /id/blog/<slug>, where the dynamic route serves EN content
+  // with a "translation pending" banner. ID-only posts also appear here
+  // (see helper for orphan handling).
+  const collections = sortMDByDate(await getLocalePreferredCollection('id'))
   const uniqueTags = getUniqueTags(collections)
   const collectionsCount = collections.length
   return paginate(collections, {

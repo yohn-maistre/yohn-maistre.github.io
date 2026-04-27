@@ -10,5 +10,17 @@
   "home.stack.orchestration": "Orkestrasi & Evaluasi",
   "home.stack.infrastructure": "Infrastruktur",
   "home.posts": "Tulisan",
-  "home.more_posts": "Lihat lebih banyak"
+  "home.more_posts": "Lihat lebih banyak",
+  "nav.blog": "Blog",
+  "nav.mind_garden": "Kebun Pikiran",
+  "nav.projects": "Proyek",
+  "nav.media": "Film & Buku",
+  "nav.about": "Tentang",
+  "blog.list.title": "Blog",
+  "blog.list.empty": "Belum ada tulisan.",
+  "blog.list.archive_link": "Lihat semua tulisan berdasarkan tahun →",
+  "blog.archives.title": "Arsip",
+  "blog.tags.title": "Tag",
+  "blog.tags.heading": "Tag",
+  "common.back": "Kembali"
 }

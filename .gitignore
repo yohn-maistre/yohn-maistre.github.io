@@ -43,3 +43,12 @@ bunfig.toml
 ### GEMINI
 GEMINI*.md
 gemini-*.json
+
+### Claude / agents
+.claude/
+revisions.md
+
+### Python
+__pycache__/
+*.py[cod]
+.venv/

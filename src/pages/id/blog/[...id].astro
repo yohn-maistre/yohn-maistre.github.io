@@ -1,30 +1,64 @@
 ---
 import { render, type CollectionEntry } from 'astro:content'
-import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import {
+  getBlogCollection,
+  sortMDByDate,
+  stripLocaleFromId
+} from '@yohn-maistre/astro-pure-fork/server'
 
 import PostLayout from '@/layouts/BlogPost.astro'
+import TranslationPendingBanner from '@/components/TranslationPendingBanner.astro'
 
 export const prerender = true
 
 export async function getStaticPaths() {
-  const posts = await getBlogCollection('id')
-  const sortedPosts = sortMDByDate(posts)
-  return sortedPosts.map((post) => ({
-    // Strip 'id/' prefix from slug to get clean URL: /id/blog/slug
-    params: { id: post.id.replace(/^id\//, '') },
-    props: { post, posts: sortedPosts }
-  }))
+  // Enumerate the *union* of EN and ID slugs so:
+  //   - EN-only post → ID route renders EN content with TranslationPendingBanner
+  //   - Both exist  → ID route renders ID content (no banner)
+  //   - ID-only post → ID route renders ID content as canonical (no banner,
+  //     no orphan invisibility)
+  const [enPosts, idPosts] = await Promise.all([
+    getBlogCollection('en'),
+    getBlogCollection('id')
+  ])
+  const enBySlug = new Map(enPosts.map((p) => [stripLocaleFromId(p.id), p]))
+  const idBySlug = new Map(idPosts.map((p) => [stripLocaleFromId(p.id), p]))
+  const allSlugs = [...new Set([...enBySlug.keys(), ...idBySlug.keys()])]
+
+  const sortedPosts = sortMDByDate(
+    allSlugs.map((slug) => idBySlug.get(slug) ?? enBySlug.get(slug)!)
+  )
+
+  return allSlugs.map((slug) => {
+    const idVersion = idBySlug.get(slug)
+    const enVersion = enBySlug.get(slug)
+    const post = idVersion ?? enVersion!
+    const isFallback = !idVersion && !!enVersion
+    return {
+      params: { id: slug },
+      props: {
+        post,
+        posts: sortedPosts,
+        isFallback,
+        // Only meaningful when isFallback is true; harmless otherwise.
+        enHref: enVersion ? `/blog/${slug}` : `/id/blog/${slug}`
+      }
+    }
+  })
 }
 
 type Props = {
   post: CollectionEntry<'blog'>
   posts: CollectionEntry<'blog'>[]
+  isFallback: boolean
+  enHref: string
 }
 
-const { post, posts } = Astro.props
+const { post, posts, isFallback, enHref } = Astro.props
 const { Content, headings, remarkPluginFrontmatter } = await render(post)
 ---
 
 <PostLayout {post} {posts} {headings} {remarkPluginFrontmatter}>
+  {isFallback && <TranslationPendingBanner {enHref} />}
   <Content />
 </PostLayout>

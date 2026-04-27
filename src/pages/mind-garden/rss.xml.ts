@@ -54,7 +54,8 @@ const renderContent = async (post: CollectionEntry<'docs'>, site: URL) => {
 }
 
 const GET = async (context: AstroGlobal) => {
-  const allPostsByDate = sortMDByDate(await getBlogCollection(undefined, 'mind-garden')) as CollectionEntry<'mind-garden'>[]
+  // EN feed only. `/id/mind-garden/rss.xml` serves the Indonesian feed.
+  const allPostsByDate = sortMDByDate(await getBlogCollection('en', 'mind-garden')) as CollectionEntry<'mind-garden'>[]
   const siteUrl = context.site ?? new URL(import.meta.env.SITE)
 
   return rss({

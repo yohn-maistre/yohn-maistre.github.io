@@ -24,36 +24,65 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
   const mountRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!mountRef.current) return
+    // Capture the mount node up front. React 19 strict mode runs effects
+    // twice in dev, and `mountRef.current` may have been swapped out by the
+    // time the cleanup function fires.
+    const mount = mountRef.current
+    if (!mount) return
 
     const scene = new THREE.Scene()
     const clock = new THREE.Clock()
     let mixer: THREE.AnimationMixer | null = null
     let model: THREE.Group | null = null
+    let rafId = 0
+    let isDisposed = false
 
-    // Camera
+    // material.dispose() does NOT dispose textures the material holds
+    // (.map, .normalMap, .roughnessMap, etc.) — each is a separate GPU
+    // resource. Walk every property of a material looking for things that
+    // quack like a Texture, then dispose them too.
+    const disposeMaterial = (material: THREE.Material) => {
+      for (const key in material) {
+        const value = (material as unknown as Record<string, unknown>)[key]
+        if (value && typeof value === 'object' && (value as THREE.Texture).isTexture) {
+          (value as THREE.Texture).dispose()
+        }
+      }
+      material.dispose()
+    }
+
+    const disposeObject = (root: THREE.Object3D) => {
+      root.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.geometry?.dispose()
+          if (Array.isArray(child.material)) {
+            child.material.forEach(disposeMaterial)
+          } else if (child.material) {
+            disposeMaterial(child.material)
+          }
+        }
+      })
+    }
+
     const camera = new THREE.PerspectiveCamera(
       75,
-      mountRef.current.clientWidth / mountRef.current.clientHeight,
+      mount.clientWidth / mount.clientHeight,
       0.1,
       1000
     )
     camera.position.z = cameraZ
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.shadowMap.enabled = true;
-    renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight)
-    mountRef.current.appendChild(renderer.domElement)
+    renderer.outputColorSpace = THREE.SRGBColorSpace
+    renderer.shadowMap.enabled = true
+    renderer.setSize(mount.clientWidth, mount.clientHeight)
+    mount.appendChild(renderer.domElement)
 
-    // Controls
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableZoom = false
     controls.enablePan = false
     controls.autoRotate = autoRotate
 
-    // Lighting
     if (lighting === 'basic') {
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.8)
       scene.add(ambientLight)
@@ -61,27 +90,15 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
       directionalLight.position.set(5, 5, 5)
       scene.add(directionalLight)
     } else if (lighting === 'studio') {
-      // const ambientLight = new THREE.AmbientLight(0xffffff, 10)
-      // scene.add(ambientLight)
-
       const spotLight = new THREE.SpotLight(0xffffff, 1000, 20, Math.PI / 4, 0.5)
       spotLight.position.set(0, 50, 50)
       scene.add(spotLight)
-
-      // const blueLight = new THREE.PointLight(0x0000ff, 5000, 200)
-      // blueLight.position.set(-50, 25, 50)
-      // scene.add(blueLight)
-
-      // const redLight = new THREE.PointLight(0xff0000, 5000, 200)
-      // redLight.position.set(50, 25, 50)
-      // scene.add(redLight)
 
       const frontSpotLight = new THREE.SpotLight(0xffffff, 10000, 20, Math.PI / 4, 0.5)
       frontSpotLight.position.set(0, 0, 50)
       scene.add(frontSpotLight)
     }
 
-    // GLTF Loader
     const loader = new GLTFLoader()
     const dracoLoader = new DRACOLoader()
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/')
@@ -89,13 +106,20 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
     loader.load(
       modelPath,
       (gltf) => {
+        // The component may have unmounted while the model was loading. If so,
+        // dispose what we just built so we don't leak GPU memory.
+        if (isDisposed) {
+          disposeObject(gltf.scene)
+          return
+        }
+
         model = gltf.scene
         model.traverse((child) => {
           if (child instanceof THREE.Mesh) {
-            child.castShadow = false;
-            child.receiveShadow = false;
+            child.castShadow = false
+            child.receiveShadow = false
           }
-        });
+        })
         const box = new THREE.Box3().setFromObject(model)
         const center = box.getCenter(new THREE.Vector3())
         model.position.sub(center)
@@ -114,24 +138,20 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
       }
     )
 
-    // Handle resize
     const handleResize = () => {
-      if (mountRef.current) {
-        const { clientWidth, clientHeight } = mountRef.current
-        renderer.setSize(clientWidth, clientHeight)
-        camera.aspect = clientWidth / clientHeight
-        camera.updateProjectionMatrix()
-      }
+      if (isDisposed) return
+      const { clientWidth, clientHeight } = mount
+      renderer.setSize(clientWidth, clientHeight)
+      camera.aspect = clientWidth / clientHeight
+      camera.updateProjectionMatrix()
     }
     window.addEventListener('resize', handleResize)
 
-    // Animation loop
     const animate = () => {
-      requestAnimationFrame(animate)
+      if (isDisposed) return
+      rafId = requestAnimationFrame(animate)
       const delta = clock.getDelta()
-      if (mixer) {
-        mixer.update(delta)
-      }
+      if (mixer) mixer.update(delta)
       if (model) {
         model.rotation.y += Math.sin(clock.getElapsedTime()) * 0.001
         model.rotation.x += Math.cos(clock.getElapsedTime()) * 0.001
@@ -141,14 +161,27 @@ const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
     }
     animate()
 
-    // Cleanup
     return () => {
+      isDisposed = true
+      cancelAnimationFrame(rafId)
       window.removeEventListener('resize', handleResize)
-      if (mountRef.current) {
-        mountRef.current.removeChild(renderer.domElement)
+
+      // Dispose every loaded GPU resource so navigating away/back doesn't
+      // leak WebGL contexts (browsers cap us at ~16).
+      disposeObject(scene)
+
+      controls.dispose()
+      dracoLoader.dispose()
+      renderer.dispose()
+      renderer.forceContextLoss?.()
+
+      // Null-guard: removeChild throws if the node isn't a child anymore,
+      // which can happen in React 19 strict-mode double-invocation.
+      if (renderer.domElement.parentNode === mount) {
+        mount.removeChild(renderer.domElement)
       }
     }
-  }, [modelPath, cameraZ, autoRotate, playAnimation, lighting])
+  }, [modelPath, cameraZ, autoRotate, playAnimation, lighting, initialRotationY])
 
   return <div ref={mountRef} style={{ width: '100%', height: '100%', background: 'transparent' }} />
 }

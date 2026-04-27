@@ -12,24 +12,19 @@ import config from 'virtual:pure-config'
 
 import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
 
-// Get dynamic import of images as a map collection
 const imagesGlob = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/content/blog/**/*.{jpeg,jpg,png,gif,avif.webp}' // add more image formats if needed
+  '/src/content/mind-garden/**/*.{jpeg,jpg,png,gif,avif.webp}'
 )
 
-const renderContent = async (post: CollectionEntry<'blog'>, site: URL) => {
-  // Replace image links with the correct path
+const renderContent = async (post: CollectionEntry<'mind-garden'>, site: URL) => {
   function remarkReplaceImageLink() {
-    /**
-     * @param {Root} tree
-     */
     return async function (tree: Root) {
       const promises: Promise<void>[] = []
       visit(tree, 'image', (node) => {
         if (node.url.startsWith('/images')) {
           node.url = `${site}${node.url.replace('/', '')}`
         } else {
-          const imagePathPrefix = `/src/content/blog/${post.id}/${node.url.replace('./', '')}`
+          const imagePathPrefix = `/src/content/mind-garden/${post.id}/${node.url.replace('./', '')}`
           const promise = imagesGlob[imagePathPrefix]?.().then(async (res) => {
             const imagePath = res?.default
             if (imagePath) {
@@ -54,28 +49,19 @@ const renderContent = async (post: CollectionEntry<'blog'>, site: URL) => {
 }
 
 const GET = async (context: AstroGlobal) => {
-  // EN feed only — `/id/rss.xml` serves the Indonesian feed.
-  // Previously this called getBlogCollection() with no locale, which silently
-  // returned every post in every language and duplicated entries in the feed.
-  const allPostsByDate = sortMDByDate(await getBlogCollection('en')) as CollectionEntry<'blog'>[]
+  const allPostsByDate = sortMDByDate(await getBlogCollection('id', 'mind-garden')) as CollectionEntry<'mind-garden'>[]
   const siteUrl = context.site ?? new URL(import.meta.env.SITE)
 
   return rss({
-    // Basic configs
     trailingSlash: false,
     xmlns: { h: 'http://www.w3.org/TR/html4/' },
     stylesheet: '/scripts/pretty-feed-v3.xsl',
-
-    // Contents
-    title: config.title,
+    title: `${config.title} — Mind Garden (Bahasa Indonesia)`,
     description: config.description,
     site: import.meta.env.SITE,
     items: await Promise.all(
       allPostsByDate.map(async (post) => ({
-        pubDate: post.data.publishDate,
-        link: `/blog/${post.id}`,
-        customData: `<h:img src="${typeof post.data.heroImage?.src === 'string' ? post.data.heroImage?.src : post.data.heroImage?.src.src}" />
-          <enclosure url="${typeof post.data.heroImage?.src === 'string' ? post.data.heroImage?.src : post.data.heroImage?.src.src}" />`,
+        link: `/id/mind-garden/${post.id.replace(/^id\//, '')}`,
         content: await renderContent(post, siteUrl),
         ...post.data
       }))

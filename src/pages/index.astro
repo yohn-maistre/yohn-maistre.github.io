@@ -1,15 +1,13 @@
 ---
 import { Image } from 'astro:assets'
 import { getLangFromUrl, useTranslations } from '@/lib/i18n'
-import { Quote } from '@yohn-maistre/astro-pure-fork/advanced'
 import { PostPreview } from '@yohn-maistre/astro-pure-fork/components/pages'
 import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
-import { Button, Card, Icon, Label } from '@yohn-maistre/astro-pure-fork/user'
+import { Button, Icon, Label } from '@yohn-maistre/astro-pure-fork/user'
 
 import PageLayout from '@/layouts/BaseLayout.astro'
 import BentoGrid from '@/components/bento/BentoGrid.astro'
 import Clock from '@/components/home/Clock.tsx'
-import ProjectCard from '@/components/home/ProjectCard.astro'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
 import avatar from '@/assets/avatar.png'
@@ -37,8 +35,9 @@ const orchestration = [
 const infrastructure = ['AWS', 'GCP', 'Vercel', 'Heroku']
 
 const MAX_POSTS = 4
-// Filter blog posts by current locale
-const allPosts = await getBlogCollection(Astro.currentLocale ?? 'en')
+// Default locale is 'en' (prefixDefaultLocale: false), so currentLocale is
+// undefined here. Explicit cast keeps the locale-required signature happy.
+const allPosts = await getBlogCollection('en')
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 ---
 
@@ -88,17 +87,6 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
     </div>
 
     <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
-      <!-- <p class='text-muted-foreground'>Developer / Designer</p> -->
-      <!-- <Section title='About'>
-        <p class='text-muted-foreground'>
-          I build things that connect technology, culture, and everyday life. Currently exploring
-          how AI and design can support communities in Papua through /Abstr•aksi/, helping people
-          learn, share, and preserve what matters to them. I care about making ideas practical and
-          human, turning systems into simple tools that people can actually use and enjoy.
-        </p>
-        <Button title='More about me' class='w-fit self-end' href='/about' variant='ahead' />
-      </Section> -->
-
       <Section title={t('home.stack')}>
         <SkillLayout title={t('home.stack.languages')} skills={languages} />
         <SkillLayout title={t('home.stack.frontend')} skills={frontend} />
@@ -108,35 +96,6 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         <SkillLayout title={t('home.stack.orchestration')} skills={orchestration} />
         <SkillLayout title={t('home.stack.infrastructure')} skills={infrastructure} />
       </Section>
-
-      <!-- <Section title='Projects'>
-        <div class='grid grid-cols-1 gap-3 sm:grid-cols-2'>
-          <ProjectCard
-            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-            heading='Lorem ipsum'
-            subheading='dolor sit amet, oratio ornatus explicari pro ex'
-            imagePath='/src/assets/projects/alex-tyson-2BAXJ7ha74s-unsplash.jpg'
-          />
-          <ProjectCard
-            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-            heading='Lorem ipsum'
-            subheading='dolor sit amet, oratio ornatus explicari pro ex'
-            imagePath='/src/assets/projects/angelica-teran-Bk9hpaXHK4o-unsplash.jpg'
-          />
-          <ProjectCard
-            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-            heading='Lorem ipsum'
-            subheading='dolor sit amet, oratio ornatus explicari pro ex'
-            imagePath='/src/assets/projects/kseniia-zapiatkina-yATU3rg8tNI-unsplash.jpg'
-          />
-          <ProjectCard
-            href='/projects'
-            heading='More projects'
-            subheading='Check out more projects'
-            imagePath='/src/assets/projects/wen-qiao-g_w8I64FiO0-unsplash.jpg'
-          />
-        </div>
-      </Section> -->
 
       {
         allPostsByDate.length > 0 && (
@@ -157,66 +116,6 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
           </Section>
         )
       }
-
-      <!-- {
-        <Section title='Experience'>
-      <Card
-        heading='Lorem Ipsum'
-        subheading='Sit amet consectetur'
-        date='Dec 2022 - Nov 2023'
-        imagePath='/src/assets/about-astro.png'
-        altText='Lorem, ipsum dolor sit'
-        imageClass='h-12 w-auto md:-start-16'
-      >
-        <ul class='ms-4 list-disc text-muted-foreground'>
-          <li>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore debitis recusandae, ut
-            molestiae laboriosam pariatur!
-
-            <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, pariatur!</li>
-          </li>
-        </ul>
-      </Card>
-      <Card
-        heading='Lorem Ipsum'
-        subheading='Sit amet consectetur'
-        date='Dec 2022 - Nov 2023'
-        imagePath='/src/assets/about-astro.png'
-        altText='Lorem, ipsum dolor sit'
-        imageClass='h-12 w-auto md:-start-16'
-      />
-    </Section>
-      } -->
-      <!-- <Section title='Education'>
-        <Card
-          as='a'
-          heading='Lorem ipsum'
-          subheading='Lorem ipsum dolor sit amet, vidit suscipit at mei.'
-          date='August 2021 - July 2025'
-          href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-        >
-          {
-            /* <ul class='ms-4 list-disc text-muted-foreground'>
-          <li>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore debitis recusandae, ut
-            molestiae laboriosam pariatur!
-          </li>
-          <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, pariatur!</li>
-        </ul> */
-          }
-        </Card>
-      </Section> -->
-
-      <!-- <Section>
-        <Card
-          as='a'
-          heading='Lorem ipsum'
-          subheading='Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione indoctum dissentiunt, cu meliore fuisset mei, vel quod voluptua ne. Ex dicat impedit mel, at eum oratio possit voluptatum. Dicat ceteros cu vim. Impetus fuisset ullamcorper pri cu, his posse iisque ad, aliquam honestatis usu id.'
-          date='July 2024'
-          href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-        />
-      </Section> -->
     </div>
-    <!-- <Quote class='mt-12' /> -->
   </main>
 </PageLayout>

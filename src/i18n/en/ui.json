@@ -10,5 +10,17 @@
   "home.stack.orchestration": "Orchestration & Eval",
   "home.stack.infrastructure": "Infrastructure",
   "home.posts": "Posts",
-  "home.more_posts": "More posts"
+  "home.more_posts": "More posts",
+  "nav.blog": "Blog",
+  "nav.mind_garden": "Mind Garden",
+  "nav.projects": "Projects",
+  "nav.media": "Movies & Books",
+  "nav.about": "About",
+  "blog.list.title": "Blog",
+  "blog.list.empty": "No posts yet.",
+  "blog.list.archive_link": "View all posts by year →",
+  "blog.archives.title": "Archives",
+  "blog.tags.title": "Tags",
+  "blog.tags.heading": "Tag",
+  "common.back": "Back"
 }
