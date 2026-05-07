@@ -1,7 +1,7 @@
 ---
-title: "The Democratization of AI in Papua: Unlocking Compressed Knowledge Through Local Languages"
+title: "AI in Papua: Unlocking Local Knowledge via LLMs"
 description: "Why AI must go beyond city limits. How offline-first, fine-tuned LLMs can bridge the gap for oral cultures in Papua and the Global South."
-date: 2026-03-31
+publishDate: 2026-03-31
 tags: ["AI", "Papua", "Local Languages", "Technology", "Global South", "LLM"]
 ---
 

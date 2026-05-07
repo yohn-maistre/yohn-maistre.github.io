@@ -6,7 +6,6 @@ description: "Berapa tahun lalu sa baca cerita yang sa rasa semua yang besar di 
 tags: ["Philosophy", "Papua", "Culture", "Science"]
 language: "Bahasa Indonesia"
 lang: "id-PM"
-heroImage: { src: '', color: '#E8833A' }
 draft: false
 ---
 
