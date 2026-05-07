@@ -6,8 +6,20 @@
  */
 type Props = {
   enHref: string
+  lang?: 'en' | 'id'
 }
-const { enHref } = Astro.props
+const { enHref, lang = 'en' } = Astro.props
+
+const isIndo = lang === 'id'
+const message = isIndo 
+  ? 'Not yet translated to English.' 
+  : 'Belum diterjemahkan ke Bahasa Indonesia.'
+const subMessage = isIndo
+  ? 'Meanwhile, this page is displaying the Indonesian version.'
+  : 'Sementara, halaman ini menampilkan versi bahasa Inggris.'
+const linkText = isIndo
+  ? 'View Indonesian version \u2192'
+  : 'Lihat versi Inggris \u2192'
 ---
 
 <aside
@@ -37,9 +49,9 @@ const { enHref } = Astro.props
       <path d='M14 18h6' />
     </svg>
     <div>
-      <p class='font-medium'>Belum diterjemahkan ke Bahasa Indonesia.</p>
+      <p class='font-medium'>{message}</p>
       <p class='text-amber-800/80 dark:text-amber-200/70'>
-        Sementara, halaman ini menampilkan versi bahasa Inggris.
+        {subMessage}
       </p>
     </div>
   </div>
@@ -47,6 +59,6 @@ const { enHref } = Astro.props
     href={enHref}
     class='shrink-0 self-start rounded-lg border border-amber-400/40 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-amber-100/40 sm:self-auto dark:border-amber-300/30 dark:hover:bg-amber-900/30'
   >
-    Lihat versi Inggris &rarr;
+    {linkText}
   </a>
 </aside>

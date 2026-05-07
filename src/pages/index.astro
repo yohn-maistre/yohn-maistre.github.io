@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets'
 import { getLangFromUrl, useTranslations } from '@/lib/i18n'
 import { PostPreview } from '@yohn-maistre/astro-pure-fork/components/pages'
-import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import { getLocalePreferredCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
 import { Button, Icon, Label } from '@yohn-maistre/astro-pure-fork/user'
 
 import PageLayout from '@/layouts/BaseLayout.astro'
@@ -37,7 +37,7 @@ const infrastructure = ['AWS', 'GCP', 'Vercel', 'Heroku']
 const MAX_POSTS = 4
 // Default locale is 'en' (prefixDefaultLocale: false), so currentLocale is
 // undefined here. Explicit cast keeps the locale-required signature happy.
-const allPosts = await getBlogCollection('en')
+const allPosts = await getLocalePreferredCollection('en')
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 ---
 

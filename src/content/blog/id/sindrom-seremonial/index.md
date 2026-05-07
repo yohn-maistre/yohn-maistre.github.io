@@ -1,7 +1,7 @@
 ---
 title: "Sindrom Seremonial: Pesawat yang Tidak Pernah Tiba"
 publishDate: "2026-05-07"
-description: "Refleksi tentang sindrom seremonial, cargo cult science, dan jebakan tiru bentuk tanpa isi di Papua. Terinspirasi dari Richard Feynman dan Charles Goodhart."
+description: "Cargo cult bukan cuma di PNG dulu. De ada di kantor-kantor pemerintah, kampus, dan startup hari ini."
 tags: ["Philosophy", "Papua", "Culture", "Science"]
 language: "Bahasa Indonesia"
 lang: "id-PM"

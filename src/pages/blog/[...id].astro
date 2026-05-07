@@ -1,30 +1,61 @@
 ---
 import { render, type CollectionEntry } from 'astro:content'
-import { getBlogCollection, sortMDByDate } from '@yohn-maistre/astro-pure-fork/server'
+import {
+  getBlogCollection,
+  sortMDByDate,
+  stripLocaleFromId
+} from '@yohn-maistre/astro-pure-fork/server'
 
 import PostLayout from '@/layouts/BlogPost.astro'
+import TranslationPendingBanner from '@/components/TranslationPendingBanner.astro'
 
 export const prerender = true
 
 export async function getStaticPaths() {
-  const posts = await getBlogCollection('en')
-  const sortedPosts = sortMDByDate(posts)
-  return sortedPosts.map((post) => ({
-    // Strip 'en/' prefix from slug to get clean URL: /blog/slug
-    params: { id: post.id.replace(/^en\//, '') },
-    props: { post, posts: sortedPosts }
-  }))
+  const [enPosts, idPosts] = await Promise.all([
+    getBlogCollection('en'),
+    getBlogCollection('id')
+  ])
+  const enBySlug = new Map(enPosts.map((p) => [stripLocaleFromId(p.id), p]))
+  const idBySlug = new Map(idPosts.map((p) => [stripLocaleFromId(p.id), p]))
+  const allSlugs = [...new Set([...enBySlug.keys(), ...idBySlug.keys()])]
+
+  const sortedPosts = sortMDByDate(
+    allSlugs.map((slug) => enBySlug.get(slug) ?? idBySlug.get(slug)!)
+  )
+
+  return allSlugs.map((slug) => {
+    const enVersion = enBySlug.get(slug)
+    const idVersion = idBySlug.get(slug)
+    const post = enVersion ?? idVersion!
+    
+    // It's a fallback if we are on the EN route but only the ID version exists
+    const isFallback = !enVersion && !!idVersion
+    
+    return {
+      params: { id: slug },
+      props: { 
+        post, 
+        posts: sortedPosts,
+        isFallback,
+        idHref: idVersion ? `/id/blog/${slug}` : `/blog/${slug}`
+      }
+    }
+  })
 }
 
 type Props = {
   post: CollectionEntry<'blog'>
   posts: CollectionEntry<'blog'>[]
+  isFallback: boolean
+  idHref: string
 }
 
-const { post, posts } = Astro.props
+const { post, posts, isFallback, idHref } = Astro.props
 const { Content, headings, remarkPluginFrontmatter } = await render(post)
 ---
 
 <PostLayout {post} {posts} {headings} {remarkPluginFrontmatter}>
+  {isFallback && <TranslationPendingBanner enHref={idHref} lang="id" />}
   <Content />
 </PostLayout>
