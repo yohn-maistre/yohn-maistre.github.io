@@ -1,14 +1,13 @@
 ---
-title: 'Sindrom Seremonial: Pesawat yang Tidak Pernah Tiba'
+title: "Sindrom Seremonial: Pesawat yang Tidak Pernah Tiba"
 publishDate: 2026-05-07
-description: "Refleksi tentang sindrom seremonial, cargo cult science, dan jebakan tiru bentuk tanpa isi di Papua dan Indonesia. Terinspirasi dari Richard Feynman dan Charles Goodhart."
-tags:
-  - Philosophy
-  - Papua
-  - Culture
-  - Science
-language: 'Bahasa Indonesia'
+date: 2026-05-07
+description: "Berapa tahun lalu sa baca cerita yang sa rasa semua yang besar di Papua mungkin pernah rasa juga. Tentang sindrom seremonial dan pesawat yang tidak pernah tiba."
+tags: ["Philosophy", "Papua", "Culture", "Science"]
+language: "Bahasa Indonesia"
+lang: "id-PM"
 heroImage: { src: '', color: '#E8833A' }
+draft: false
 ---
 
 Berapa tahun lalu sa baca cerita yang sa rasa semua yang besar di Papua mungkin pernah rasa juga. Cerita ini dari masa Perang Dunia kedua, di kepulauan Pasifik, termasuk di tong pu sodara-sodara di PNG dan Vanuatu. Pas perang, pesawat-pesawat tentara datang turun di pulau - bawa makanan kaleng, pakaian, alat, semua barang yang asing dan ajaib yang tra pernah dong lihat sebelumnya. Habis perang selesai, tentara pergi, pesawat tra datang lagi. Tapi orang-orang masih ingat barang-barang itu, dan dong mau supaya datang lagi. Jadi dong bangun landasan dari bambu, bikin tower dari kayu, ada satu orang duduk di situ pake "headset" dari batok kelapa, antena dari ranting. De pu bentuk persis sama dengan apa yang dong lihat dari tentara dulu; ritual juga dilakukan, doa-doa dipanjatkan supaya pesawat datang lagi. Tapi pesawat tra pernah datang lagi.
@@ -25,7 +24,7 @@ Dan kalau ko tanya kenapa ini terjadi, sa rasa jawabannya tra bisa cuma satu. Ad
 
 Lapisan pertama, yang paling jelas, itu insentif. Anggaran lebih mudah cair untuk acara-acara seremoni dibanding untuk kerja teknis berkelanjutan yang sunyi dan lama. Foto bisa dilampirkan ke laporan, hasil teknis sulit dibuktikan dalam satu lembar A4. Pejabat yang bikin acara meriah terlihat sukses di mata atasan; pejabat yang habiskan tiga tahun untuk perbaiki sistem secara diam-diam tra terlihat oleh siapa-siapa, dan kadang malah dianggap kerja kurang. Jadi yang dapat reward bukan yang kerja, tapi yang bisa akrobat bikin pertunjukan paling "wah". Ada konsep yang pas gambarkan ini dari yang namanya Goodhart, ekonom dari Inggris (tra penting juga de siapa, yang penting de pu konsep benar, berbobot, dan masuk akal). De bilang: pas satu ukuran/metrik jadi target akhir, ukuran/metrik berhenti jadi ukuran yang baik. Pas foto kegiatan jadi target, kegiatan itu sendiri tra penting lagi - yang penting fotonya. Pas indikator kinerja jadi target, kinerja sebenarnya jadi tra penting lagi - yang penting laporannya bagus. *Sebagai sampingan saja: ada alasan kenapa uang, status, dll, itu dangkal - karena itu indikator/metrik dari hal-hal lain yang lebih dalam/bermakna. *
 
-Lapisan kedua, yang lebih penting untuk tong sebagai orang-orang bekas jajahan, adalah ini: tong tra punya banyak waktu untuk bangun struktur dari bawah dengan tangan tong sendiri. Yang tong dapat dari Belanda dulu, dari Jakarta sekarang, dari donor luar dan organisasi internasional, itu semua bentuk yang sudah jadi. Lab penelitian bentuknya begini. Birokrasi bentuknya begini. Universitas bentuknya begini. Demokrasi bentuknya begini. NGO bentuknya begini. Tong terima bentuk-bentuk itu, kadang dengan paksa kadang dengan senang hati, tapi tong tra selalu dikasih tau (atau mau cari tau) kenapa bentuk itu dibuat begitu, masalah apa yang dong coba selesaikan dulu di tempat asalnya dengan bentuk-bentuk itu, kenapa dia berbentuk seperti itu dan bukan bentuk lain. Jadi tong tiru bentuk, tapi tra kuasai isinya. Persis macam sodara-sodara di PNG dulu yang tiru landasan tapi tra paham aerodinamika. Persis macam peneliti yang Feynman bicarakan, yang tiru metode tapi trada isi dan sebenarnya tra betul-betul untuk cari kebenaran.
+Lapisan kedua, yang lebih penting untuk tong sebagai orang-orang bekas jajahan, adalah ini: tong tra punya banyak waktu untuk bangun struktur dari bawah dengan tangan tong sendiri. Yang tong dapat dari Belanda dulu, dari Jakarta sekarang, dari donor luar dan organisasi internasional, itu semua bentuk yang sudah jadi. Lab penelitian bentuknya begini. Berokrasi bentuknya begini. Universitas bentuknya begini. Demokrasi bentuknya begini. NGO bentuknya begini. Tong terima bentuk-bentuk itu, kadang dengan paksa kadang dengan senang hati, tapi tong tra selalu dikasih tau (atau mau cari tau) kenapa bentuk itu dibuat begitu, masalah apa yang dong coba selesaikan dulu di tempat asalnya dengan bentuk-bentuk itu, kenapa dia berbentuk seperti itu dan bukan bentuk lain. Jadi tong tiru bentuk, tapi tra kuasai isinya. Persis macam sodara-sodara di PNG dulu yang tiru landasan tapi tra paham aerodinamika. Persis macam peneliti yang Feynman bicarakan, yang tiru metode tapi trada isi dan sebenarnya tra betul-betul untuk cari kebenaran.
 
 Dan ini bukan sepenuhnya tong pu salah - tong tra minta dijajah, tong tra minta semua bentuk modern ini datang sekaligus dalam satu generasi; Eropa sana butuh lima ratus tahun untuk dong sampai ke kesimpulan bentuk-bentuk itu. Tapi sekarang tong su ada di sini, dan trada yang akan bangun pondasi untuk tong selain tong sendiri. Jadi selalu pertanyakan bentuk-bentuk ini - dari pemerintah, dari peradaban luar - walaupun bentuk-bentuk ini sudah fungsional dan kesannya terlambat.
 
