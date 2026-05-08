@@ -177,7 +177,143 @@ import { Button } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Compress: &lt;a href=&quot;https://github.com/PlayForm/Compress&quot;&gt;playform/compress&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Image compress: &lt;a href=&quot;https://github.com/lovell/sharp&quot;&gt;sharp&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content:encoded></item><item><title>Update Theme</title><link>https://yose.is-a.dev/mind-garden/en/advanced/update</link><guid isPermaLink="true">https://yose.is-a.dev/mind-garden/en/advanced/update</guid><description>Update astro theme pure to the latest version</description><content:encoded>&lt;p&gt;import { Aside } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+&lt;/ul&gt;</content:encoded></item><item><title>Fine-tuning TTS Models</title><link>https://yose.is-a.dev/mind-garden/en/gen-ai/text-to-speech-fine-tuning</link><guid isPermaLink="true">https://yose.is-a.dev/mind-garden/en/gen-ai/text-to-speech-fine-tuning</guid><description>A technical guide to fine-tuning Text-to-Speech (TTS) models with Unsloth.</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+&lt;h2&gt;Fine-tuning TTS Models: A Practical Guide&lt;/h2&gt;
+&lt;p&gt;This is a straight-to-the-point guide on fine-tuning Text-to-Speech (TTS) models. We&apos;ll be using &lt;a href=&quot;https://github.com/unslothai/unsloth&quot;&gt;Unsloth&lt;/a&gt; to speed up the process. The goal is to customize a TTS model for a specific voice or style.&lt;/p&gt;
+&lt;h3&gt;Fine-tuning vs. Zero-shot&lt;/h3&gt;
+&lt;h3&gt;Model Selection&lt;/h3&gt;
+&lt;p&gt;Smaller models are generally better for TTS due to lower latency. Models under 3B parameters are a good starting point.&lt;/p&gt;
+&lt;h3&gt;Loading the Model&lt;/h3&gt;
+&lt;p&gt;Here’s how to load a model using Unsloth. We&apos;re using LoRA 16-bit, but you have other options.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;from unsloth import FastModel
+
+model, tokenizer = FastModel.from_pretrained(
+    model_name = &quot;unsloth/orpheus-3b-0.1-pretrained&quot;,
+    load_in_4bit=False,  # Use False for LoRA 16-bit
+    # load_in_8bit=True, # Or use 8-bit
+    # full_finetuning=True # Or full fine-tuning
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Dataset Preparation&lt;/h3&gt;
+&lt;p&gt;A good dataset is critical. You&apos;ll need audio clips and their corresponding transcripts.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Choose Your Dataset.&lt;/strong&gt;
+You can use a pre-existing one from Hugging Face or create your own. The &lt;a href=&quot;https://huggingface.co/datasets/MrDragonFox/Elise&quot;&gt;&lt;em&gt;Elise&lt;/em&gt; dataset&lt;/a&gt; is a good example. It has two variants:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;MrDragonFox/Elise&lt;/code&gt;: Includes emotion tags like &lt;code&gt;&amp;#x3C;sigh&gt;&lt;/code&gt; and &lt;code&gt;&amp;#x3C;laughs&gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Jinsaryko/Elise&lt;/code&gt;: A base version without emotion tags.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Prepare a Custom Dataset (Optional).&lt;/strong&gt;
+If you have your own audio, organize it in a folder and create a CSV or TSV file with &lt;code&gt;filename&lt;/code&gt; and &lt;code&gt;text&lt;/code&gt; columns.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;filename,text
+0001.wav,Hello there!
+0002.wav,&amp;#x3C;sigh&gt; I am very tired.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Load and Process the Data.&lt;/strong&gt;
+Here&apos;s an example using the &lt;code&gt;datasets&lt;/code&gt; library to load and prepare the data.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;from datasets import load_dataset, Audio
+
+# For a Hugging Face dataset
+dataset = load_dataset(&quot;MrDragonFox/Elise&quot;, split=&quot;train&quot;)
+
+# For a custom CSV
+# dataset = load_dataset(&quot;csv&quot;, data_files=&quot;mydata.csv&quot;, split=&quot;train&quot;)
+
+# Set the sampling rate (Orpheus expects 24kHz)
+dataset = dataset.cast_column(&quot;audio&quot;, Audio(sampling_rate=24000))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;The Fine-tuning Process&lt;/h3&gt;
+&lt;p&gt;Now, let&apos;s fine-tune the model.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Configure the Trainer.&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;from transformers import TrainingArguments,Trainer,DataCollatorForSeq2Seq
+from unsloth import is_bfloat16_supported
+
+trainer = Trainer(
+    model = model,
+    train_dataset = dataset,
+    args = TrainingArguments(
+        per_device_train_batch_size = 1,
+        gradient_accumulation_steps = 4,
+        warmup_steps = 5,
+        max_steps = 60, # Set to a low number for testing
+        learning_rate = 2e-4,
+        fp16 = not is_bfloat16_supported(),
+        bf16 = is_bfloat16_supported(),
+        logging_steps = 1,
+        optim = &quot;adamw_8bit&quot;,
+        weight_decay = 0.01,
+        lr_scheduler_type = &quot;linear&quot;,
+        seed = 3407,
+        output_dir = &quot;outputs&quot;,
+        report_to = &quot;none&quot;,
+    ),
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Run the Training.&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;trainer.train()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Save the LoRA Adapters.&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;model.save_pretrained(&quot;lora_model&quot;)
+tokenizer.save_pretrained(&quot;lora_model&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</content:encoded></item><item><title>Advanced Components</title><link>https://yose.is-a.dev/mind-garden/en/integrations/advanced</link><guid isPermaLink="true">https://yose.is-a.dev/mind-garden/en/integrations/advanced</guid><description>Advanced components with advanced docs</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
+&lt;h2&gt;Web Content Render&lt;/h2&gt;
+&lt;h3&gt;Quote&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;Quote&lt;/code&gt; component is a simple component that displays a random quote.&lt;/p&gt;
+&lt;p&gt;Config:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
+  // Add a random quote to the footer (default on homepage footer)
+  quote: {
+    // https://github.com/lukePeavey/quotable
+    server: &apos;https://api.quotable.io/quotes/random?maxLength=60&apos;, // [!code highlight:2]
+    target: `(data) =&gt; data[0].content || &apos;Error&apos;`
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/lukePeavey/quotable&quot;&gt;Quotable&lt;/a&gt; is a open-source API that provides random English quotes.&lt;/p&gt;
+&lt;p&gt;For Chinese quotes, you can use &lt;a href=&quot;https://developer.hitokoto.cn/sentence/&quot;&gt;Hitokoto&lt;/a&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
+  quote: {
+    // https://developer.hitokoto.cn/sentence/#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
+    server: &apos;https://v1.hitokoto.cn/?c=i&apos;, // [!code highlight:2]
+    target: `(data) =&gt; data.hitokoto || &apos;Error&apos;`
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;GitHub Card&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;GithubCard&lt;/code&gt; component is a simple component that displays a GitHub user card.&lt;/p&gt;
+&lt;h3&gt;Link Preview&lt;/h3&gt;
+&lt;p&gt;Preview any link inserted in the content.&lt;/p&gt;
+&lt;h2&gt;Data Transformer&lt;/h2&gt;
+&lt;h3&gt;QRCode&lt;/h3&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;//  // default to render current page link
+&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;#x3C;/Fragment&gt;
+&amp;#x3C;/MdxRepl&gt;
+
+### Medium Zoom
+
+Try click the following image.
+
+![img](https://github.com/user-attachments/assets/6c42b061-df7e-4696-a29b-bff07fe17d88)
+
+See [Other Integrations#medium-zoom](/docs/integrations/others#medium-zoom).
+&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Update Theme</title><link>https://yose.is-a.dev/mind-garden/en/advanced/update</link><guid isPermaLink="true">https://yose.is-a.dev/mind-garden/en/advanced/update</guid><description>Update astro theme pure to the latest version</description><content:encoded>&lt;p&gt;import { Aside } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Breaking Changes&lt;/h2&gt;
 &lt;h3&gt;v4.0.8&lt;/h3&gt;
 &lt;p&gt;No breaking changes.&lt;/p&gt;
@@ -437,142 +573,6 @@ f: ^src\\pages\\terms\\.*\.md$
 
 ### Blog ###
 # Your own files
-&lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Fine-tuning TTS Models</title><link>https://yose.is-a.dev/mind-garden/en/gen-ai/text-to-speech-fine-tuning</link><guid isPermaLink="true">https://yose.is-a.dev/mind-garden/en/gen-ai/text-to-speech-fine-tuning</guid><description>A technical guide to fine-tuning Text-to-Speech (TTS) models with Unsloth.</description><content:encoded>&lt;p&gt;import { Steps, Aside, Tabs, TabItem } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
-&lt;h2&gt;Fine-tuning TTS Models: A Practical Guide&lt;/h2&gt;
-&lt;p&gt;This is a straight-to-the-point guide on fine-tuning Text-to-Speech (TTS) models. We&apos;ll be using &lt;a href=&quot;https://github.com/unslothai/unsloth&quot;&gt;Unsloth&lt;/a&gt; to speed up the process. The goal is to customize a TTS model for a specific voice or style.&lt;/p&gt;
-&lt;h3&gt;Fine-tuning vs. Zero-shot&lt;/h3&gt;
-&lt;h3&gt;Model Selection&lt;/h3&gt;
-&lt;p&gt;Smaller models are generally better for TTS due to lower latency. Models under 3B parameters are a good starting point.&lt;/p&gt;
-&lt;h3&gt;Loading the Model&lt;/h3&gt;
-&lt;p&gt;Here’s how to load a model using Unsloth. We&apos;re using LoRA 16-bit, but you have other options.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;from unsloth import FastModel
-
-model, tokenizer = FastModel.from_pretrained(
-    model_name = &quot;unsloth/orpheus-3b-0.1-pretrained&quot;,
-    load_in_4bit=False,  # Use False for LoRA 16-bit
-    # load_in_8bit=True, # Or use 8-bit
-    # full_finetuning=True # Or full fine-tuning
-)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;Dataset Preparation&lt;/h3&gt;
-&lt;p&gt;A good dataset is critical. You&apos;ll need audio clips and their corresponding transcripts.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Choose Your Dataset.&lt;/strong&gt;
-You can use a pre-existing one from Hugging Face or create your own. The &lt;a href=&quot;https://huggingface.co/datasets/MrDragonFox/Elise&quot;&gt;&lt;em&gt;Elise&lt;/em&gt; dataset&lt;/a&gt; is a good example. It has two variants:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;MrDragonFox/Elise&lt;/code&gt;: Includes emotion tags like &lt;code&gt;&amp;#x3C;sigh&gt;&lt;/code&gt; and &lt;code&gt;&amp;#x3C;laughs&gt;&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Jinsaryko/Elise&lt;/code&gt;: A base version without emotion tags.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Prepare a Custom Dataset (Optional).&lt;/strong&gt;
-If you have your own audio, organize it in a folder and create a CSV or TSV file with &lt;code&gt;filename&lt;/code&gt; and &lt;code&gt;text&lt;/code&gt; columns.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;filename,text
-0001.wav,Hello there!
-0002.wav,&amp;#x3C;sigh&gt; I am very tired.
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Load and Process the Data.&lt;/strong&gt;
-Here&apos;s an example using the &lt;code&gt;datasets&lt;/code&gt; library to load and prepare the data.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;from datasets import load_dataset, Audio
-
-# For a Hugging Face dataset
-dataset = load_dataset(&quot;MrDragonFox/Elise&quot;, split=&quot;train&quot;)
-
-# For a custom CSV
-# dataset = load_dataset(&quot;csv&quot;, data_files=&quot;mydata.csv&quot;, split=&quot;train&quot;)
-
-# Set the sampling rate (Orpheus expects 24kHz)
-dataset = dataset.cast_column(&quot;audio&quot;, Audio(sampling_rate=24000))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;The Fine-tuning Process&lt;/h3&gt;
-&lt;p&gt;Now, let&apos;s fine-tune the model.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Configure the Trainer.&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;from transformers import TrainingArguments,Trainer,DataCollatorForSeq2Seq
-from unsloth import is_bfloat16_supported
-
-trainer = Trainer(
-    model = model,
-    train_dataset = dataset,
-    args = TrainingArguments(
-        per_device_train_batch_size = 1,
-        gradient_accumulation_steps = 4,
-        warmup_steps = 5,
-        max_steps = 60, # Set to a low number for testing
-        learning_rate = 2e-4,
-        fp16 = not is_bfloat16_supported(),
-        bf16 = is_bfloat16_supported(),
-        logging_steps = 1,
-        optim = &quot;adamw_8bit&quot;,
-        weight_decay = 0.01,
-        lr_scheduler_type = &quot;linear&quot;,
-        seed = 3407,
-        output_dir = &quot;outputs&quot;,
-        report_to = &quot;none&quot;,
-    ),
-)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Run the Training.&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;trainer.train()
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Save the LoRA Adapters.&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;model.save_pretrained(&quot;lora_model&quot;)
-tokenizer.save_pretrained(&quot;lora_model&quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;/ol&gt;</content:encoded></item><item><title>Advanced Components</title><link>https://yose.is-a.dev/mind-garden/en/integrations/advanced</link><guid isPermaLink="true">https://yose.is-a.dev/mind-garden/en/integrations/advanced</guid><description>Advanced components with advanced docs</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
-&lt;h2&gt;Web Content Render&lt;/h2&gt;
-&lt;h3&gt;Quote&lt;/h3&gt;
-&lt;p&gt;The &lt;code&gt;Quote&lt;/code&gt; component is a simple component that displays a random quote.&lt;/p&gt;
-&lt;p&gt;Config:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
-  // Add a random quote to the footer (default on homepage footer)
-  quote: {
-    // https://github.com/lukePeavey/quotable
-    server: &apos;https://api.quotable.io/quotes/random?maxLength=60&apos;, // [!code highlight:2]
-    target: `(data) =&gt; data[0].content || &apos;Error&apos;`
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;a href=&quot;https://github.com/lukePeavey/quotable&quot;&gt;Quotable&lt;/a&gt; is a open-source API that provides random English quotes.&lt;/p&gt;
-&lt;p&gt;For Chinese quotes, you can use &lt;a href=&quot;https://developer.hitokoto.cn/sentence/&quot;&gt;Hitokoto&lt;/a&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-ts&quot;&gt;export const integ: IntegrationUserConfig = {
-  quote: {
-    // https://developer.hitokoto.cn/sentence/#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
-    server: &apos;https://v1.hitokoto.cn/?c=i&apos;, // [!code highlight:2]
-    target: `(data) =&gt; data.hitokoto || &apos;Error&apos;`
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;GitHub Card&lt;/h3&gt;
-&lt;p&gt;The &lt;code&gt;GithubCard&lt;/code&gt; component is a simple component that displays a GitHub user card.&lt;/p&gt;
-&lt;h3&gt;Link Preview&lt;/h3&gt;
-&lt;p&gt;Preview any link inserted in the content.&lt;/p&gt;
-&lt;h2&gt;Data Transformer&lt;/h2&gt;
-&lt;h3&gt;QRCode&lt;/h3&gt;
-&lt;p&gt;&lt;/p&gt;
-&lt;p&gt;//  // default to render current page link
-&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;#x3C;/Fragment&gt;
-&amp;#x3C;/MdxRepl&gt;
-
-### Medium Zoom
-
-Try click the following image.
-
-![img](https://github.com/user-attachments/assets/6c42b061-df7e-4696-a29b-bff07fe17d88)
-
-See [Other Integrations#medium-zoom](/docs/integrations/others#medium-zoom).
 &lt;/code&gt;&lt;/pre&gt;</content:encoded></item><item><title>Shiki Code</title><link>https://yose.is-a.dev/mind-garden/en/integrations/code</link><guid isPermaLink="true">https://yose.is-a.dev/mind-garden/en/integrations/code</guid><description>Some methods for better using shiki code</description><content:encoded>&lt;p&gt;import { MdxRepl } from &apos;@yohn-maistre/astro-pure-fork/user&apos;&lt;/p&gt;
 &lt;h2&gt;Basic Usage&lt;/h2&gt;
 &lt;p&gt;For &lt;code&gt;.astro&lt;/code&gt; file:&lt;/p&gt;
