@@ -6,11 +6,17 @@ import '@waline/client/style'
 import { cn } from '@yohn-maistre/astro-pure-fork/utils'
 
 const { class: className } = Astro.props
+// GitHub Pages canonicalises directory URLs with a trailing slash, so
+// window.location.pathname disagrees with Astro.url.pathname (the value
+// PageInfo's count spans use). Pass our server-side path explicitly so the
+// widget queries Waline under the same key as the spans — otherwise reactions
+// and the comment list silently look up a different "page" than the counters.
+const path = Astro.url.pathname
 ---
 
 {
   config.integ.waline.enable && (
-    <comment-component>
+    <comment-component data-path={path}>
       <div id='waline' class={cn('not-prose', className)}>
         Comment seems to stuck. Try to refresh?✨
       </div>
@@ -44,6 +50,7 @@ const { class: className } = Astro.props
 
       walineInit({
         el: '#waline',
+        path: this.dataset.path,
         serverURL: walineConfig.server || '',
         emoji,
         reaction: ['/icons/heart-item.svg'],
