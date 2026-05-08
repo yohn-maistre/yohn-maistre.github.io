@@ -8,6 +8,7 @@ tags:
   - Culture
 heroImage: { src: './thumbnail.png', color: '#D58388' }
 language: 'Bahasa Indonesia'
+draft: true
 ---
 
 ## Awal Mula (alias Sore yang Habis Sia-sia di Reddit)
