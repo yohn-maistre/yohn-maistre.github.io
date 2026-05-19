@@ -1,6 +1,6 @@
 ---
-title: '[Tao](https://en.wikipedia.org/wiki/Tao)'
-description: 'Notes and resources about [Tao](https://en.wikipedia.org/wiki/Tao).'
+title: 'Tao'
+description: 'Notes and resources about Tao.'
 ---
 
 ---

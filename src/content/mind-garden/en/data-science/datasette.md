@@ -1,6 +1,6 @@
 ---
-title: '[Datasette](https://datasette.io/)'
-description: 'Notes and resources about [Datasette](https://datasette.io/).'
+title: 'Datasette'
+description: 'Notes and resources about Datasette.'
 ---
 
 ---

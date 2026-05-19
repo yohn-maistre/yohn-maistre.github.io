@@ -1,6 +1,6 @@
 ---
-title: '[Signal processing](https://en.wikipedia.org/wiki/Signal_processing)'
-description: 'Notes and resources about [Signal processing](https://en.wikipedia.org/wiki/Signal_processing).'
+title: 'Signal processing'
+description: 'Notes and resources about Signal processing.'
 ---
 
 ---

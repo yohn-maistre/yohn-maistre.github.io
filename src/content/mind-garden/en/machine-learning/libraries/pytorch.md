@@ -1,5 +1,5 @@
 ---
-title: '[PyTorch](http://pytorch.org/)'
+title: 'PyTorch'
 description: 'PyTorch Lightning & Lightning Hydra Template are neat. Tensor Puzzles is great intro.'
 ---
 

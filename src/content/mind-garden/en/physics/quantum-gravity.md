@@ -1,6 +1,6 @@
 ---
-title: '[Quantum gravity](https://en.wikipedia.org/wiki/Quantum_gravity)'
-description: 'Notes and resources about [Quantum gravity](https://en.wikipedia.org/wiki/Quantum_gravity).'
+title: 'Quantum gravity'
+description: 'Notes and resources about Quantum gravity.'
 ---
 
 ---

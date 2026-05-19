@@ -1,6 +1,6 @@
 ---
-title: '[String theory](http://en.wikipedia.org/wiki/String_theory)'
-description: 'Notes and resources about [String theory](http://en.wikipedia.org/wiki/String_theory).'
+title: 'String theory'
+description: 'Notes and resources about String theory.'
 ---
 
 ---

@@ -1,5 +1,5 @@
 ---
-title: '[Zero knowledge proofs](https://en.wikipedia.org/wiki/Zero-knowledge_proof)'
+title: 'Zero knowledge proofs'
 description: 'RISC Zero looks neat.'
 ---
 

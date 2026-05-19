@@ -1,5 +1,5 @@
 ---
-title: '[Zig](https://ziglang.org/)'
+title: 'Zig'
 description: 'Ziglings is nice for learning.'
 ---
 

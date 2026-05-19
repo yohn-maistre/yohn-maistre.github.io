@@ -1,5 +1,5 @@
 ---
-title: '[TensorFlow](https://www.tensorflow.org)'
+title: 'TensorFlow'
 description: 'TensorFlow Hub is useful.'
 ---
 

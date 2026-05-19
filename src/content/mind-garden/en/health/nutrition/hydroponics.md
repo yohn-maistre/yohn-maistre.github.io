@@ -1,6 +1,6 @@
 ---
-title: '[Hydroponics](https://en.wikipedia.org/wiki/Hydroponics)'
-description: 'Notes and resources about [Hydroponics](https://en.wikipedia.org/wiki/Hydroponics).'
+title: 'Hydroponics'
+description: 'Notes and resources about Hydroponics.'
 ---
 
 ---

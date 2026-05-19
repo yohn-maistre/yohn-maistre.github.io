@@ -1,5 +1,5 @@
 ---
-title: '[JAX](https://github.com/google/jax)'
+title: 'JAX'
 description: 'Differential Programming with JAX course is nice. Meta Optimal Transport is nice JAX repo to run/study.'
 ---
 

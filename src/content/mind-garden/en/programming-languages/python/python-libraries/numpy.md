@@ -1,6 +1,6 @@
 ---
-title: '[NumPy](https://www.numpy.org/)'
-description: 'Notes and resources about [NumPy](https://www.numpy.org/).'
+title: 'NumPy'
+description: 'Notes and resources about NumPy.'
 ---
 
 ---

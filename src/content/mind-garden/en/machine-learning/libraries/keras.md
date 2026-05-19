@@ -1,6 +1,6 @@
 ---
-title: '[Keras](https://github.com/keras-team/keras)'
-description: 'Notes and resources about [Keras](https://github.com/keras-team/keras).'
+title: 'Keras'
+description: 'Notes and resources about Keras.'
 ---
 
 ---

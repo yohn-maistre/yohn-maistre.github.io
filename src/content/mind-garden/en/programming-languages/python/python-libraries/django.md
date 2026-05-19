@@ -1,5 +1,5 @@
 ---
-title: '[Django](https://www.djangoproject.com/)'
+title: 'Django'
 description: '2. Run ./manage makemigrations to create migration from changed models. (can run ./manage makemigrations -n <migration-name> to give it custom name).'
 ---
 

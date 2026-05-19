@@ -1,5 +1,5 @@
 ---
-title: '[Reinforcement learning](http://en.wikipedia.org/wiki/Reinforcement_learning)'
+title: 'Reinforcement learning'
 description: 'Acme, TorchRL & Ray seem nice. Hugging Face Deep Reinforcement Learning Class is great intro.'
 ---
 

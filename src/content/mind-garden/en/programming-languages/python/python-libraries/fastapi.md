@@ -1,6 +1,6 @@
 ---
-title: '[FastAPI](https://fastapi.tiangolo.com/)'
-description: 'Notes and resources about [FastAPI](https://fastapi.tiangolo.com/).'
+title: 'FastAPI'
+description: 'Notes and resources about FastAPI.'
 ---
 
 ---

@@ -1,6 +1,6 @@
 ---
-title: '[Transfer learning](https://en.wikipedia.org/wiki/Transfer_learning)'
-description: 'Notes and resources about [Transfer learning](https://en.wikipedia.org/wiki/Transfer_learning).'
+title: 'Transfer learning'
+description: 'Notes and resources about Transfer learning.'
 ---
 
 ---

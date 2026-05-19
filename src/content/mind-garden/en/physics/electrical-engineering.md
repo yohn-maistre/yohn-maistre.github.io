@@ -1,6 +1,6 @@
 ---
-title: '[Electrical engineering](https://en.wikipedia.org/wiki/Electrical_engineering)'
-description: 'Notes and resources about [Electrical engineering](https://en.wikipedia.org/wiki/Electrical_engineering).'
+title: 'Electrical engineering'
+description: 'Notes and resources about Electrical engineering.'
 ---
 
 ---

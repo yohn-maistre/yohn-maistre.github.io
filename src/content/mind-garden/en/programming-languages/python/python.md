@@ -1,5 +1,5 @@
 ---
-title: '[Python](https://www.python.org)'
+title: 'Python'
 description: 'Memray is useful python memory profiler.'
 ---
 

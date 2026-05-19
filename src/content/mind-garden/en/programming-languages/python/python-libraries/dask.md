@@ -1,6 +1,6 @@
 ---
-title: '[Dask](https://dask.org/)'
-description: 'Notes and resources about [Dask](https://dask.org/).'
+title: 'Dask'
+description: 'Notes and resources about Dask.'
 ---
 
 ---

@@ -1,6 +1,6 @@
 ---
-title: '[Tor Project](https://www.torproject.org/download/)'
-description: 'Notes and resources about [Tor Project](https://www.torproject.org/download/).'
+title: 'Tor Project'
+description: 'Notes and resources about Tor Project.'
 ---
 
 ---

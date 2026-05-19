@@ -1,6 +1,6 @@
 ---
-title: '[Antimatter](http://en.wikipedia.org/wiki/Antimatter)'
-description: 'Notes and resources about [Antimatter](http://en.wikipedia.org/wiki/Antimatter).'
+title: 'Antimatter'
+description: 'Notes and resources about Antimatter.'
 ---
 
 ---

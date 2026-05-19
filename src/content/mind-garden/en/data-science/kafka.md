@@ -1,5 +1,5 @@
 ---
-title: '[Apache Kafka](https://kafka.apache.org/)'
+title: 'Apache Kafka'
 description: 'This talk is good intro.'
 ---
 

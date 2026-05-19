@@ -1,5 +1,5 @@
 ---
-title: '[Quantum computing](https://en.wikipedia.org/wiki/Quantum_computing)'
+title: 'Quantum computing'
 description: 'Quantum Computing for Computer Scientists is good intro.'
 ---
 
