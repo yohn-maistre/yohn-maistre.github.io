@@ -1,17 +1,20 @@
 ---
 import { Image } from 'astro:assets'
-import { Button, Collapse, Icon } from '@yohn-maistre/astro-pure-fork/user'
 
+import { Button, Collapse, Icon } from '@yohn-maistre/astro-pure-fork/user'
 import PageLayout from '@/layouts/CommonPage.astro'
 import ProjectSection from '@/components/projects/ProjectSection.astro'
 import KeyIcon from '@/assets/icons/key.svg'
 
 const headings = [
-  { depth: 2, slug: 'voice-ai', text: 'Voice & AI' },
-  { depth: 2, slug: 'data-science-ml', text: 'Data Science & ML' },
-  { depth: 2, slug: 'web-automation', text: 'Web & Automation' },
-  { depth: 2, slug: 'legacy-pocs', text: 'Legacy & POCs' },
-  { depth: 2, slug: 'personal', text: 'Personal' },
+  { depth: 2, slug: 'agentic-ai-systems', text: '🤖 Agentic AI Systems' },
+  { depth: 3, slug: 'multi-agent-workspaces', text: '👥 Multi-Agent Workspaces' },
+  { depth: 3, slug: 'voice-ai', text: '🗣️ Voice AI' },
+  { depth: 3, slug: 'defense-intelligence', text: '⚔️ Defense & Intelligence' },
+  { depth: 2, slug: 'generative-ai-data-assistants', text: '🔮 Generative AI & Data Assistants' },
+  { depth: 2, slug: 'machine-learning-signal-processing', text: '🧪 Machine Learning & Signal Processing' },
+  { depth: 2, slug: 'frontend-web-engineering', text: '🎨 Frontend & Web Engineering' },
+  { depth: 2, slug: 'systems-algorithms-legacy', text: '👾 Systems, Algorithms & Legacy' },
   { depth: 2, slug: 'gpg-signature', text: 'GPG Signature' }
 ]
 ---
@@ -27,90 +30,159 @@ const headings = [
     />
   </p>
   <p>
-    Jika Anda merasa akan berguna atau menarik untuk berkolaborasi dalam sebuah proyek, Anda bisa
-    menyumbang untuk mendukung pekerjaan saya atau menghubungi saya untuk mendiskusikan proyek.
+    Jika Anda merasa kolaborasi dalam suatu proyek akan berguna atau menarik, jangan ragu untuk menghubungi saya untuk berdiskusi.
   </p>
-  <Button title='Lihat sponsorship' class='w-fit' href='#sponsorship'>
-    <Icon class='size-5' name='receive-money' slot='before' />
-  </Button>
 
-  <h2 id='voice-ai'>🗣️ Voice & AI</h2>
+  <h2 id='agentic-ai-systems'>🤖 Agentic AI Systems</h2>
+
+  <h3 id='multi-agent-workspaces'>👥 Multi-Agent Workspaces</h3>
   <ProjectSection
     projects={[
       {
         name: '📝 Aksara',
-        description:
-          'Platform AI agent otonom yang menyediakan pakar digital on-demand untuk menangani tugas kognitif yang kompleks.',
+        description: `**Workspace multi-agen otonom dengan runtime terisolasi untuk eksekusi tugas otomatis.**
+        *Technologies: Next.js, FastAPI, Python, Daytona Sandbox, tldraw, Supabase, RabbitMQ, Zep/Graphiti.*
+        
+        Platform agen AI untuk mengorkestrasi asisten spesifik dalam mengeksekusi riset, pemrosesan dokumen, dan analisis data. Setiap agen berjalan di dalam container Linux Daytona terisolasi, menggunakan Playwright untuk otomatisasi browser, Tavily untuk pencarian informasi, dan RabbitMQ untuk antrean tugas asinkron.`,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/aksara' }]
-      },
+      }
+    ]}
+  />
+
+  <h3 id='voice-ai'>🗣️ Voice AI</h3>
+  <ProjectSection
+    projects={[
       {
-        name: '🏛️ Philo-Fight-Club-AI',
-        description:
-          'Platform debat interaktif berbasis suara yang revolusioner di mana Anda menantang pikiran filosofis terhebat dalam sejarah melalui percakapan AI real-time.',
+        name: '🏛️ Philo Fight Club AI',
+        description: `**Platform debat suara interaktif real-time dengan persona LLM.**
+        *Technologies: React, Tailwind CSS, Vapi (Voice API), Gemini.*
+        
+        Platform interaktif suara menggunakan Vapi untuk memfasilitasi debat verbal langsung dengan persona filsuf sejarah yang diatur melalui instruksi khusus. Menggunakan aliran audio latensi rendah untuk percakapan tanpa jeda.`,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/philo-fight-club-ai' }]
       }
     ]}
   />
 
-  <h2 id='data-science-ml'>🔬 Data Science & ML</h2>
+  <h3 id='defense-intelligence'>⚔️ Defense & Intelligence</h3>
   <ProjectSection
     projects={[
       {
-        name: '🫁 Respiratory-Diseases-Classifier',
-        description:
-          'Aplikasi web Streamlit untuk mengklasifikasikan penyakit paru-paru dengan rekaman suara pernapasan (.wav).',
-        links: [
-          {
-            type: 'github',
-            href: 'https://github.com/yohn-maistre/respiratory-diseases-classifier'
-          }
-        ]
+        name: '🦅 Project Cartensz',
+        description: `**Pipeline triage intelijen ancaman 5 tahap menggunakan klasifikasi lokal dan sintesis LLM.**
+        *Technologies: Python, SetFit (NusaBERT), Gemini Flash, DuckDB, Qwen-ASR, FastAPI, Streamlit.*
+        
+        Sistem analisis ancaman taktis untuk menyaring feed RSS, Reddit, dan YouTube. Menggunakan model klasifikasi SetFit (NusaBERT) lokal dengan kecepatan 2.500 teks/detik pada CPU untuk menyaring konten aman, lalu meneruskan teks berisiko tinggi ke Gemini Flash untuk penyusunan laporan ringkas.`,
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/project-cartensz' }]
+      },
+      {
+        name: '🛡️ ATLAS Multi-Agent Threat Intel',
+        description: `**Koordinator intelijen multi-agen untuk pelacakan ancaman dan operasi keamanan taktis.**
+        *Technologies: LangGraph, LiveKit, Neo4j, DuckDB, NeMo Guardrails, FastAPI.*
+        
+        Sistem orkestrasi intelijen yang mengoordinasikan 7 agen AI spesialis menggunakan LangGraph. Melacak hubungan aktor dan vektor narasi di dalam database graf Neo4j, menggunakan LiveKit untuk komunikasi real-time, dan NeMo Guardrails untuk kepatuhan keamanan data.`,
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/atlas-multi-agent-threat-intel' }]
       }
     ]}
   />
 
-  <h2 id='web-automation'>⚙️ Web & Automation</h2>
+  <h2 id='generative-ai-data-assistants'>🔮 Generative AI & Data Assistants</h2>
   <ProjectSection
     projects={[
       {
-        name: 'HN-Webhook',
-        description:
-          'Webhook Discord sederhana untuk mengambil 10 cerita teratas dan terbaik dari Hacker News',
-        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/hn-webhook' }]
+        name: '📊 BPS Papua Chat',
+        description: `**Antarmuka bahasa alami berbasis Streamlit untuk query dan visualisasi data statistik provinsi.**
+        *Technologies: Streamlit, Python, Pandas, OpenAI/Gemini, Plotly.*
+        
+        Antarmuka bahasa alami untuk kumpulan data sensus resmi dari BPS Papua. Membaca pertanyaan pengguna, memetakan ke file Excel/CSV lokal, melakukan agregasi data via Pandas, dan menampilkan visualisasi grafik interaktif Plotly.`,
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/bps-data-vis-chat' }]
+      },
+      {
+        name: '🏙️ Detak Detik Jayapura',
+        description: `**Dasbor warga dan portal informasi layanan publik kota Jayapura.** *(legacy, merged with ETNOS)*
+        *Technologies: React, Vite, TypeScript, shadcn/ui, Tailwind CSS.*
+        
+        Platform pelayanan publik yang mengintegrasikan berita lokal, laporan warga, dan panduan administratif Jayapura. Dirancang untuk digitalisasi akses layanan publik dengan bantuan asisten percakapan lokal.`,
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/detak-detik-jpr' }]
       }
     ]}
   />
 
-  <Collapse title='🗂️ Legacy & POCs'>
-    <ProjectSection
-      projects={[
-        {
-          name: 'forumanak-pb',
-          description: 'POC Website Forum Anak Papua Barat',
-          links: [{ type: 'github', href: 'https://github.com/yohn-maistre/forumanak-pb' }]
-        },
-        {
-          name: 'google-foobar-challenge',
-          description: 'Percobaan untuk tantangan foobar.withgoogle.',
-          links: [
-            { type: 'github', href: 'https://github.com/yohn-maistre/google-foobar-challenge' }
-          ]
-        }
-      ]}
-    />
-  </Collapse>
-
-  <h2 id='personal'>👤 Personal</h2>
+  <h2 id='machine-learning-signal-processing'>🧪 Machine Learning & Signal Processing</h2>
   <ProjectSection
     projects={[
       {
-        name: 'yohn-maistre.github.io',
-        description: 'Website portofolio pribadi saya.',
+        name: '🩺 CareCompass Triage',
+        description: `**Klasifikasi triase klinik menggunakan model Multi-Task Hierarchical Attention Network (MT-HAN).**
+        *Technologies: PyTorch, FastAPI, Streamlit, Docker, Multi-Task Hierarchical Attention (MT-HAN).*
+        
+        Model triase klinik menggunakan arsitektur deep learning Hierarchical Attention Network berbasis PyTorch. Dilatih langsung dari dialog medis, model ini mencapai akurasi rute 95%, mendeteksi kebutuhan pasien, dan mengukur ketidakpastian Bayesian via Monte Carlo Dropout.`,
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/carecompass-clinical-triage' }]
+      },
+      {
+        name: '🫁 Respiratory Diseases Classifier',
+        description: `**Klasifikasi sinyal akustik untuk identifikasi penyakit pernapasan.**
+        *Technologies: Streamlit, Librosa, Python, Scikit-learn.*
+        
+        Aplikasi web untuk mengekstrak fitur akustik (mel-spectrogram, chroma, MFCC) dari rekaman suara pernapasan (.wav) menggunakan Librosa, lalu mengklasifikasikannya dengan model Scikit-learn untuk deteksi kondisi pernapasan.`,
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/respiratory-diseases-classifier' }]
+      }
+    ]}
+  />
+
+  <h2 id='frontend-web-engineering'>🎨 Frontend & Web Engineering</h2>
+  <ProjectSection
+    projects={[
+      {
+        name: '🌐 Honai Metro',
+        description: `**Client Fediverse terdesentralisasi berbasis Svelte untuk jejaring komunitas.**
+        *Technologies: Svelte, Photon framework, Lemmy API, pyfedi.*
+        
+        Client Svelte ringan dengan kustomisasi gaya untuk mengakses jaringan server Lemmy dan Fediverse di Papua. Difork dari Photon dan terintegrasi dengan pyfedi untuk koneksi langsung ke node terdesentralisasi.`,
+        links: [{ type: 'github', href: 'https://github.com/yohn-maistre/honai-metro' }]
+      },
+      {
+        name: '🌿 yohn-maistre.github.io',
+        description: `**Portofolio personal dan kebun pikiran dwibahasa yang dibangun dengan Astro.**
+        *Technologies: Astro, TypeScript, Tailwind CSS, Markdown/MDX.*
+        
+        Mesin di balik portofolio ini, mengintegrasikan loader konten dwibahasa otomatis (i18n), navigasi sidebar dinamis untuk kategori mendalam, dan optimasi performa rendering pada perangkat seluler.`,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/yohn-maistre.github.io' }]
       }
     ]}
   />
 
+  <Collapse title='👾 Systems, Algorithms & Legacy'>
+    <ProjectSection
+      projects={[
+        {
+          name: '⚙️ CyjonOS',
+          description: `**Sistem operasi multi-tasking yang ditulis dengan Assembly 64-bit.**
+          *Technologies: Assembly x86_64, Custom Bootloaders, Low-Level Kernel.*
+          
+          Sistem operasi edukatif untuk arsitektur x86_64 yang dibangun dari nol menggunakan bahasa assembly murni. Mengimplementasikan bootloader kustom, manajemen memori paging virtual, scheduler tugas, dan driver perangkat keras dasar.`,
+          links: [{ type: 'github', href: 'https://github.com/yohn-maistre/CyjonOS' }]
+        },
+        {
+          name: 'forumanak-pb 👦👧',
+          description: `**Portal web edukatif untuk Forum Anak Papua Barat.**
+          *Technologies: HTML, CSS, JavaScript, Bootstrap.*
+          
+          Landing page responsif dan pusat informasi untuk memperkuat kehadiran digital dan menyuarakan aspirasi anak-anak di Papua Barat.`,
+          links: [{ type: 'github', href: 'https://github.com/yohn-maistre/forumanak-pb' }]
+        },
+        {
+          name: 'google-foobar-challenge 🍬',
+          description: `**Solusi algoritma untuk tantangan rekrutmen rahasia Google Foobar.**
+          *Technologies: Python, Graph Algorithms, Dynamic Programming, Math.*
+          
+          Repositori berisi solusi algoritma dalam bahasa Python untuk memecahkan tantangan jaringan aliran, rantai Markov, dan pemrograman dinamis dari Google Foobar.`,
+          links: [{ type: 'github', href: 'https://github.com/yohn-maistre/google-foobar-challenge' }]
+        }
+      ]}
+    />
+  </Collapse>
+
+  <!-- gpg signature -->
   <h2 id='gpg-signature'>GPG Signature</h2>
   <p>
     Anda dapat memverifikasi keaslian file yang saya tandatangani dengan memeriksa signature GPG.
@@ -121,23 +193,3 @@ const headings = [
     <KeyIcon class='size-5' slot='before' />
   </Button>
 </PageLayout>
-
-<style>
-  .sponsorship-card {
-    & .sponsorship-card-img {
-      opacity: 0.3;
-      --un-blur: blur(4px);
-      filter: var(--un-blur);
-    }
-
-    &:hover {
-      & .sponsorship-card-icon {
-        opacity: 0;
-      }
-      & .sponsorship-card-img {
-        opacity: 1;
-        --un-blur: blur(0);
-      }
-    }
-  }
-</style>
