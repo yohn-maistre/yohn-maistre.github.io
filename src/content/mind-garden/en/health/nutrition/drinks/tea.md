@@ -1,6 +1,6 @@
 ---
 title: 'Tea'
-description: 'I drink a lot of tea & prefer it to coffee as it doesn't give me focus crashes and disrupt sleep.'
+description: 'I drink a lot of tea & prefer it to coffee as it doesn''t give me focus crashes and disrupt sleep.'
 ---
 
 I drink a lot of tea & prefer it to [coffee](coffee.md) as it doesn't give me focus crashes and disrupt sleep.

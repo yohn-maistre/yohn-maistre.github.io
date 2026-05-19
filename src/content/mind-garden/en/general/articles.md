@@ -1,6 +1,6 @@
 ---
 title: 'Articles'
-description: 'Some articles I read and liked that don't fit under any other topic inside this wiki.'
+description: 'Some articles I read and liked that don''t fit under any other topic inside this wiki.'
 ---
 
 Some articles I read and liked that don't fit under any other topic inside this wiki.

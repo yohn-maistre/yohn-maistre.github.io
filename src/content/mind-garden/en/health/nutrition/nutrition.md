@@ -1,6 +1,6 @@
 ---
 title: 'Nutrition'
-description: 'Rhonda Patrick's interview is insightful.'
+description: 'Rhonda Patrick''s interview is insightful.'
 ---
 
 [Rhonda Patrick's interview](https://www.youtube.com/watch?v=XcvhERcZpWw&t=582s) is insightful.
