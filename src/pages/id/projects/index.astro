@@ -40,10 +40,11 @@ const headings = [
     projects={[
       {
         name: '📝 Aksara',
-        description: `**Workspace multi-agen otonom dengan runtime terisolasi untuk eksekusi tugas otomatis.**
-        *Technologies: Next.js, FastAPI, Python, Daytona Sandbox, tldraw, Supabase, RabbitMQ, Zep/Graphiti.*
-        
-        Platform agen AI untuk mengorkestrasi asisten spesifik dalam mengeksekusi riset, pemrosesan dokumen, dan analisis data. Setiap agen berjalan di dalam container Linux Daytona terisolasi, menggunakan Playwright untuk otomatisasi browser, Tavily untuk pencarian informasi, dan RabbitMQ untuk antrean tugas asinkron.`,
+        description: `
+          <strong class="text-foreground block mb-1">Workspace multi-agen otonom dengan runtime terisolasi untuk eksekusi tugas otomatis.</strong>
+          <span class="block text-xs text-primary mb-2">Technologies: Next.js, FastAPI, Python, Daytona Sandbox, tldraw, Supabase, RabbitMQ, Zep/Graphiti</span>
+          <p class="text-sm">Platform agen AI untuk mengorkestrasi asisten spesifik dalam mengeksekusi riset, pemrosesan dokumen, dan analisis data. Setiap agen berjalan di dalam container Linux Daytona terisolasi, menggunakan Playwright untuk otomatisasi browser, Tavily untuk pencarian informasi, dan RabbitMQ untuk antrean tugas asinkron.</p>
+        `,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/aksara' }]
       }
     ]}
@@ -54,10 +55,11 @@ const headings = [
     projects={[
       {
         name: '🏛️ Philo Fight Club AI',
-        description: `**Platform debat suara interaktif real-time dengan persona LLM.**
-        *Technologies: React, Tailwind CSS, Vapi (Voice API), Gemini.*
-        
-        Platform interaktif suara menggunakan Vapi untuk memfasilitasi debat verbal langsung dengan persona filsuf sejarah yang diatur melalui instruksi khusus. Menggunakan aliran audio latensi rendah untuk percakapan tanpa jeda.`,
+        description: `
+          <strong class="text-foreground block mb-1">Platform debat suara interaktif real-time dengan persona LLM.</strong>
+          <span class="block text-xs text-primary mb-2">Technologies: React, Tailwind CSS, Vapi (Voice API), Gemini</span>
+          <p class="text-sm">Platform interaktif suara menggunakan Vapi untuk memfasilitasi debat verbal langsung dengan persona filsuf sejarah yang diatur melalui instruksi khusus. Menggunakan aliran audio latensi rendah untuk percakapan tanpa jeda.</p>
+        `,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/philo-fight-club-ai' }]
       }
     ]}
@@ -68,18 +70,20 @@ const headings = [
     projects={[
       {
         name: '🦅 Project Cartensz',
-        description: `**Pipeline triage intelijen ancaman 5 tahap menggunakan klasifikasi lokal dan sintesis LLM.**
-        *Technologies: Python, SetFit (NusaBERT), Gemini Flash, DuckDB, Qwen-ASR, FastAPI, Streamlit.*
-        
-        Sistem analisis ancaman taktis untuk menyaring feed RSS, Reddit, dan YouTube. Menggunakan model klasifikasi SetFit (NusaBERT) lokal dengan kecepatan 2.500 teks/detik pada CPU untuk menyaring konten aman, lalu meneruskan teks berisiko tinggi ke Gemini Flash untuk penyusunan laporan ringkas.`,
+        description: `
+          <strong class="text-foreground block mb-1">Pipeline triage intelijen ancaman 5 tahap menggunakan klasifikasi lokal dan sintesis LLM.</strong>
+          <span class="block text-xs text-primary mb-2">Technologies: Python, SetFit (NusaBERT), Gemini Flash, DuckDB, Qwen-ASR, FastAPI, Streamlit</span>
+          <p class="text-sm">Sistem analisis ancaman taktis untuk menyaring feed RSS, Reddit, dan YouTube. Menggunakan model klasifikasi SetFit (NusaBERT) lokal dengan kecepatan 2.500 teks/detik pada CPU untuk menyaring konten aman, lalu meneruskan teks berisiko tinggi ke Gemini Flash untuk penyusunan laporan ringkas.</p>
+        `,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/project-cartensz' }]
       },
       {
         name: '🛡️ ATLAS Multi-Agent Threat Intel',
-        description: `**Koordinator intelijen multi-agen untuk pelacakan ancaman dan operasi keamanan taktis.**
-        *Technologies: LangGraph, LiveKit, Neo4j, DuckDB, NeMo Guardrails, FastAPI.*
-        
-        Sistem orkestrasi intelijen yang mengoordinasikan 7 agen AI spesialis menggunakan LangGraph. Melacak hubungan aktor dan vektor narasi di dalam database graf Neo4j, menggunakan LiveKit untuk komunikasi real-time, dan NeMo Guardrails untuk kepatuhan keamanan data.`,
+        description: `
+          <strong class="text-foreground block mb-1">Koordinator intelijen multi-agen untuk pelacakan ancaman dan operasi keamanan taktis.</strong>
+          <span class="block text-xs text-primary mb-2">Technologies: LangGraph, LiveKit, Neo4j, DuckDB, NeMo Guardrails, FastAPI</span>
+          <p class="text-sm">Sistem orkestrasi intelijen yang mengoordinasikan 7 agen AI spesialis menggunakan LangGraph. Melacak hubungan aktor dan vektor narasi di dalam database graf Neo4j, menggunakan LiveKit untuk komunikasi real-time, dan NeMo Guardrails untuk kepatuhan keamanan data.</p>
+        `,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/atlas-multi-agent-threat-intel' }]
       }
     ]}
@@ -90,18 +94,20 @@ const headings = [
     projects={[
       {
         name: '📊 BPS Papua Chat',
-        description: `**Antarmuka bahasa alami berbasis Streamlit untuk query dan visualisasi data statistik provinsi.**
-        *Technologies: Streamlit, Python, Pandas, OpenAI/Gemini, Plotly.*
-        
-        Antarmuka bahasa alami untuk kumpulan data sensus resmi dari BPS Papua. Membaca pertanyaan pengguna, memetakan ke file Excel/CSV lokal, melakukan agregasi data via Pandas, dan menampilkan visualisasi grafik interaktif Plotly.`,
+        description: `
+          <strong class="text-foreground block mb-1">Antarmuka bahasa alami berbasis Streamlit untuk query dan visualisasi data statistik provinsi.</strong>
+          <span class="block text-xs text-primary mb-2">Technologies: Streamlit, Python, Pandas, OpenAI/Gemini, Plotly</span>
+          <p class="text-sm">Antarmuka bahasa alami untuk kumpulan data sensus resmi dari BPS Papua. Membaca pertanyaan pengguna, memetakan ke file Excel/CSV lokal, melakukan agregasi data via Pandas, dan menampilkan visualisasi grafik interaktif Plotly.</p>
+        `,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/bps-data-vis-chat' }]
       },
       {
         name: '🏙️ Detak Detik Jayapura',
-        description: `**Dasbor warga dan portal informasi layanan publik kota Jayapura.** *(legacy, merged with ETNOS)*
-        *Technologies: React, Vite, TypeScript, shadcn/ui, Tailwind CSS.*
-        
-        Platform pelayanan publik yang mengintegrasikan berita lokal, laporan warga, dan panduan administratif Jayapura. Dirancang untuk digitalisasi akses layanan publik dengan bantuan asisten percakapan lokal.`,
+        description: `
+          <strong class="text-foreground block mb-1">Dasbor warga dan portal informasi layanan publik kota Jayapura.</strong> *(legacy, merged with ETNOS)*
+          <span class="block text-xs text-primary mb-2">Technologies: React, Vite, TypeScript, shadcn/ui, Tailwind CSS</span>
+          <p class="text-sm">Platform pelayanan publik yang mengintegrasikan berita lokal, laporan warga, dan panduan administratif Jayapura. Dirancang untuk digitalisasi akses layanan publik dengan bantuan asisten percakapan lokal.</p>
+        `,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/detak-detik-jpr' }]
       }
     ]}
@@ -112,18 +118,20 @@ const headings = [
     projects={[
       {
         name: '🩺 CareCompass Triage',
-        description: `**Klasifikasi triase klinik menggunakan model Multi-Task Hierarchical Attention Network (MT-HAN).**
-        *Technologies: PyTorch, FastAPI, Streamlit, Docker, Multi-Task Hierarchical Attention (MT-HAN).*
-        
-        Model triase klinik menggunakan arsitektur deep learning Hierarchical Attention Network berbasis PyTorch. Dilatih langsung dari dialog medis, model ini mencapai akurasi rute 95%, mendeteksi kebutuhan pasien, dan mengukur ketidakpastian Bayesian via Monte Carlo Dropout.`,
+        description: `
+          <strong class="text-foreground block mb-1">Klasifikasi triase klinik menggunakan model Multi-Task Hierarchical Attention Network (MT-HAN).</strong>
+          <span class="block text-xs text-primary mb-2">Technologies: PyTorch, FastAPI, Streamlit, Docker, Multi-Task Hierarchical Attention (MT-HAN)</span>
+          <p class="text-sm">Model triase klinik menggunakan arsitektur deep learning Hierarchical Attention Network berbasis PyTorch. Dilatih langsung dari dialog medis, model ini mencapai akurasi rute 95%, mendeteksi kebutuhan pasien, dan mengukur ketidakpastian Bayesian via Monte Carlo Dropout.</p>
+        `,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/carecompass-clinical-triage' }]
       },
       {
         name: '🫁 Respiratory Diseases Classifier',
-        description: `**Klasifikasi sinyal akustik untuk identifikasi penyakit pernapasan.**
-        *Technologies: Streamlit, Librosa, Python, Scikit-learn.*
-        
-        Aplikasi web untuk mengekstrak fitur akustik (mel-spectrogram, chroma, MFCC) dari rekaman suara pernapasan (.wav) menggunakan Librosa, lalu mengklasifikasikannya dengan model Scikit-learn untuk deteksi kondisi pernapasan.`,
+        description: `
+          <strong class="text-foreground block mb-1">Klasifikasi sinyal akustik untuk identifikasi penyakit pernapasan.</strong>
+          <span class="block text-xs text-primary mb-2">Technologies: Streamlit, Librosa, Python, Scikit-learn</span>
+          <p class="text-sm">Aplikasi web untuk mengekstrak fitur akustik (mel-spectrogram, chroma, MFCC) dari rekaman suara pernapasan (.wav) menggunakan Librosa, lalu mengklasifikasikannya dengan model Scikit-learn untuk deteksi kondisi pernapasan.</p>
+        `,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/respiratory-diseases-classifier' }]
       }
     ]}
@@ -134,18 +142,20 @@ const headings = [
     projects={[
       {
         name: '🌐 Honai Metro',
-        description: `**Client Fediverse terdesentralisasi berbasis Svelte untuk jejaring komunitas.**
-        *Technologies: Svelte, Photon framework, Lemmy API, pyfedi.*
-        
-        Client Svelte ringan dengan kustomisasi gaya untuk mengakses jaringan server Lemmy dan Fediverse di Papua. Difork dari Photon dan terintegrasi dengan pyfedi untuk koneksi langsung ke node terdesentralisasi.`,
+        description: `
+          <strong class="text-foreground block mb-1">Client Fediverse terdesentralisasi berbasis Svelte untuk jejaring komunitas.</strong>
+          <span class="block text-xs text-primary mb-2">Technologies: Svelte, Photon framework, Lemmy API, pyfedi</span>
+          <p class="text-sm">Client Svelte ringan dengan kustomisasi gaya untuk mengakses jaringan server Lemmy dan Fediverse di Papua. Difork dari Photon dan terintegrasi dengan pyfedi untuk koneksi langsung ke node terdesentralisasi.</p>
+        `,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/honai-metro' }]
       },
       {
         name: '🌿 yohn-maistre.github.io',
-        description: `**Portofolio personal dan kebun pikiran dwibahasa yang dibangun dengan Astro.**
-        *Technologies: Astro, TypeScript, Tailwind CSS, Markdown/MDX.*
-        
-        Mesin di balik portofolio ini, mengintegrasikan loader konten dwibahasa otomatis (i18n), navigasi sidebar dinamis untuk kategori mendalam, dan optimasi performa rendering pada perangkat seluler.`,
+        description: `
+          <strong class="text-foreground block mb-1">Portofolio personal dan kebun pikiran dwibahasa yang dibangun dengan Astro.</strong>
+          <span class="block text-xs text-primary mb-2">Technologies: Astro, TypeScript, Tailwind CSS, Markdown/MDX</span>
+          <p class="text-sm">Mesin di balik portofolio ini, mengintegrasikan loader konten dwibahasa otomatis (i18n), navigasi sidebar dinamis untuk kategori mendalam, dan optimasi performa rendering pada perangkat seluler.</p>
+        `,
         links: [{ type: 'github', href: 'https://github.com/yohn-maistre/yohn-maistre.github.io' }]
       }
     ]}
@@ -156,26 +166,29 @@ const headings = [
       projects={[
         {
           name: '⚙️ CyjonOS',
-          description: `**Sistem operasi multi-tasking yang ditulis dengan Assembly 64-bit.**
-          *Technologies: Assembly x86_64, Custom Bootloaders, Low-Level Kernel.*
-          
-          Sistem operasi edukatif untuk arsitektur x86_64 yang dibangun dari nol menggunakan bahasa assembly murni. Mengimplementasikan bootloader kustom, manajemen memori paging virtual, scheduler tugas, dan driver perangkat keras dasar.`,
+          description: `
+            <strong class="text-foreground block mb-1">Sistem operasi multi-tasking yang ditulis dengan Assembly 64-bit.</strong>
+            <span class="block text-xs text-primary mb-2">Technologies: Assembly x86_64, Custom Bootloaders, Low-Level Kernel</span>
+            <p class="text-sm">Sistem operasi edukatif untuk arsitektur x86_64 yang dibangun dari nol menggunakan bahasa assembly murni. Mengimplementasikan bootloader kustom, manajemen memori paging virtual, scheduler tugas, dan driver perangkat keras dasar.</p>
+          `,
           links: [{ type: 'github', href: 'https://github.com/yohn-maistre/CyjonOS' }]
         },
         {
           name: 'forumanak-pb 👦👧',
-          description: `**Portal web edukatif untuk Forum Anak Papua Barat.**
-          *Technologies: HTML, CSS, JavaScript, Bootstrap.*
-          
-          Landing page responsif dan pusat informasi untuk memperkuat kehadiran digital dan menyuarakan aspirasi anak-anak di Papua Barat.`,
+          description: `
+            <strong class="text-foreground block mb-1">Portal web edukatif untuk Forum Anak Papua Barat.</strong>
+            <span class="block text-xs text-primary mb-2">Technologies: HTML, CSS, JavaScript, Bootstrap</span>
+            <p class="text-sm">Landing page responsif dan pusat informasi untuk memperkuat kehadiran digital dan menyuarakan aspirasi anak-anak di Papua Barat.</p>
+          `,
           links: [{ type: 'github', href: 'https://github.com/yohn-maistre/forumanak-pb' }]
         },
         {
           name: 'google-foobar-challenge 🍬',
-          description: `**Solusi algoritma untuk tantangan rekrutmen rahasia Google Foobar.**
-          *Technologies: Python, Graph Algorithms, Dynamic Programming, Math.*
-          
-          Repositori berisi solusi algoritma dalam bahasa Python untuk memecahkan tantangan jaringan aliran, rantai Markov, dan pemrograman dinamis dari Google Foobar.`,
+          description: `
+            <strong class="text-foreground block mb-1">Solusi algoritma untuk tantangan rekrutmen rahasia Google Foobar.</strong>
+            <span class="block text-xs text-primary mb-2">Technologies: Python, Graph Algorithms, Dynamic Programming, Math</span>
+            <p class="text-sm">Repositori berisi solusi algoritma dalam bahasa Python untuk memecahkan tantangan jaringan aliran, rantai Markov, dan pemrograman dinamis dari Google Foobar.</p>
+          `,
           links: [{ type: 'github', href: 'https://github.com/yohn-maistre/google-foobar-challenge' }]
         }
       ]}
