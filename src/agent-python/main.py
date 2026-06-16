@@ -1,26 +1,24 @@
 import logging
 import os
+
 from dotenv import load_dotenv
-from livekit import rtc
 from livekit.agents import (
     Agent,
     AgentServer,
     AgentSession,
     JobContext,
     cli,
-    room_io,
 )
-from livekit.plugins import deepgram, elevenlabs, google, silero
+from livekit.plugins import deepgram, elevenlabs, openai, silero
 
-# Load environment variables from .env file (two levels up from agent-python)
+# Local dev only — LiveKit Cloud injects secrets via the agent secrets manifest.
 load_dotenv("../../.env")
 
 logger = logging.getLogger("voice-agent")
 logger.setLevel(logging.INFO)
 
+
 class KaiAssistant(Agent):
-    """Kai - Personal AI assistant for Yose's portfolio"""
-    
     def __init__(self) -> None:
         super().__init__(
             instructions=(
@@ -31,38 +29,40 @@ class KaiAssistant(Agent):
             ),
         )
 
-# Create the agent server instance
+
 server = AgentServer()
+
 
 @server.rtc_session()
 async def agent_entrypoint(ctx: JobContext):
-    """Main entrypoint for the voice agent session"""
-    
     logger.info(f"Agent connecting to room: {ctx.room.name}")
-    
-    # Create the agent session with STT, LLM, TTS, and VAD
+
+    # NVIDIA NIM is OpenAI-compatible; the openai plugin works against it
+    # by overriding base_url. Swap to Groq by changing base_url + api key
+    # to https://api.groq.com/openai/v1 and GROQ_API_KEY.
     session = AgentSession(
-        stt="deepgram/nova-2",  # Deepgram Nova-2 for speech-to-text
-        llm=google.LLM(model="gemini-2.0-flash-exp"),  # Google Gemini 2.0 Flash Experimental
+        stt="deepgram/nova-3",
+        llm=openai.LLM(
+            model="meta/llama-3.3-70b-instruct",
+            base_url="https://integrate.api.nvidia.com/v1",
+            api_key=os.getenv("NVIDIA_NIM_API_KEY"),
+        ),
         tts=elevenlabs.TTS(
             voice_id="iWydkXKoiVtvdn4vLKp9",
             api_key=os.getenv("ELEVENLABS_API_KEY"),
-        ),  # ElevenLabs for text-to-speech
-        vad=silero.VAD.load(),  # Silero VAD for voice activity detection
-    )
-    
-    # Start the session
-    await session.start(
-        room=ctx.room,
-        agent=KaiAssistant(),
-    )
-    
-    # Generate initial greeting
-    logger.info("Generating initial greeting")
-    await session.generate_reply(
-        instructions="Greet the user in Indonesian with your introduction: 'Halo, saya Kai, AI pribadi Yose. Apa yang kamu mau tau soal Yose?'"
+        ),
+        vad=silero.VAD.load(),
     )
 
+    await session.start(room=ctx.room, agent=KaiAssistant())
+
+    await session.generate_reply(
+        instructions=(
+            "Greet the user in Indonesian with your introduction: "
+            "'Halo, saya Kai, AI pribadi Yose. Apa yang kamu mau tau soal Yose?'"
+        )
+    )
+
+
 if __name__ == "__main__":
-    # Run the agent server
     cli.run_app(server)

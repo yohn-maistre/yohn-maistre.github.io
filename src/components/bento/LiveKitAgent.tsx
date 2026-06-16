@@ -17,18 +17,19 @@ export default function LiveKitAgent() {
   const [started, setStarted] = useState(false);
 
   const startAgent = useCallback(async () => {
+    const endpoint = import.meta.env.PUBLIC_TOKEN_ENDPOINT;
+    if (!endpoint) {
+      alert('Voice agent is offline (token endpoint not configured).');
+      return;
+    }
     try {
-      const response = await fetch('/api/connection-details', {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
       });
 
       if (!response.ok) {
-        if (response.status === 404) {
-          alert('Agent is currently offline (API unreachable on static deployment). Try running locally!');
-          return;
-        }
         throw new Error('Failed to fetch connection details');
       }
 
