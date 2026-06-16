@@ -1,13 +1,10 @@
 {
-  "name": "yose-livekit-token-worker",
+  "name": "yose-voice-agent-worker",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "deploy": "wrangler deploy",
     "dev": "wrangler dev"
-  },
-  "dependencies": {
-    "jose": "^5.9.6"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240909.0",

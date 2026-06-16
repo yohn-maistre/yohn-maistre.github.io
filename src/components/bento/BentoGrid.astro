@@ -4,7 +4,7 @@ import { Icon } from 'astro-icon/components'
 
 import DiscordPresence from '@/components/bento/DiscordPresence.tsx'
 import HousePostCanvas from '@/components/bento/HousePostCanvas.tsx'
-import LiveKitAgent from '@/components/bento/LiveKitAgent.tsx'
+import VoiceAgent from '@/components/bento/VoiceAgent.tsx'
 import SpotifyPresence from '@/components/bento/SpotifyPresence.tsx'
 import WakatimeGraph from '@/components/bento/WakatimeGraph.tsx'
 import Link from '@/components/Link.astro'
@@ -53,7 +53,7 @@ import Link from '@/components/Link.astro'
     class='bento-tile three-canvas-container has-overlay relative flex aspect-[6/5] items-center justify-center overflow-hidden p-4 [grid-area:e] hover:bg-none sm:aspect-[2.1/1] xl:aspect-square'
     aria-label='Voice agent (Kai)'
   >
-    <LiveKitAgent client:visible />
+    <VoiceAgent client:visible />
   </div>
 
   <div
@@ -174,7 +174,7 @@ import Link from '@/components/Link.astro'
     background-repeat: no-repeat;
   }
 
-  /* Three.js / LiveKit container needs no border or padding */
+  /* Three.js / voice-agent container needs no border or padding */
   .three-canvas-container {
     background: transparent !important;
     border: none !important;

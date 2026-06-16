@@ -1,0 +1,286 @@
+import { KAI_MODEL, KAI_SYSTEM_PROMPT, KAI_TOOLS, KAI_VOICE } from './system-prompt'
+import { searchMoviesTv } from './tmdb-tool'
+
+const TOKEN_ENDPOINT = import.meta.env.PUBLIC_TOKEN_ENDPOINT as string
+const LIVE_WS_BASE =
+  'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent'
+
+const INPUT_SAMPLE_RATE = 16000
+const OUTPUT_SAMPLE_RATE = 24000
+
+export type AgentState =
+  | 'idle'
+  | 'connecting'
+  | 'listening'
+  | 'thinking'
+  | 'speaking'
+  | 'error'
+
+export interface GeminiLiveClientOpts {
+  onState: (s: AgentState) => void
+  onPlaybackTrack?: (track: MediaStreamTrack | undefined) => void
+  onError?: (e: Error) => void
+}
+
+interface FunctionCall {
+  id: string
+  name: string
+  args: Record<string, unknown>
+}
+
+export class GeminiLiveClient {
+  private ws?: WebSocket
+  private captureCtx?: AudioContext
+  private playbackCtx?: AudioContext
+  private playbackDest?: MediaStreamAudioDestinationNode
+  private worklet?: AudioWorkletNode
+  private mic?: MediaStream
+  private playbackQueueEnd = 0
+  private activeSources = new Set<AudioBufferSourceNode>()
+  private state: AgentState = 'idle'
+
+  constructor(private opts: GeminiLiveClientOpts) {}
+
+  async connect(): Promise<void> {
+    this.setState('connecting')
+    try {
+      const token = await this.fetchToken()
+      await this.openSocket(token)
+      await this.startCapture()
+      this.setState('listening')
+    } catch (e) {
+      this.opts.onError?.(e as Error)
+      this.setState('error')
+      this.disconnect()
+      throw e
+    }
+  }
+
+  disconnect(): void {
+    if (this.ws && this.ws.readyState !== WebSocket.CLOSED) this.ws.close()
+    this.ws = undefined
+    this.stopAllPlayback()
+    this.worklet?.disconnect()
+    this.worklet = undefined
+    this.mic?.getTracks().forEach((t) => t.stop())
+    this.mic = undefined
+    this.captureCtx?.close().catch(() => {})
+    this.captureCtx = undefined
+    this.playbackCtx?.close().catch(() => {})
+    this.playbackCtx = undefined
+    this.playbackDest = undefined
+    this.opts.onPlaybackTrack?.(undefined)
+    this.setState('idle')
+  }
+
+  private setState(s: AgentState) {
+    if (this.state === s) return
+    this.state = s
+    this.opts.onState(s)
+  }
+
+  private async fetchToken(): Promise<string> {
+    const res = await fetch(`${TOKEN_ENDPOINT}/token`, { method: 'POST' })
+    if (!res.ok) throw new Error(`Token mint failed: ${res.status}`)
+    const body = (await res.json()) as { name?: string }
+    if (!body.name) throw new Error('Token response missing "name"')
+    return body.name
+  }
+
+  private openSocket(token: string): Promise<void> {
+    const url = `${LIVE_WS_BASE}?access_token=${encodeURIComponent(token)}`
+    return new Promise((resolve, reject) => {
+      const ws = new WebSocket(url)
+      this.ws = ws
+      ws.binaryType = 'arraybuffer'
+
+      let setupAcked = false
+
+      ws.onopen = () => {
+        ws.send(
+          JSON.stringify({
+            setup: {
+              model: KAI_MODEL,
+              generationConfig: {
+                responseModalities: ['AUDIO'],
+                speechConfig: {
+                  voiceConfig: {
+                    prebuiltVoiceConfig: { voiceName: KAI_VOICE },
+                  },
+                  languageCode: 'id-ID',
+                },
+              },
+              systemInstruction: { parts: [{ text: KAI_SYSTEM_PROMPT }] },
+              tools: KAI_TOOLS,
+              realtimeInputConfig: {
+                automaticActivityDetection: {
+                  startOfSpeechSensitivity: 'START_SENSITIVITY_HIGH',
+                  endOfSpeechSensitivity: 'END_SENSITIVITY_HIGH',
+                },
+              },
+            },
+          })
+        )
+      }
+
+      ws.onmessage = async (ev) => {
+        try {
+          const text = await toText(ev.data)
+          const msg = JSON.parse(text)
+          if (msg.setupComplete && !setupAcked) {
+            setupAcked = true
+            resolve()
+          }
+          this.handleServer(msg)
+        } catch (e) {
+          console.warn('[gemini-live] message parse error', e)
+        }
+      }
+
+      ws.onerror = () => {
+        if (!setupAcked) reject(new Error('WebSocket error before setup'))
+      }
+
+      ws.onclose = (ev) => {
+        if (!setupAcked) reject(new Error(`WebSocket closed: ${ev.code} ${ev.reason}`))
+        if (this.state !== 'idle') this.disconnect()
+      }
+    })
+  }
+
+  private async startCapture(): Promise<void> {
+    this.captureCtx = new AudioContext({ sampleRate: INPUT_SAMPLE_RATE })
+    await this.captureCtx.audioWorklet.addModule('/voice/pcm-worklet.js')
+
+    this.mic = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        channelCount: 1,
+      },
+    })
+    const source = this.captureCtx.createMediaStreamSource(this.mic)
+    this.worklet = new AudioWorkletNode(this.captureCtx, 'pcm16-downsampler')
+    this.worklet.port.onmessage = (ev) => {
+      const buf = ev.data as ArrayBuffer
+      if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return
+      this.ws.send(
+        JSON.stringify({
+          realtimeInput: {
+            mediaChunks: [{ data: arrayBufferToBase64(buf), mimeType: 'audio/pcm;rate=16000' }],
+          },
+        })
+      )
+    }
+    source.connect(this.worklet)
+  }
+
+  private handleServer(msg: any) {
+    if (msg.serverContent) {
+      const sc = msg.serverContent
+      if (sc.interrupted) {
+        this.stopAllPlayback()
+        this.setState('listening')
+      }
+      const parts: any[] = sc.modelTurn?.parts ?? []
+      let gotAudio = false
+      for (const part of parts) {
+        const inline = part.inlineData
+        if (inline?.mimeType?.startsWith('audio/')) {
+          gotAudio = true
+          this.setState('speaking')
+          this.enqueuePlayback(inline.data)
+        }
+      }
+      if (!gotAudio && parts.length === 0 && !sc.interrupted && !sc.turnComplete) {
+        this.setState('thinking')
+      }
+      if (sc.turnComplete) this.setState('listening')
+    }
+    if (msg.toolCall) {
+      this.dispatchToolCalls(msg.toolCall.functionCalls ?? [])
+    }
+    if (msg.goAway) {
+      console.warn('[gemini-live] goAway', msg.goAway)
+    }
+  }
+
+  private async dispatchToolCalls(calls: FunctionCall[]) {
+    const responses = await Promise.all(
+      calls.map(async (call) => {
+        try {
+          let output: unknown
+          if (call.name === 'search_movies_tv') {
+            output = await searchMoviesTv(String(call.args.query ?? ''))
+          } else {
+            output = { error: `unknown tool: ${call.name}` }
+          }
+          return { id: call.id, name: call.name, response: { output } }
+        } catch (e) {
+          return {
+            id: call.id,
+            name: call.name,
+            response: { error: (e as Error).message },
+          }
+        }
+      })
+    )
+    this.ws?.send(JSON.stringify({ toolResponse: { functionResponses: responses } }))
+  }
+
+  private enqueuePlayback(b64: string) {
+    if (!this.playbackCtx) {
+      this.playbackCtx = new AudioContext({ sampleRate: OUTPUT_SAMPLE_RATE })
+      this.playbackDest = this.playbackCtx.createMediaStreamDestination()
+      this.opts.onPlaybackTrack?.(this.playbackDest.stream.getAudioTracks()[0])
+    }
+    const ctx = this.playbackCtx
+    const bytes = base64ToUint8Array(b64)
+    const int16 = new Int16Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 2)
+    const float = new Float32Array(int16.length)
+    for (let i = 0; i < int16.length; i++) float[i] = int16[i] / 0x8000
+    const buf = ctx.createBuffer(1, float.length, OUTPUT_SAMPLE_RATE)
+    buf.copyToChannel(float, 0)
+    const src = ctx.createBufferSource()
+    src.buffer = buf
+    src.connect(ctx.destination)
+    if (this.playbackDest) src.connect(this.playbackDest)
+    const startAt = Math.max(ctx.currentTime, this.playbackQueueEnd)
+    src.start(startAt)
+    this.playbackQueueEnd = startAt + buf.duration
+    this.activeSources.add(src)
+    src.onended = () => this.activeSources.delete(src)
+  }
+
+  private stopAllPlayback() {
+    for (const src of this.activeSources) {
+      try {
+        src.stop()
+      } catch {}
+    }
+    this.activeSources.clear()
+    this.playbackQueueEnd = 0
+  }
+}
+
+function arrayBufferToBase64(buf: ArrayBuffer): string {
+  const bytes = new Uint8Array(buf)
+  let bin = ''
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
+  return btoa(bin)
+}
+
+function base64ToUint8Array(b64: string): Uint8Array {
+  const bin = atob(b64)
+  const arr = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i)
+  return arr
+}
+
+async function toText(data: unknown): Promise<string> {
+  if (typeof data === 'string') return data
+  if (data instanceof ArrayBuffer) return new TextDecoder().decode(data)
+  if (data instanceof Blob) return data.text()
+  return String(data)
+}

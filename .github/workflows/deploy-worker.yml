@@ -1,4 +1,4 @@
-name: Deploy Cloudflare Worker (LiveKit Token)
+name: Deploy Cloudflare Worker (Voice Agent)
 
 on:
   push:

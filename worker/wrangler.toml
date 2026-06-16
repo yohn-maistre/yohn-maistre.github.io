@@ -1,11 +1,10 @@
-name = "yose-livekit-token"
+name = "yose-voice-agent"
 main = "src/index.ts"
 compatibility_date = "2026-06-16"
 
 [vars]
 ALLOWED_ORIGIN = "https://yose.is-a.dev"
 
-# Secrets set out-of-band:
-#   wrangler secret put LIVEKIT_API_KEY
-#   wrangler secret put LIVEKIT_API_SECRET
-#   wrangler secret put LIVEKIT_URL
+# Secrets set via:
+#   wrangler secret put GEMINI_API_KEY
+#   wrangler secret put TMDB_API_KEY
