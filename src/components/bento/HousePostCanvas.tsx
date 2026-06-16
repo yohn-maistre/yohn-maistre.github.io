@@ -5,7 +5,7 @@ import ThreeCanvas from './ThreeCanvas'
 export default function HousePostCanvas() {
   return (
     <ThreeCanvas
-      modelPath='/iatmul_house_post.glb'
+      modelPath='/iatmul_house_post.opt.glb'
       cameraZ={18}
       autoRotate={false}
       playAnimation={false}
