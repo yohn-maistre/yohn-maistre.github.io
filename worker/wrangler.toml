@@ -5,6 +5,7 @@ compatibility_date = "2026-06-16"
 [vars]
 ALLOWED_ORIGIN = "https://yose.is-a.dev"
 
-# Secrets set via:
-#   wrangler secret put GEMINI_API_KEY
-#   wrangler secret put TMDB_API_KEY
+# Secrets are pushed automatically by .github/workflows/deploy-worker.yml
+# (cloudflare/wrangler-action@v3 with `secrets:`). Just add GEMINI_API_KEY
+# and TMDB_API_KEY to GitHub repo secrets; the action wires them into the
+# Worker on every deploy. No local `wrangler secret put` needed.

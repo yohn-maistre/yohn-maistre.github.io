@@ -19,8 +19,8 @@ const json = (body: unknown, status: number, headers: HeadersInit) =>
 
 async function mintEphemeralToken(env: Env): Promise<unknown> {
   const now = Date.now()
-  const expireTime = new Date(now + 30 * 60_000).toISOString()
-  const newSessionExpireTime = new Date(now + 5 * 60_000).toISOString()
+  const expire_time = new Date(now + 30 * 60_000).toISOString()
+  const new_session_expire_time = new Date(now + 60_000).toISOString()
 
   const res = await fetch(
     `https://generativelanguage.googleapis.com/v1alpha/auth_tokens?key=${env.GEMINI_API_KEY}`,
@@ -28,15 +28,13 @@ async function mintEphemeralToken(env: Env): Promise<unknown> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        config: {
-          uses: 1,
-          expireTime,
-          newSessionExpireTime,
-          liveConnectConstraints: {
-            model: 'models/gemini-3.1-flash-live-preview',
-            // Fallback if 3.1 misbehaves:
-            // model: 'models/gemini-live-2.5-flash-native-audio',
-          },
+        uses: 1,
+        expire_time,
+        new_session_expire_time,
+        live_connect_constraints: {
+          model: 'models/gemini-3.1-flash-live-preview',
+          // Fallback if 3.1 misbehaves:
+          // model: 'models/gemini-live-2.5-flash-native-audio',
         },
       }),
     }

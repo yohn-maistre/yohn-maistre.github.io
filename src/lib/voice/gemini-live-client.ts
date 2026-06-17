@@ -3,7 +3,7 @@ import { searchMoviesTv } from './tmdb-tool'
 
 const TOKEN_ENDPOINT = import.meta.env.PUBLIC_TOKEN_ENDPOINT as string
 const LIVE_WS_BASE =
-  'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent'
+  'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContentConstrained'
 
 const INPUT_SAMPLE_RATE = 16000
 const OUTPUT_SAMPLE_RATE = 24000
@@ -168,7 +168,7 @@ export class GeminiLiveClient {
       this.ws.send(
         JSON.stringify({
           realtimeInput: {
-            mediaChunks: [{ data: arrayBufferToBase64(buf), mimeType: 'audio/pcm;rate=16000' }],
+            audio: { data: arrayBufferToBase64(buf), mimeType: 'audio/pcm;rate=16000' },
           },
         })
       )
