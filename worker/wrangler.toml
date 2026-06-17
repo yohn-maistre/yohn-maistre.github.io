@@ -1,0 +1,11 @@
+name = "yose-voice-agent"
+main = "src/index.ts"
+compatibility_date = "2026-06-16"
+
+[vars]
+ALLOWED_ORIGIN = "https://yose.is-a.dev"
+
+# Secrets are pushed automatically by .github/workflows/deploy-worker.yml
+# (cloudflare/wrangler-action@v3 with `secrets:`). Just add GEMINI_API_KEY
+# and TMDB_API_KEY to GitHub repo secrets; the action wires them into the
+# Worker on every deploy. No local `wrangler secret put` needed.

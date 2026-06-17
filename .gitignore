@@ -52,3 +52,8 @@ revisions.md
 __pycache__/
 *.py[cod]
 .venv/
+
+### Local-only assets
+# Pre-DRACO source GLB restored from git history (e49acb1) as a dev safety
+# net to eyeball against the 1.1 MB .opt.glb that HousePostCanvas loads.
+public/iatmul_house_post.glb
