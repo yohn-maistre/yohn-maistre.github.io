@@ -22,7 +22,7 @@ jobs:
         run: bun run build
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-          PUBLIC_TOKEN_ENDPOINT: ${{ secrets.PUBLIC_TOKEN_ENDPOINT }}
+          PUBLIC_TOKEN_ENDPOINT: ${{ vars.PUBLIC_TOKEN_ENDPOINT }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
