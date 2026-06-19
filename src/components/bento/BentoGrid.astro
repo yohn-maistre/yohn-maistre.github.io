@@ -41,7 +41,7 @@ import Link from '@/components/Link.astro'
   </div>
 
   <div
-    class='bento-tile relative size-full overflow-hidden [grid-area:g] sm:aspect-square'
+    class='bento-tile relative aspect-square size-full overflow-hidden [grid-area:g] sm:aspect-square'
     aria-label='Discord presence'
   >
     <div style={{ width: '100%', height: '100%' }}>
@@ -64,7 +64,7 @@ import Link from '@/components/Link.astro'
         class="overlay absolute inset-0 z-0 size-full rounded-3xl bg-[url('/bento/spotify.webp')] bg-cover bg-center bg-no-repeat transition-opacity duration-200 xl:opacity-0"
       >
       </div>
-      <SpotifyPresence client:visible />
+      <SpotifyPresence client:idle />
     </div>
   </div>
 
