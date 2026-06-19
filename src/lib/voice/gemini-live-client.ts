@@ -80,15 +80,22 @@ export class GeminiLiveClient {
   }
 
   private async fetchToken(): Promise<string> {
-    const res = await fetch(`${TOKEN_ENDPOINT}/token`, { method: 'POST' })
-    if (!res.ok) throw new Error(`Token mint failed: ${res.status}`)
+    const url = `${TOKEN_ENDPOINT}/token`
+    console.log('[gemini-live] POST', url)
+    const res = await fetch(url, { method: 'POST' })
+    if (!res.ok) {
+      const body = await res.text().catch(() => '')
+      throw new Error(`Token mint ${res.status}: ${body.slice(0, 200)}`)
+    }
     const body = (await res.json()) as { name?: string }
-    if (!body.name) throw new Error('Token response missing "name"')
+    if (!body.name) throw new Error('Token response missing "name" field')
+    console.log('[gemini-live] got ephemeral token')
     return body.name
   }
 
   private openSocket(token: string): Promise<void> {
     const url = `${LIVE_WS_BASE}?access_token=${encodeURIComponent(token)}`
+    console.log('[gemini-live] WS opening', LIVE_WS_BASE)
     return new Promise((resolve, reject) => {
       const ws = new WebSocket(url)
       this.ws = ws
@@ -97,6 +104,7 @@ export class GeminiLiveClient {
       let setupAcked = false
 
       ws.onopen = () => {
+        console.log('[gemini-live] WS open, sending setup')
         ws.send(
           JSON.stringify({
             setup: {
@@ -128,6 +136,7 @@ export class GeminiLiveClient {
           const text = await toText(ev.data)
           const msg = JSON.parse(text)
           if (msg.setupComplete && !setupAcked) {
+            console.log('[gemini-live] setupComplete')
             setupAcked = true
             resolve()
           }
@@ -137,11 +146,13 @@ export class GeminiLiveClient {
         }
       }
 
-      ws.onerror = () => {
+      ws.onerror = (e) => {
+        console.error('[gemini-live] WS error', e)
         if (!setupAcked) reject(new Error('WebSocket error before setup'))
       }
 
       ws.onclose = (ev) => {
+        console.log('[gemini-live] WS close', ev.code, ev.reason)
         if (!setupAcked) reject(new Error(`WebSocket closed: ${ev.code} ${ev.reason}`))
         if (this.state !== 'idle') this.disconnect()
       }
@@ -149,6 +160,7 @@ export class GeminiLiveClient {
   }
 
   private async startCapture(): Promise<void> {
+    console.log('[gemini-live] startCapture')
     this.captureCtx = new AudioContext({ sampleRate: INPUT_SAMPLE_RATE })
     await this.captureCtx.audioWorklet.addModule('/voice/pcm-worklet.js')
 
@@ -160,11 +172,15 @@ export class GeminiLiveClient {
         channelCount: 1,
       },
     })
+    console.log('[gemini-live] mic granted, ctx sampleRate', this.captureCtx.sampleRate)
     const source = this.captureCtx.createMediaStreamSource(this.mic)
     this.worklet = new AudioWorkletNode(this.captureCtx, 'pcm16-downsampler')
+    let chunkCount = 0
     this.worklet.port.onmessage = (ev) => {
       const buf = ev.data as ArrayBuffer
       if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return
+      if (chunkCount === 0) console.log('[gemini-live] first audio chunk out')
+      chunkCount++
       this.ws.send(
         JSON.stringify({
           realtimeInput: {
@@ -177,6 +193,9 @@ export class GeminiLiveClient {
   }
 
   private handleServer(msg: any) {
+    // First-glance log of any non-setup server frame so we can see what
+    // shape Gemini actually sends back in the wild.
+    if (!msg.setupComplete) console.log('[gemini-live] server frame', Object.keys(msg))
     if (msg.serverContent) {
       const sc = msg.serverContent
       if (sc.interrupted) {
@@ -199,6 +218,7 @@ export class GeminiLiveClient {
       if (sc.turnComplete) this.setState('listening')
     }
     if (msg.toolCall) {
+      console.log('[gemini-live] toolCall', msg.toolCall)
       this.dispatchToolCalls(msg.toolCall.functionCalls ?? [])
     }
     if (msg.goAway) {
