@@ -71,10 +71,7 @@ export default function VoiceAgent() {
   const onClick = phase === 'idle' ? start : state === 'connecting' ? undefined : stop
 
   return (
-    <div
-      className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-3xl bg-secondary/25'
-      style={{ containerType: 'size' }}
-    >
+    <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-3xl bg-secondary/25'>
       <div className='relative flex h-full w-full items-center justify-center'>
         <OrbAnimation
           key={phase}

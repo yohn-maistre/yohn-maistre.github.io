@@ -22,6 +22,13 @@ async function mintEphemeralToken(env: Env): Promise<unknown> {
   const expire_time = new Date(now + 30 * 60_000).toISOString()
   const new_session_expire_time = new Date(now + 60_000).toISOString()
 
+  // Match the official google-gemini/gemini-live-api-examples server.py:
+  // top-level AuthToken fields, no `config` wrapper, no model lock. The
+  // earlier `live_connect_constraints` field was a Python-SDK abstraction
+  // that doesn't exist on the REST AuthToken resource and was rejected
+  // with "Invalid JSON payload received. Unknown name". The token stays
+  // single-use + 30 min — security cost of dropping the model lock is
+  // negligible for a portfolio.
   const res = await fetch(
     `https://generativelanguage.googleapis.com/v1alpha/auth_tokens?key=${env.GEMINI_API_KEY}`,
     {
@@ -31,11 +38,6 @@ async function mintEphemeralToken(env: Env): Promise<unknown> {
         uses: 1,
         expire_time,
         new_session_expire_time,
-        live_connect_constraints: {
-          model: 'models/gemini-3.1-flash-live-preview',
-          // Fallback if 3.1 misbehaves:
-          // model: 'models/gemini-live-2.5-flash-native-audio',
-        },
       }),
     }
   )

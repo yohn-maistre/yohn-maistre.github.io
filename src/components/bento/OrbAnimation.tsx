@@ -331,12 +331,11 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
         ref={creatureRef}
         className="flex flex-wrap justify-center items-center"
         style={{
-          // Scale the creature to its container so it fills the tile on
-          // every breakpoint. cqmin reads the shorter side of the nearest
-          // ancestor with `container-type` set — VoiceAgent sets that on
-          // its root wrapper. Falls back to viewport min on browsers that
-          // don't honour container query units in <em> contexts.
-          fontSize: 'clamp(0.8px, 0.4cqmin, 2.2px)',
+          // The orb sizing is `em`-based and the parent fontSize drives the
+          // zoom level. Using `vh` alone meant tiny orbs on mobile portrait
+          // (~5px) and oversized ones on ultrawide. clamp() keeps it sane:
+          // floor of 0.04em, scales with viewport height, capped at 0.12em.
+          fontSize: 'clamp(0.04em, 0.08vh, 0.12em)',
           width: '150em',
           height: '150em'
         }}
