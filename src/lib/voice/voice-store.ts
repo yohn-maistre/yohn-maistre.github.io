@@ -96,6 +96,16 @@ function setState(s: AgentState): void {
     playDisconnectChime()
   }
   if (s === 'sleeping' || s === 'error') playErrorChime()
+  // CRITICAL: when the client falls back to idle but its WS is no longer
+  // alive (hard cutoff, ws.onclose, fatal error), null the reference so the
+  // next start() doesn't bail out with "if (_client) return" and look like
+  // a dead click. Without this, the visitor would click the orb after the
+  // 3-min cap and see nothing happen.
+  if (s === 'idle' && _client && !_client.isResumable) {
+    console.log('[voice-store] client no longer resumable — clearing for fresh start next time')
+    _client = null
+    _track = undefined
+  }
   emit()
 }
 

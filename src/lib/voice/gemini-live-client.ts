@@ -251,7 +251,12 @@ export class GeminiLiveClient {
     this.clearSessionCaps()
     this.windDownTimer = window.setTimeout(() => {
       this.injectSystemTurn(
-        '[wind down — session ends in ~30 seconds. Deliver one short, warm closing line (1 sentence) in the language the user has been speaking, then stop. Do not start a new topic.]'
+        '[wind down — your free-tier session is at the 3-minute cap and will close in ~30 seconds. ' +
+        'In the language the visitor has been using, briefly EXPLAIN this is a per-session limit ' +
+        '(not your choice) and that they can come back in a few seconds to keep chatting. Examples: ' +
+        '"kuota sesi 3 menit habis sebentar lagi — balik lagi yuk, klik aja Aksara biar lanjut" / ' +
+        '"my 3-minute session cap is up — pop back in a few seconds and we can keep going". ' +
+        'Then a warm one-line goodbye. Do not over-apologize and do not pretend it was your idea.]'
       )
     }, GeminiLiveClient.WIND_DOWN_MS)
     this.hardCutoffTimer = window.setTimeout(() => {

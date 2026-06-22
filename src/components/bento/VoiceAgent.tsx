@@ -22,21 +22,17 @@ interface VoiceAgentProps {
   lang?: 'en' | 'id'
 }
 
-function formatCountdown(seconds: number, lang: 'en' | 'id'): string {
-  if (seconds <= 0) return lang === 'id' ? 'sebentar lagi…' : 'almost back…'
-  if (seconds < 60) {
-    return lang === 'id' ? `siap dalam ${seconds}s` : `back in ${seconds}s`
-  }
+/** Clock-style countdown for the prominent sleeping overlay (MM:SS or H:MM:SS). */
+function formatCooldownClock(seconds: number): string {
+  if (seconds <= 0) return '0:00'
   if (seconds < 3600) {
     const m = Math.floor(seconds / 60)
     const s = seconds % 60
-    return lang === 'id' ? `siap dalam ${m}m ${s}s` : `back in ${m}m ${s}s`
+    return `${m}:${s.toString().padStart(2, '0')}`
   }
   const h = Math.floor(seconds / 3600)
   const m = Math.floor((seconds % 3600) / 60)
-  return lang === 'id'
-    ? `kuota harian habis (${h}j ${m}m lagi)`
-    : `daily cap reached (${h}h ${m}m)`
+  return `${h}:${m.toString().padStart(2, '0')}:00`
 }
 
 function errorCopy(err: AgentError, lang: 'en' | 'id'): string {
@@ -98,10 +94,47 @@ export default function VoiceAgent({ lang = 'id' }: VoiceAgentProps) {
       </div>
 
       {state === 'sleeping' && (
-        <div className='pointer-events-none absolute bottom-2 left-2 right-2 flex justify-center'>
-          <div className='rounded-full border border-white/10 bg-black/55 px-3 py-1 text-[11px] text-white/90 backdrop-blur-sm'>
-            {formatCountdown(remainingSeconds, lang)}
+        <div
+          className='pointer-events-none absolute inset-0 flex flex-col items-center justify-center rounded-3xl backdrop-blur-[2px]'
+          style={{
+            background:
+              'radial-gradient(circle at center, rgba(60, 130, 185, 0.42) 0%, rgba(40, 90, 140, 0.55) 75%)',
+            animation: 'aksaraSleepFade 600ms ease-out'
+          }}
+        >
+          <div
+            className='text-white/90 text-[10px] font-medium uppercase tracking-[0.18em] mb-1.5'
+            style={{ textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}
+          >
+            {lang === 'id' ? 'ngaso bentar' : 'cooling down'}
           </div>
+          <div
+            className='text-white text-[2rem] font-light tabular-nums tracking-wider leading-none'
+            style={{
+              textShadow:
+                '0 0 14px rgba(140, 200, 240, 0.65), 0 2px 6px rgba(0,0,0,0.45)'
+            }}
+          >
+            {formatCooldownClock(remainingSeconds)}
+          </div>
+          <div
+            className='text-white/75 text-[10px] mt-2 max-w-[80%] text-center leading-snug'
+            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}
+          >
+            {remainingSeconds >= 3600
+              ? lang === 'id'
+                ? 'kuota harian browser ini habis'
+                : "this browser's daily cap is spent"
+              : lang === 'id'
+              ? 'klik lagi pas siap'
+              : 'click again when ready'}
+          </div>
+          <style>{`
+            @keyframes aksaraSleepFade {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+          `}</style>
         </div>
       )}
 
