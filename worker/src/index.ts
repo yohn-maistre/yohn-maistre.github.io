@@ -17,7 +17,54 @@ const json = (body: unknown, status: number, headers: HeadersInit) =>
     headers: { 'Content-Type': 'application/json', ...headers },
   })
 
-async function mintEphemeralToken(env: Env): Promise<unknown> {
+type ErrorKind = 'rate-limit' | 'quota' | 'auth' | 'upstream' | 'unknown'
+
+interface ClassifiedError {
+  kind: ErrorKind
+  status: number
+  message: string
+  retryAfter?: number
+}
+
+/**
+ * Maps an upstream Gemini auth_tokens failure to an ErrorKind + suggested
+ * retryAfter (seconds). Gemini returns Retry-After as a header on 429
+ * sometimes; other times it's in the JSON body under `error.details[].retryDelay`
+ * formatted as "Ns".
+ */
+async function classifyUpstream(res: Response): Promise<ClassifiedError> {
+  const status = res.status
+  const text = await res.text()
+  let retryAfter: number | undefined
+
+  const header = res.headers.get('retry-after')
+  if (header) {
+    const n = Number.parseInt(header, 10)
+    if (Number.isFinite(n)) retryAfter = n
+  }
+
+  if (retryAfter === undefined && text) {
+    const m = text.match(/"retryDelay"\s*:\s*"(\d+)s"/)
+    if (m) retryAfter = Number.parseInt(m[1], 10)
+  }
+
+  let kind: ErrorKind = 'unknown'
+  if (status === 429) {
+    kind = 'rate-limit'
+    if (retryAfter === undefined) retryAfter = 60
+  } else if (status === 403) {
+    kind = /quota|limit/i.test(text) ? 'quota' : 'auth'
+    if (kind === 'quota' && retryAfter === undefined) retryAfter = 60
+  } else if (status === 401) {
+    kind = 'auth'
+  } else if (status >= 500) {
+    kind = 'upstream'
+  }
+
+  return { kind, status, message: text.slice(0, 300), retryAfter }
+}
+
+async function mintEphemeralToken(env: Env): Promise<Response> {
   const now = Date.now()
   const expire_time = new Date(now + 30 * 60_000).toISOString()
   const new_session_expire_time = new Date(now + 60_000).toISOString()
@@ -29,7 +76,7 @@ async function mintEphemeralToken(env: Env): Promise<unknown> {
   // with "Invalid JSON payload received. Unknown name". The token stays
   // single-use + 30 min — security cost of dropping the model lock is
   // negligible for a portfolio.
-  const res = await fetch(
+  return fetch(
     `https://generativelanguage.googleapis.com/v1alpha/auth_tokens?key=${env.GEMINI_API_KEY}`,
     {
       method: 'POST',
@@ -41,12 +88,6 @@ async function mintEphemeralToken(env: Env): Promise<unknown> {
       }),
     }
   )
-
-  if (!res.ok) {
-    throw new Error(`Gemini auth_tokens ${res.status}: ${await res.text()}`)
-  }
-
-  return res.json()
 }
 
 async function searchTmdb(query: string, env: Env): Promise<unknown> {
@@ -75,9 +116,22 @@ export default {
 
     if (url.pathname === '/token' && request.method === 'POST') {
       try {
-        return json(await mintEphemeralToken(env), 200, headers)
+        const upstream = await mintEphemeralToken(env)
+        if (!upstream.ok) {
+          const err = await classifyUpstream(upstream)
+          return json(
+            { error: err.message, kind: err.kind, retryAfter: err.retryAfter },
+            err.status === 429 ? 429 : 502,
+            headers
+          )
+        }
+        return json(await upstream.json(), 200, headers)
       } catch (e) {
-        return json({ error: (e as Error).message }, 500, headers)
+        return json(
+          { error: (e as Error).message, kind: 'upstream' as ErrorKind },
+          502,
+          headers
+        )
       }
     }
 

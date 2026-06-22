@@ -24,12 +24,28 @@ export type AgentState =
   | 'listening'
   | 'thinking'
   | 'speaking'
+  | 'sleeping'
   | 'error'
+
+export type ErrorKind =
+  | 'rate-limit'
+  | 'quota'
+  | 'auth'
+  | 'network'
+  | 'mic-denied'
+  | 'unknown'
+
+export interface AgentError {
+  kind: ErrorKind
+  message: string
+  /** Seconds until retry is sensible. Always set for rate-limit/quota. */
+  retryAfter?: number
+}
 
 export interface GeminiLiveClientOpts {
   onState: (s: AgentState) => void
   onPlaybackTrack?: (track: MediaStreamTrack | undefined) => void
-  onError?: (e: Error) => void
+  onError?: (e: AgentError) => void
   /** UI locale at session start. Defaults to 'id' to match the site's primary audience. */
   lang?: 'en' | 'id'
 }
@@ -71,14 +87,38 @@ export class GeminiLiveClient {
       this.sendGreetingPrimer()
       this.setState('listening')
     } catch (e) {
-      this.opts.onError?.(e as Error)
-      this.setState('error')
-      this.disconnect()
+      const err = this.classifyError(e)
+      this.opts.onError?.(err)
+      // Sleeping states get their own animation; everything else is "error"
+      this.setState(err.kind === 'rate-limit' || err.kind === 'quota' ? 'sleeping' : 'error')
+      this.disconnect({ keepState: true })
       throw e
     }
   }
 
-  disconnect(): void {
+  private classifyError(raw: unknown): AgentError {
+    if (raw instanceof Error) {
+      const m = raw.message
+      // Token mint failures are formatted by fetchToken with the body verbatim.
+      try {
+        const inner = m.match(/\{.*\}/s)?.[0]
+        if (inner) {
+          const parsed = JSON.parse(inner) as { kind?: ErrorKind; retryAfter?: number; error?: string }
+          if (parsed.kind) return { kind: parsed.kind, message: parsed.error ?? m, retryAfter: parsed.retryAfter }
+        }
+      } catch {}
+      if (/permission|NotAllowedError|denied/i.test(m)) {
+        return { kind: 'mic-denied', message: m }
+      }
+      if (/429/.test(m)) return { kind: 'rate-limit', message: m, retryAfter: 60 }
+      if (/401|403/.test(m)) return { kind: 'auth', message: m }
+      if (/WebSocket|fetch|Network/i.test(m)) return { kind: 'network', message: m }
+      return { kind: 'unknown', message: m }
+    }
+    return { kind: 'unknown', message: String(raw) }
+  }
+
+  disconnect(opts: { keepState?: boolean } = {}): void {
     if (this.ws && this.ws.readyState !== WebSocket.CLOSED) this.ws.close()
     this.ws = undefined
     this.stopAllPlayback()
@@ -92,7 +132,9 @@ export class GeminiLiveClient {
     this.playbackCtx = undefined
     this.playbackDest = undefined
     this.opts.onPlaybackTrack?.(undefined)
-    this.setState('idle')
+    // When connect() fails into a sleeping/error state we don't want to
+    // immediately blow it away by setting 'idle'.
+    if (!opts.keepState) this.setState('idle')
   }
 
   private setState(s: AgentState) {
@@ -104,10 +146,17 @@ export class GeminiLiveClient {
   private async fetchToken(): Promise<string> {
     const url = `${TOKEN_ENDPOINT}/token`
     console.log('[gemini-live] POST', url)
-    const res = await fetch(url, { method: 'POST' })
+    let res: Response
+    try {
+      res = await fetch(url, { method: 'POST' })
+    } catch (e) {
+      throw new Error(`Network: ${(e as Error).message}`)
+    }
     if (!res.ok) {
+      // Worker returns { error, kind, retryAfter? } — pass it through so
+      // classifyError can pick it up.
       const body = await res.text().catch(() => '')
-      throw new Error(`Token mint ${res.status}: ${body.slice(0, 200)}`)
+      throw new Error(`Token mint failed ${res.status}: ${body}`)
     }
     const body = (await res.json()) as { name?: string }
     if (!body.name) throw new Error('Token response missing "name" field')
@@ -176,8 +225,24 @@ export class GeminiLiveClient {
 
       ws.onclose = (ev) => {
         console.log('[gemini-live] WS close', ev.code, ev.reason)
-        if (!setupAcked) reject(new Error(`WebSocket closed: ${ev.code} ${ev.reason}`))
-        if (this.state !== 'idle') this.disconnect()
+        // Codes 1008 (policy), 1011 (server), 1013 (try-again) on Gemini
+        // Live's WS map to rate-limit/quota in practice. Treat as sleeping.
+        const rateLimitCodes = [1008, 1011, 1013]
+        if (!setupAcked) {
+          if (rateLimitCodes.includes(ev.code)) {
+            const synthetic = JSON.stringify({ kind: 'rate-limit', retryAfter: 60, error: ev.reason })
+            reject(new Error(`Token mint failed 429: ${synthetic}`))
+          } else {
+            reject(new Error(`WebSocket closed: ${ev.code} ${ev.reason}`))
+          }
+        } else if (rateLimitCodes.includes(ev.code) && this.state !== 'idle' && this.state !== 'sleeping') {
+          // Mid-session rate-limit: surface to the app and enter sleeping.
+          this.opts.onError?.({ kind: 'rate-limit', message: `WS ${ev.code}: ${ev.reason}`, retryAfter: 60 })
+          this.setState('sleeping')
+          this.disconnect({ keepState: true })
+        } else if (this.state !== 'idle' && this.state !== 'sleeping') {
+          this.disconnect()
+        }
       }
     })
   }
@@ -208,14 +273,19 @@ export class GeminiLiveClient {
     this.captureCtx = new AudioContext({ sampleRate: INPUT_SAMPLE_RATE })
     await this.captureCtx.audioWorklet.addModule('/voice/pcm-worklet.js')
 
-    this.mic = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true,
-        channelCount: 1,
-      },
-    })
+    try {
+      this.mic = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          channelCount: 1,
+        },
+      })
+    } catch (e) {
+      // Re-tag the error so classifyError routes it to 'mic-denied'.
+      throw new Error(`Mic permission denied: ${(e as Error).message}`)
+    }
     console.log('[gemini-live] mic granted, ctx sampleRate', this.captureCtx.sampleRate)
     const source = this.captureCtx.createMediaStreamSource(this.mic)
     this.worklet = new AudioWorkletNode(this.captureCtx, 'pcm16-downsampler')

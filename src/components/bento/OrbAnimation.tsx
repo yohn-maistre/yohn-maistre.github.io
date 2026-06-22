@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { animate, createTimeline, createTimer, stagger, utils } from 'animejs';
 
 interface OrbAnimationProps {
-  state: 'listening' | 'thinking' | 'speaking' | 'disconnected' | 'connecting' | 'initializing';
+  state: 'listening' | 'thinking' | 'speaking' | 'disconnected' | 'connecting' | 'initializing' | 'sleeping';
   audioTrack?: MediaStreamTrack;
   onConnect?: () => void;
 }
@@ -151,6 +151,10 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
         if (connecting) {
           // Loading state: dark brown for visual feedback
           updateOrbColors('#533c32ff', 'rgba(200, 180, 170, 0.9)');
+        } else if (currentState === 'sleeping') {
+          // Sleeping: deep cool teal, low-glow — Aksara is resting on the
+          // rate-limit. Breathing pulse handled at the container level below.
+          updateOrbColors('#244a4a', 'rgba(80, 130, 130, 0.45)');
         } else if (currentState === 'listening' || currentState === 'thinking' || currentState === 'speaking') {
           // Connected state: teal/green (REVERSED - was blue before)
           updateOrbColors('#4a9d8e', 'rgba(140, 200, 180, 0.9)');
@@ -287,16 +291,23 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const isSleeping = state === 'sleeping';
+
   return (
-    <div 
-      ref={containerRef} 
+    <div
+      ref={containerRef}
       className="absolute inset-0 flex items-center justify-center overflow-hidden cursor-pointer"
-      style={{ 
+      style={{
         // Old static background: background: 'radial-gradient(circle at center, #2a2a2a 0%, #000000 100%)',
         // Pastel gradient with distinct color stops for better separation
-        background: 'linear-gradient(135deg, #f0e6d2 0%, #a8c9c0 25%, #e8dcc4 50%, #c4d9d4 75%, #f0e6d2 100%)',
+        background: isSleeping
+          ? 'linear-gradient(135deg, #243845 0%, #2c4a52 50%, #243845 100%)'
+          : 'linear-gradient(135deg, #f0e6d2 0%, #a8c9c0 25%, #e8dcc4 50%, #c4d9d4 75%, #f0e6d2 100%)',
         backgroundSize: '300% 300%',
-        animation: 'gradientShift 8s ease-in-out infinite',  // Faster animation (8s instead of 20s)
+        animation: isSleeping
+          ? 'aksaraBreath 4s ease-in-out infinite'
+          : 'gradientShift 8s ease-in-out infinite',
+        transition: 'background 600ms ease-in-out',
       }}
       onClick={handleClick}
     >
@@ -306,7 +317,47 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
+        @keyframes aksaraBreath {
+          0%, 100% { background-position: 0% 50%; filter: brightness(0.85); }
+          50% { background-position: 100% 50%; filter: brightness(1); }
+        }
+        @keyframes aksaraSnore1 {
+          0%, 100% { opacity: 0; transform: translate(0, 0) rotate(-8deg); }
+          30% { opacity: 0.85; transform: translate(-6px, -12px) rotate(-12deg); }
+          60% { opacity: 0.4; transform: translate(-10px, -24px) rotate(-16deg); }
+        }
+        @keyframes aksaraSnore2 {
+          0%, 100% { opacity: 0; transform: translate(0, 0) rotate(8deg); }
+          30% { opacity: 0; }
+          60% { opacity: 0.7; transform: translate(8px, -14px) rotate(12deg); }
+          90% { opacity: 0.3; transform: translate(12px, -26px) rotate(16deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [data-aksara-zzz] { display: none; }
+        }
       `}</style>
+
+      {isSleeping && (
+        <div
+          aria-hidden="true"
+          data-aksara-zzz
+          style={{
+            position: 'absolute',
+            top: '24%',
+            right: '28%',
+            fontFamily: 'system-ui, sans-serif',
+            color: 'rgba(220, 240, 240, 0.9)',
+            fontSize: 'clamp(14px, 3vw, 26px)',
+            fontWeight: 600,
+            letterSpacing: '0.05em',
+            pointerEvents: 'none',
+            textShadow: '0 0 6px rgba(120, 200, 200, 0.45)'
+          }}
+        >
+          <span style={{ display: 'inline-block', animation: 'aksaraSnore1 3.6s ease-in-out infinite' }}>z</span>
+          <span style={{ display: 'inline-block', animation: 'aksaraSnore2 3.6s ease-in-out infinite 0.6s' }}>Z</span>
+        </div>
+      )}
       
       {/* Grainy overlay */}
       <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ filter: 'url(#noise)' }}></div>
