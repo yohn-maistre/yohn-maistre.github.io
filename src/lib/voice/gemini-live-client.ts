@@ -1,4 +1,14 @@
-import { KAI_MODEL, KAI_SYSTEM_PROMPT, KAI_TOOLS, KAI_VOICE } from './system-prompt'
+import {
+  AKSARA_MODEL,
+  AKSARA_SYSTEM_PROMPT,
+  AKSARA_TOOLS,
+  AKSARA_VOICE
+} from './system-prompt'
+import {
+  buildSessionStartHint,
+  formatBundleForPrompt,
+  loadAksaraContext
+} from './site-context'
 import { searchMoviesTv } from './tmdb-tool'
 
 const TOKEN_ENDPOINT = import.meta.env.PUBLIC_TOKEN_ENDPOINT as string
@@ -20,6 +30,8 @@ export interface GeminiLiveClientOpts {
   onState: (s: AgentState) => void
   onPlaybackTrack?: (track: MediaStreamTrack | undefined) => void
   onError?: (e: Error) => void
+  /** UI locale at session start. Defaults to 'id' to match the site's primary audience. */
+  lang?: 'en' | 'id'
 }
 
 interface FunctionCall {
@@ -44,9 +56,19 @@ export class GeminiLiveClient {
   async connect(): Promise<void> {
     this.setState('connecting')
     try {
-      const token = await this.fetchToken()
-      await this.openSocket(token)
+      // Mint token and bundle in parallel — they're independent and the
+      // bundle fetch hits the same origin's edge cache.
+      const [token, bundle] = await Promise.all([
+        this.fetchToken(),
+        loadAksaraContext().catch((e) => {
+          console.warn('[gemini-live] context bundle failed', e)
+          return null
+        })
+      ])
+      const contextSuffix = bundle ? '\n\n' + formatBundleForPrompt(bundle) : ''
+      await this.openSocket(token, contextSuffix)
       await this.startCapture()
+      this.sendGreetingPrimer()
       this.setState('listening')
     } catch (e) {
       this.opts.onError?.(e as Error)
@@ -93,9 +115,10 @@ export class GeminiLiveClient {
     return body.name
   }
 
-  private openSocket(token: string): Promise<void> {
+  private openSocket(token: string, contextSuffix = ''): Promise<void> {
     const url = `${LIVE_WS_BASE}?access_token=${encodeURIComponent(token)}`
-    console.log('[gemini-live] WS opening', LIVE_WS_BASE)
+    const systemText = AKSARA_SYSTEM_PROMPT + contextSuffix
+    console.log('[gemini-live] WS opening', LIVE_WS_BASE, '— systemInstruction', systemText.length, 'chars')
     return new Promise((resolve, reject) => {
       const ws = new WebSocket(url)
       this.ws = ws
@@ -108,18 +131,18 @@ export class GeminiLiveClient {
         ws.send(
           JSON.stringify({
             setup: {
-              model: KAI_MODEL,
+              model: AKSARA_MODEL,
               generationConfig: {
                 responseModalities: ['AUDIO'],
                 speechConfig: {
                   voiceConfig: {
-                    prebuiltVoiceConfig: { voiceName: KAI_VOICE },
+                    prebuiltVoiceConfig: { voiceName: AKSARA_VOICE },
                   },
                   languageCode: 'id-ID',
                 },
               },
-              systemInstruction: { parts: [{ text: KAI_SYSTEM_PROMPT }] },
-              tools: KAI_TOOLS,
+              systemInstruction: { parts: [{ text: systemText }] },
+              tools: AKSARA_TOOLS,
               realtimeInputConfig: {
                 automaticActivityDetection: {
                   startOfSpeechSensitivity: 'START_SENSITIVITY_HIGH',
@@ -157,6 +180,27 @@ export class GeminiLiveClient {
         if (this.state !== 'idle') this.disconnect()
       }
     })
+  }
+
+  /**
+   * Synthetic first turn that asks Aksara to greet the user. The text
+   * mirrors the trigger string the system prompt watches for. Locale +
+   * hour are included so the greeting can be time-aware.
+   */
+  private sendGreetingPrimer(): void {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return
+    const lang: 'en' | 'id' = this.opts.lang ?? 'id'
+    const hour = new Date().getHours()
+    this.ws.send(
+      JSON.stringify({
+        clientContent: {
+          turns: [
+            { role: 'user', parts: [{ text: buildSessionStartHint({ lang, hour }) }] }
+          ],
+          turnComplete: true
+        }
+      })
+    )
   }
 
   private async startCapture(): Promise<void> {

@@ -15,7 +15,11 @@ const stateToOrb: Record<AgentState, OrbState> = {
   error: 'disconnected',
 }
 
-export default function VoiceAgent() {
+interface VoiceAgentProps {
+  lang?: 'en' | 'id'
+}
+
+export default function VoiceAgent({ lang = 'id' }: VoiceAgentProps) {
   const [state, setState] = useState<AgentState>('idle')
   const [track, setTrack] = useState<MediaStreamTrack | undefined>()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -40,6 +44,7 @@ export default function VoiceAgent() {
         console.error('[voice-agent] error:', e)
         setErrorMsg(e.message)
       },
+      lang,
     })
     clientRef.current = client
     try {
@@ -47,7 +52,7 @@ export default function VoiceAgent() {
     } catch {
       clientRef.current = null
     }
-  }, [])
+  }, [lang])
 
   const stop = useCallback(() => {
     console.log('[voice-agent] stop')

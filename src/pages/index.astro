@@ -11,28 +11,22 @@ import Clock from '@/components/home/Clock.tsx'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
 import avatar from '@/assets/avatar.png'
+import { TECH_STACK } from '@/consts/tech-stack'
 
 import config from '../site.config'
 
 const lang = getLangFromUrl(Astro.url)
 const t = useTranslations(lang)
 
-const languages = ['Python', 'HTML', 'CSS', 'JS/TS', 'R', 'MATLAB']
-const frontend = ['Next.js', 'TailwindCSS', 'UnoCSS', 'Astro.js', 'Svelte', 'Vite', 'Three.js']
-const backend = ['Node.js', 'Bun', 'Django', 'Flask', 'REST', 'FastAPI']
-const database = ['PostgreSQL', 'pgVector', 'FAISS', 'Chroma', 'Pinecone', 'Supabase', 'GraphQL']
-const machineLearning = ['PyTorch']
-const orchestration = [
-  'Google ADK',
-  'OpenAI Agent SDK',
-  'LangGraph',
-  'PyDantic',
-  'CrewAI',
-  'n8n',
-  'Weights & Biases',
-  'Comet'
-]
-const infrastructure = ['AWS', 'GCP', 'Vercel', 'Heroku']
+const {
+  languages,
+  frontend,
+  backend,
+  database,
+  machineLearning,
+  orchestration,
+  infrastructure
+} = TECH_STACK
 
 const MAX_POSTS = 4
 // Default locale is 'en' (prefixDefaultLocale: false), so currentLocale is
