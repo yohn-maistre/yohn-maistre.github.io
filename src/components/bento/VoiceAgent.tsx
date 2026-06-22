@@ -38,9 +38,18 @@ function formatCountdown(seconds: number, lang: 'en' | 'id'): string {
   if (seconds < 60) {
     return lang === 'id' ? `siap dalam ${seconds}s` : `back in ${seconds}s`
   }
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
-  return lang === 'id' ? `siap dalam ${m}m ${s}s` : `back in ${m}m ${s}s`
+  if (seconds < 3600) {
+    const m = Math.floor(seconds / 60)
+    const s = seconds % 60
+    return lang === 'id' ? `siap dalam ${m}m ${s}s` : `back in ${m}m ${s}s`
+  }
+  // > 1 hour means the daily quota was hit. Don't pretend Aksara is on a
+  // short break — say it plainly so the visitor knows it's a local cap.
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  return lang === 'id'
+    ? `kuota harian habis (${h}j ${m}m lagi)`
+    : `daily cap reached (${h}h ${m}m)`
 }
 
 function errorCopy(err: AgentError, lang: 'en' | 'id'): string {
@@ -170,10 +179,10 @@ export default function VoiceAgent({ lang = 'id' }: VoiceAgentProps) {
     []
   )
 
-  // OrbAnimation owns an internal `isConnecting` flag that latches on click
-  // and never resets. Remount it on each idle ↔ active transition so the
-  // flag is naturally reborn at `false` and the click handler can fire again
-  // (now wired to `stop` so the orb itself is the hang-up button).
+  // OrbAnimation no longer needs the `key={phase}` remount — the new version
+  // derives its connecting visual from `state` directly and the click handler
+  // is unconditional. Removing the remount fixes the "particles snap to grid
+  // square on click" flash, and lets the cursor decay smoothly to center.
   const phase: 'idle' | 'active' | 'asleep' =
     state === 'sleeping' ? 'asleep' : state === 'idle' || state === 'error' ? 'idle' : 'active'
   const onOrbClick = phase === 'idle' ? start : state === 'connecting' ? undefined : stop
@@ -187,7 +196,6 @@ export default function VoiceAgent({ lang = 'id' }: VoiceAgentProps) {
     <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-3xl bg-secondary/25'>
       <div className='relative flex h-full w-full items-center justify-center'>
         <OrbAnimation
-          key={phase}
           state={stateToOrb[state]}
           audioTrack={track}
           onConnect={onOrbClick}

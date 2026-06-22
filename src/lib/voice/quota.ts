@@ -5,14 +5,19 @@
  * it covers the realistic case of casual abuse (someone leaving the page
  * open + spamming the orb).
  *
- * Limits:
- *  - 5 successfully-started sessions per rolling 24 h per browser.
- *  - 60 s cooldown between sessions.
+ * Limits (relaxed after stress-testing — 5/day was hostile to even normal use):
+ *  - 20 successfully-started sessions per rolling 24 h per browser.
+ *  - 30 s cooldown between sessions.
+ *
+ * Escape hatches:
+ *  - URL param ?aksara-reset=1 wipes the counter on next load (and cleans
+ *    itself out of the URL).
+ *  - DevTools: localStorage.removeItem('aksara_sessions_v1')
  */
 
 const KEY_SESSIONS = 'aksara_sessions_v1'
-const DAILY_LIMIT = 5
-const COOLDOWN_MS = 60_000
+const DAILY_LIMIT = 20
+const COOLDOWN_MS = 30_000
 const DAY_MS = 24 * 60 * 60_000
 
 interface SessionRecord {
@@ -40,6 +45,27 @@ function write(records: SessionRecord[]): void {
     /* private mode / quota — give up silently */
   }
 }
+
+/**
+ * URL-param escape hatch: ?aksara-reset=1 wipes the counter and rewrites
+ * the URL so a reload doesn't keep clearing it. Idempotent.
+ */
+function maybeResetFromURL(): void {
+  if (typeof window === 'undefined') return
+  try {
+    const url = new URL(window.location.href)
+    if (url.searchParams.get('aksara-reset') === '1') {
+      localStorage.removeItem(KEY_SESSIONS)
+      console.log('[quota] reset via ?aksara-reset=1')
+      url.searchParams.delete('aksara-reset')
+      window.history.replaceState({}, '', url.toString())
+    }
+  } catch {
+    /* SSR / restricted environment — skip */
+  }
+}
+
+maybeResetFromURL()
 
 export interface QuotaCheck {
   ok: boolean
@@ -88,18 +114,11 @@ export function quotaCopy(check: QuotaCheck, lang: 'en' | 'id'): string {
   if (check.ok) return ''
   if (check.reason === 'cooldown') {
     return lang === 'id'
-      ? `tunggu ${check.retryAfter}s ya — saya butuh napas dulu`
-      : `give me ${check.retryAfter}s — I need a breath`
+      ? `tarik napas ${check.retryAfter}s ya`
+      : `breath ${check.retryAfter}s`
   }
-  // daily
-  const minutes = Math.ceil((check.retryAfter ?? 0) / 60)
-  const hours = Math.floor(minutes / 60)
-  if (lang === 'id') {
-    return hours >= 1
-      ? `kuota harian habis — coba lagi sekitar ${hours} jam lagi`
-      : `kuota harian habis — coba lagi sekitar ${minutes} menit lagi`
-  }
-  return hours >= 1
-    ? `daily quota spent — try again in about ${hours} h`
-    : `daily quota spent — try again in about ${minutes} min`
+  // Daily cap — be honest it's a local cap, not Google's. Suggest the reset.
+  return lang === 'id'
+    ? 'kuota harian browser ini habis — buka DevTools, hapus aksara_sessions_v1 di localStorage kalau mau lanjut tes'
+    : "this browser's daily cap is spent — DevTools → remove aksara_sessions_v1 from localStorage if you want to keep testing"
 }

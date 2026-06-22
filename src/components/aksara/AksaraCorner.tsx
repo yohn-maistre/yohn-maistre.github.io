@@ -57,9 +57,14 @@ function nearestCorner(x: number, y: number): Corner {
 function formatCountdown(seconds: number, lang: 'en' | 'id'): string {
   if (seconds <= 0) return lang === 'id' ? 'sebentar lagi…' : 'almost back…'
   if (seconds < 60) return lang === 'id' ? `siap ${seconds}s` : `back in ${seconds}s`
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
-  return lang === 'id' ? `siap ${m}m ${s}s` : `back ${m}m ${s}s`
+  if (seconds < 3600) {
+    const m = Math.floor(seconds / 60)
+    const s = seconds % 60
+    return lang === 'id' ? `siap ${m}m ${s}s` : `back ${m}m ${s}s`
+  }
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  return lang === 'id' ? `kuota harian (${h}j ${m}m)` : `daily cap (${h}h ${m}m)`
 }
 
 function tooltipFor(state: AgentState, lang: 'en' | 'id'): string {

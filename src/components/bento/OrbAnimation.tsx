@@ -1,11 +1,80 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 // @ts-ignore - animejs v4 types might not be available yet
 import { animate, createTimeline, createTimer, stagger, utils } from 'animejs';
 
 interface OrbAnimationProps {
-  state: 'listening' | 'thinking' | 'speaking' | 'disconnected' | 'connecting' | 'initializing' | 'sleeping';
+  state:
+    | 'listening'
+    | 'thinking'
+    | 'speaking'
+    | 'disconnected'
+    | 'connecting'
+    | 'initializing'
+    | 'sleeping';
   audioTrack?: MediaStreamTrack;
   onConnect?: () => void;
+}
+
+/**
+ * State palette — each particle blends between `tip` (darkest, dead-centre)
+ * and `edge` (lightest, grid corners) by its radial distance from centre.
+ * That's where the depth comes from: not a uniform color, but a per-particle
+ * lerp across the 13×13 grid.
+ */
+interface Palette {
+  /** Centermost particle. Dark, low chroma. */
+  tip: [number, number, number];
+  /** Corner particles. Lighter, more chroma. */
+  edge: [number, number, number];
+  /** Outer glow color. Brighter than `edge`. */
+  glow: string;
+}
+
+const PALETTES: Record<string, Palette> = {
+  idle: {
+    tip: [14, 37, 69], // #0e2545 very dark navy
+    edge: [89, 132, 178], // #5984b2 medium blue
+    glow: 'rgba(120, 180, 230, 0.95)'
+  },
+  connecting: {
+    tip: [38, 24, 18], // #261812 dark brown
+    edge: [200, 168, 144], // #c8a890 light tan
+    glow: 'rgba(220, 190, 170, 0.95)'
+  },
+  active: {
+    // listening / thinking / speaking
+    tip: [22, 64, 58], // #16403a dark teal
+    edge: [126, 215, 192], // #7ed7c0 bright mint
+    glow: 'rgba(140, 220, 190, 0.95)'
+  },
+  sleeping: {
+    tip: [20, 51, 58], // #14333a very dark teal
+    edge: [80, 130, 145], // #508291 medium cool
+    glow: 'rgba(100, 160, 170, 0.45)'
+  }
+};
+
+function paletteFor(state: OrbAnimationProps['state']): Palette {
+  if (state === 'connecting' || state === 'initializing') return PALETTES.connecting;
+  if (state === 'sleeping') return PALETTES.sleeping;
+  if (state === 'listening' || state === 'thinking' || state === 'speaking') return PALETTES.active;
+  return PALETTES.idle;
+}
+
+function rgbStr(c: [number, number, number]): string {
+  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+}
+
+function lerpColor(
+  a: [number, number, number],
+  b: [number, number, number],
+  t: number
+): [number, number, number] {
+  return [
+    Math.round(a[0] + (b[0] - a[0]) * t),
+    Math.round(a[1] + (b[1] - a[1]) * t),
+    Math.round(a[2] + (b[2] - a[2]) * t)
+  ];
 }
 
 export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimationProps) {
@@ -13,51 +82,41 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
   const creatureRef = useRef<HTMLDivElement>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const dataArrayRef = useRef<Uint8Array | null>(null);
-  const [isConnecting, setIsConnecting] = useState(false);
   const cursorRef = useRef({ x: 0, y: 0 });
   const mainLoopRef = useRef<any>(null);
   const autoMoveRef = useRef<any>(null);
   const manualTimeoutRef = useRef<any>(null);
 
+  // No internal isConnecting flag anymore — the "connecting" visual is driven
+  // by the `state` prop directly. This means the parent can remove `key={state}`
+  // and we don't lose the click handler.
   const handleClick = () => {
-    if (onConnect && !isConnecting) {
-      setIsConnecting(true);
-      onConnect();
-    }
+    if (onConnect) onConnect();
   };
 
-  // Use refs to track state changes without triggering effect rerun
+  // Mirror prop into ref so the animation loop reads the latest without
+  // restarting (the loop has [] dep on purpose).
   const stateRef = useRef(state);
-  const isConnectingRef = useRef(isConnecting);
-
-  // Update refs when props change (doesn't trigger animation recreation)
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
 
-  useEffect(() => {
-    isConnectingRef.current = isConnecting;
-  }, [isConnecting]);
-
-  // Audio Analysis Setup
+  // Audio analyser. Same as before — fftSize 32 is fine for our needs.
   useEffect(() => {
     if (!audioTrack) return;
-
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const analyser = audioContext.createAnalyser();
     analyser.fftSize = 32;
     const source = audioContext.createMediaStreamSource(new MediaStream([audioTrack]));
     source.connect(analyser);
-
     analyserRef.current = analyser;
     dataArrayRef.current = new Uint8Array(analyser.frequencyBinCount);
-
     return () => {
       audioContext.close();
     };
   }, [audioTrack]);
 
-  // Animation Setup - Port of Codepen logic
+  // Animation setup — runs once, reads state from refs each frame.
   useEffect(() => {
     if (!containerRef.current || !creatureRef.current) return;
 
@@ -66,6 +125,8 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
     const rows = 13;
     const grid = [rows, rows];
     const from = 'center';
+    const center = (rows - 1) / 2;
+    const maxDist = Math.hypot(center, center);
 
     // Mutable viewport — kept in sync via ResizeObserver below so the
     // auto-move timeline tracks real container bounds when the user resizes
@@ -73,13 +134,20 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
     const initialRect = container.getBoundingClientRect();
     const viewport = { w: initialRect.width * 0.5, h: initialRect.height * 0.5 };
     const cursor = cursorRef.current;
-    
+
+    // Per-particle radial distance from grid centre (0..1). Drives both
+    // color depth and opacity in the depth shading.
+    const distFor = (i: number) => {
+      const row = Math.floor(i / rows);
+      const col = i % rows;
+      return Math.hypot(row - center, col - center) / maxDist;
+    };
+
     const scaleStagger = stagger([2, 5], { ease: 'inQuad', grid, from });
-    const opacityStagger = stagger([1, 0.1], { grid, from });
-    
+    const opacityStagger = stagger([1, 0.18], { grid, from });
+
     creatureEl.innerHTML = '';
-    
-    for (let i = 0; i < (rows * rows); i++) {
+    for (let i = 0; i < rows * rows; i++) {
       const div = document.createElement('div');
       Object.assign(div.style, {
         transformStyle: 'preserve-3d',
@@ -89,28 +157,23 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
         margin: '3em',
         borderRadius: '2em',
         willChange: 'transform',
-        // Idle state: deep blue (reversed from before)
-        background: '#1e3a5f',
-        boxShadow: '0 0 15px rgba(70, 120, 180, 0.9)',  // Brighter glow
+        background: rgbStr(PALETTES.idle.tip),
+        boxShadow: `0 0 18px ${PALETTES.idle.glow}`
       });
       div.className = 'orb-particle';
       creatureEl.appendChild(div);
     }
-
     const particuleEls = creatureEl.querySelectorAll('div');
 
-    // Set creature size
     utils.set(creatureEl, {
       width: rows * 10 + 'em',
       height: rows * 10 + 'em'
     });
-
-    // Set initial particle state
     utils.set(particuleEls, {
       x: 0,
       y: 0,
       scale: scaleStagger,
-      opacity: opacityStagger,
+      opacity: opacityStagger
     });
 
     // Pulse animation (normal or fast for loading)
@@ -121,149 +184,196 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
             scale: 5,
             opacity: 1,
             delay: stagger(fast ? 40 : 90, { start: fast ? 0 : 1650, grid, from }),
-            duration: fast ? 100 : 150,
-          }, {
+            duration: fast ? 100 : 150
+          },
+          {
             scale: scaleStagger,
             opacity: opacityStagger,
             ease: 'inOutQuad',
             duration: fast ? 300 : 600
           }
-        ],
+        ]
       });
     };
 
-    // Update orb colors based on state
-    const updateOrbColors = (color: string, shadowColor: string) => {
-      particuleEls.forEach((el) => {
-        (el as HTMLElement).style.background = color;
-        (el as HTMLElement).style.boxShadow = `0 0 15px ${shadowColor}`;  // Increased glow
+    /**
+     * Apply per-particle radial color depth: centre uses palette.tip
+     * (darkest), corners use palette.edge (lightest). The glow brightens
+     * toward the corners too so the orb has a halo feel without a flat
+     * uniform color.
+     */
+    const applyPalette = (palette: Palette) => {
+      particuleEls.forEach((el, i) => {
+        const dist = distFor(i);
+        const color = rgbStr(lerpColor(palette.tip, palette.edge, dist));
+        const el2 = el as HTMLElement;
+        el2.style.background = color;
+        // Larger glow on outer particles for the halo look.
+        const glowSize = 12 + dist * 14;
+        el2.style.boxShadow = `0 0 ${glowSize}px ${palette.glow}`;
       });
     };
 
-    // Main loop - particles follow cursor
+    // Initial paint.
+    applyPalette(PALETTES.idle);
+
+    let loadingPulseInterval: any = null;
+
+    const startLoadingPulse = () => {
+      if (loadingPulseInterval) return;
+      pulse(true);
+      loadingPulseInterval = setInterval(() => pulse(true), 500);
+    };
+    const stopLoadingPulse = () => {
+      if (loadingPulseInterval) {
+        clearInterval(loadingPulseInterval);
+        loadingPulseInterval = null;
+      }
+    };
+
+    // Main loop — reads state, drives color/scale/position.
     const mainLoop = createTimer({
       frameRate: 15,
       onUpdate: () => {
         const currentState = stateRef.current;
-        const connecting = isConnectingRef.current;
+        const isConnecting = currentState === 'connecting' || currentState === 'initializing';
+        const isActive =
+          currentState === 'listening' ||
+          currentState === 'thinking' ||
+          currentState === 'speaking';
 
-        // Update colors based on state (REVERSED)
-        if (connecting) {
-          // Loading state: dark brown for visual feedback
-          updateOrbColors('#533c32ff', 'rgba(200, 180, 170, 0.9)');
-        } else if (currentState === 'sleeping') {
-          // Sleeping: deep cool teal, low-glow — Aksara is resting on the
-          // rate-limit. Breathing pulse handled at the container level below.
-          updateOrbColors('#244a4a', 'rgba(80, 130, 130, 0.45)');
-        } else if (currentState === 'listening' || currentState === 'thinking' || currentState === 'speaking') {
-          // Connected state: teal/green (REVERSED - was blue before)
-          updateOrbColors('#4a9d8e', 'rgba(140, 200, 180, 0.9)');
-        } else {
-          // Idle/disconnected: deep blue (REVERSED - was brown before)
-          updateOrbColors('#1e3a5f', 'rgba(70, 120, 180, 0.9)');
-        }
+        // Update colors based on state (smoothly via per-particle palette).
+        applyPalette(paletteFor(currentState));
 
-        // Voice reactivity for speaking state
+        // Voice reactivity for speaking state.
         let audioModifier = 1;
         if (analyserRef.current && dataArrayRef.current && currentState === 'speaking') {
-          analyserRef.current.getByteFrequencyData(dataArrayRef.current as unknown as Uint8Array<ArrayBuffer>);
-          const avg = dataArrayRef.current.reduce((a, b) => a + b, 0) / dataArrayRef.current.length;
-          audioModifier = 1 + (avg / 128);
-          
-          // Apply scale based on audio
+          analyserRef.current.getByteFrequencyData(
+            dataArrayRef.current as unknown as Uint8Array<ArrayBuffer>
+          );
+          const avg =
+            dataArrayRef.current.reduce((a, b) => a + b, 0) / dataArrayRef.current.length;
+          audioModifier = 1 + avg / 128;
+
           animate(particuleEls, {
-            scale: (el: any, i: any) => scaleStagger(el, i) * audioModifier,
+            scale: (_el: any, i: any) => (scaleStagger as any)(_el, i) * audioModifier,
             duration: 100,
             ease: 'linear',
             composition: 'blend'
           });
         }
 
-        // Seamless pause/resume logic
-        if (connecting || currentState === 'listening' || currentState === 'thinking' || currentState === 'speaking') {
-          // Paused states: stop auto-move, freeze at current position
-          autoMove.pause();
-          // Don't animate x/y - orbs stay where they are
+        // Connecting → start the fast-pulse loop. Anything else → stop it.
+        if (isConnecting) startLoadingPulse();
+        else stopLoadingPulse();
+
+        // Position handling. Active + connecting + sleeping pause the
+        // auto-move and smoothly decay the cursor toward (0, 0) so the orb
+        // re-centres no matter where the user clicked. Idle resumes the
+        // organic auto-move + cursor-follow.
+        if (isConnecting || isActive || currentState === 'sleeping') {
+          if (!autoMove.paused) autoMove.pause();
+          // 0.86 per 15-FPS tick → ~80% decayed in 1s, fully centred in ~2.5s.
+          cursor.x *= 0.86;
+          cursor.y *= 0.86;
         } else {
-          // Idle state: resume organic movement
           if (autoMove.paused) autoMove.play();
-          
-          // Normal cursor following
-          animate(particuleEls, {
-            x: cursor.x,
-            y: cursor.y,
-            delay: stagger(40, { grid, from }),
-            duration: stagger(120, { start: 750, ease: 'inQuad', grid, from }),
-            ease: 'inOut',
-            composition: 'blend',
-          });
         }
+
+        // Always animate to the (possibly-decaying) cursor — gives us a
+        // smooth interpolation in both directions without the "snap to grid"
+        // glitch that used to happen on click.
+        animate(particuleEls, {
+          x: cursor.x,
+          y: cursor.y,
+          delay: stagger(40, { grid, from }),
+          duration: stagger(120, { start: 750, ease: 'inQuad', grid, from }),
+          ease: 'inOut',
+          composition: 'blend'
+        });
       }
     });
-
     mainLoopRef.current = mainLoop;
 
-    // Loading pulse loop
-    let loadingPulseInterval: any = null;
-    if (isConnecting) {
-      pulse(true);  // Immediate fast pulse
-      loadingPulseInterval = setInterval(() => pulse(true), 500);
-    }
-
-    // Wrapper function for pulse callbacks (fixes timing)
     const normalPulse = () => pulse(false);
 
-    // Auto-move timeline - animates cursor position
+    // Auto-move timeline — drives the cursor when idle.
     const autoMove = createTimeline()
-      .add(cursor, {
-        x: [-viewport.w * 0.45, viewport.w * 0.45],
-        modifier: (x: number) => x + Math.sin(mainLoop.currentTime * 0.0007) * viewport.w * 0.5,
-        duration: 3000,
-        ease: 'inOutExpo',
-        alternate: true,
-        loop: true,
-        onBegin: normalPulse,  // Fixed: use wrapper
-        onLoop: normalPulse,   // Fixed: use wrapper
-      }, 0)
-      .add(cursor, {
-        y: [-viewport.h * 0.45, viewport.h * 0.45],
-        modifier: (y: number) => y + Math.cos(mainLoop.currentTime * 0.00012) * viewport.h * 0.5,
-        duration: 1000,
-        ease: 'inOutQuad',
-        alternate: true,
-        loop: true,
-      }, 0);
-
+      .add(
+        cursor,
+        {
+          x: [-viewport.w * 0.45, viewport.w * 0.45],
+          modifier: (x: number) => x + Math.sin(mainLoop.currentTime * 0.0007) * viewport.w * 0.5,
+          duration: 3000,
+          ease: 'inOutExpo',
+          alternate: true,
+          loop: true,
+          onBegin: normalPulse,
+          onLoop: normalPulse
+        },
+        0
+      )
+      .add(
+        cursor,
+        {
+          y: [-viewport.h * 0.45, viewport.h * 0.45],
+          modifier: (y: number) =>
+            y + Math.cos(mainLoop.currentTime * 0.00012) * viewport.h * 0.5,
+          duration: 1000,
+          ease: 'inOutQuad',
+          alternate: true,
+          loop: true
+        },
+        0
+      );
     autoMoveRef.current = autoMove;
 
-    // Manual movement timeout
+    // Manual movement timeout — when the visitor moves the pointer, we
+    // pause auto-move briefly, then resume.
     const manualMovementTimeout = createTimer({
       duration: 1500,
-      onComplete: () => autoMove.play(),
+      onComplete: () => {
+        // Only resume auto-move if we're back in idle.
+        const s = stateRef.current;
+        const stillIdle =
+          s !== 'connecting' &&
+          s !== 'initializing' &&
+          s !== 'listening' &&
+          s !== 'thinking' &&
+          s !== 'speaking' &&
+          s !== 'sleeping';
+        if (stillIdle) autoMove.play();
+      }
     });
-
     manualTimeoutRef.current = manualMovementTimeout;
 
-    // Follow pointer
     const followPointer = (e: MouseEvent | TouchEvent) => {
+      const s = stateRef.current;
+      // Pointer interaction is only meaningful in idle. During active states
+      // we want the orb staying centred.
+      if (
+        s === 'connecting' ||
+        s === 'initializing' ||
+        s === 'listening' ||
+        s === 'thinking' ||
+        s === 'speaking' ||
+        s === 'sleeping'
+      ) {
+        return;
+      }
       const event = e.type === 'touchmove' ? (e as TouchEvent).touches[0] : (e as MouseEvent);
       const rect = container.getBoundingClientRect();
-      // Center the cursor position relative to the middle of the container
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
-      cursor.x = (event.clientX - rect.left) - centerX;
-      cursor.y = (event.clientY - rect.top) - centerY;
+      cursor.x = event.clientX - rect.left - centerX;
+      cursor.y = event.clientY - rect.top - centerY;
       autoMove.pause();
       manualMovementTimeout.restart();
     };
 
-    // Add mouse tracking to container
     container.addEventListener('mousemove', followPointer as any);
     container.addEventListener('touchmove', followPointer as any);
 
-    // Keep viewport bounds in sync. Without this, resizing the window or
-    // toggling devtools makes the orbs animate to off-screen coordinates
-    // (the original code captured `getBoundingClientRect` once at mount).
     const resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (!entry) return;
@@ -277,7 +387,7 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
       mainLoop.pause();
       autoMove.pause();
       manualMovementTimeout.pause();
-      if (loadingPulseInterval) clearInterval(loadingPulseInterval);
+      stopLoadingPulse();
       resizeObserver.disconnect();
       container.removeEventListener('mousemove', followPointer as any);
       container.removeEventListener('touchmove', followPointer as any);
@@ -285,9 +395,8 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
     // Empty dependency array is intentional: the animation must NOT tear down
     // and rebuild every time the agent state or audio track changes (that
     // would re-create 169 DOM nodes and reset the timeline 60+ times per
-    // session). Instead, prop changes are funneled through stateRef /
-    // isConnectingRef so the animation loop reads the latest values without
-    // restarting.
+    // session). Instead, prop changes are funneled through stateRef so the
+    // animation loop reads the latest values without restarting.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -296,10 +405,8 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 flex items-center justify-center overflow-hidden cursor-pointer"
+      className='absolute inset-0 flex items-center justify-center overflow-hidden cursor-pointer'
       style={{
-        // Old static background: background: 'radial-gradient(circle at center, #2a2a2a 0%, #000000 100%)',
-        // Pastel gradient with distinct color stops for better separation
         background: isSleeping
           ? 'linear-gradient(135deg, #243845 0%, #2c4a52 50%, #243845 100%)'
           : 'linear-gradient(135deg, #f0e6d2 0%, #a8c9c0 25%, #e8dcc4 50%, #c4d9d4 75%, #f0e6d2 100%)',
@@ -307,7 +414,7 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
         animation: isSleeping
           ? 'aksaraBreath 4s ease-in-out infinite'
           : 'gradientShift 8s ease-in-out infinite',
-        transition: 'background 600ms ease-in-out',
+        transition: 'background 600ms ease-in-out'
       }}
       onClick={handleClick}
     >
@@ -321,46 +428,13 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
           0%, 100% { background-position: 0% 50%; filter: brightness(0.85); }
           50% { background-position: 100% 50%; filter: brightness(1); }
         }
-        @keyframes aksaraSnore1 {
-          0%, 100% { opacity: 0; transform: translate(0, 0) rotate(-8deg); }
-          30% { opacity: 0.85; transform: translate(-6px, -12px) rotate(-12deg); }
-          60% { opacity: 0.4; transform: translate(-10px, -24px) rotate(-16deg); }
-        }
-        @keyframes aksaraSnore2 {
-          0%, 100% { opacity: 0; transform: translate(0, 0) rotate(8deg); }
-          30% { opacity: 0; }
-          60% { opacity: 0.7; transform: translate(8px, -14px) rotate(12deg); }
-          90% { opacity: 0.3; transform: translate(12px, -26px) rotate(16deg); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          [data-aksara-zzz] { display: none; }
-        }
       `}</style>
 
-      {isSleeping && (
-        <div
-          aria-hidden="true"
-          data-aksara-zzz
-          style={{
-            position: 'absolute',
-            top: '24%',
-            right: '28%',
-            fontFamily: 'system-ui, sans-serif',
-            color: 'rgba(220, 240, 240, 0.9)',
-            fontSize: 'clamp(14px, 3vw, 26px)',
-            fontWeight: 600,
-            letterSpacing: '0.05em',
-            pointerEvents: 'none',
-            textShadow: '0 0 6px rgba(120, 200, 200, 0.45)'
-          }}
-        >
-          <span style={{ display: 'inline-block', animation: 'aksaraSnore1 3.6s ease-in-out infinite' }}>z</span>
-          <span style={{ display: 'inline-block', animation: 'aksaraSnore2 3.6s ease-in-out infinite 0.6s' }}>Z</span>
-        </div>
-      )}
-      
       {/* Grainy overlay */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ filter: 'url(#noise)' }}></div>
+      <div
+        className='absolute inset-0 opacity-20 pointer-events-none'
+        style={{ filter: 'url(#noise)' }}
+      ></div>
       {/*
         SVG filter source. Must NOT use `display: none` — Firefox (and some
         WebKit builds) skip rendering filter primitives inside hidden SVGs,
@@ -369,218 +443,30 @@ export default function OrbAnimation({ state, audioTrack, onConnect }: OrbAnimat
         filter resolve.
       */}
       <svg
-        aria-hidden="true"
-        focusable="false"
-        style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', pointerEvents: 'none' }}
+        aria-hidden='true'
+        focusable='false'
+        style={{
+          position: 'absolute',
+          width: 0,
+          height: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none'
+        }}
       >
-        <filter id="noise">
-          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+        <filter id='noise'>
+          <feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch' />
         </filter>
       </svg>
 
-      {/*
-        Corona overlay — a 2D ring of ~32 dots positioned around the inner
-        orb. Idle hidden, listening = soft glow, speaking = the dots flare
-        outward in time with bass + treble, the spike effect we want.
-      */}
-      <CoronaOverlay state={state} audioTrack={audioTrack} />
-
       <div
         ref={creatureRef}
-        className="flex flex-wrap justify-center items-center"
+        className='flex flex-wrap justify-center items-center'
         style={{
-          // The orb sizing is `em`-based and the parent fontSize drives the
-          // zoom level. Using `vh` alone meant tiny orbs on mobile portrait
-          // (~5px) and oversized ones on ultrawide. clamp() keeps it sane:
-          // floor of 0.04em, scales with viewport height, capped at 0.12em.
           fontSize: 'clamp(0.04em, 0.08vh, 0.12em)',
           width: '150em',
           height: '150em'
         }}
       />
     </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────────────
- * CoronaOverlay — a 2D ring of ~32 dots that orbits the inner creature.
- *
- * Idle / disconnected / sleeping: hidden.
- * Listening / thinking: soft halo of dots in resting position.
- * Speaking: bass drives radial breath, treble (mid bins) drives flares —
- * individual dots punch outward on consonants.
- *
- * Lives in this file so it shares the OrbAnimation viewport. Owns its own
- * AnalyserNode off the same audioTrack — cheaper than passing refs around
- * and keeps the original cursor-following loop untouched.
- * ─────────────────────────────────────────────────────────────────────── */
-
-interface CoronaProps {
-  state: OrbAnimationProps['state'];
-  audioTrack?: MediaStreamTrack;
-}
-
-const CORONA_COUNT = 32;
-const CORONA_BASE_RADIUS = 40; // % of viewBox
-const CORONA_FLARE_MAX = 12;
-
-function CoronaOverlay({ state, audioTrack }: CoronaProps) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const dataRef = useRef<Uint8Array | null>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const stateRef = useRef(state);
-
-  useEffect(() => {
-    stateRef.current = state;
-  }, [state]);
-
-  // Own audio analyser — separate from OrbAnimation's so we can use a higher
-  // fftSize (we want clean mid-treble bins for the flares).
-  useEffect(() => {
-    if (audioCtxRef.current) {
-      audioCtxRef.current.close().catch(() => {});
-      audioCtxRef.current = null;
-      analyserRef.current = null;
-      dataRef.current = null;
-    }
-    if (!audioTrack) return;
-    const Ctx = window.AudioContext || (window as any).webkitAudioContext;
-    const ctx: AudioContext = new Ctx();
-    const an = ctx.createAnalyser();
-    an.fftSize = 64;
-    const src = ctx.createMediaStreamSource(new MediaStream([audioTrack]));
-    src.connect(an);
-    audioCtxRef.current = ctx;
-    analyserRef.current = an;
-    dataRef.current = new Uint8Array(an.frequencyBinCount);
-    return () => {
-      ctx.close().catch(() => {});
-    };
-  }, [audioTrack]);
-
-  // Animation loop — runs at full frame rate while active. Cheap: ~32 DOM
-  // attribute writes per frame on a single SVG, no re-renders.
-  useEffect(() => {
-    const svg = svgRef.current;
-    if (!svg) return;
-    const dots = svg.querySelectorAll<SVGCircleElement>('circle[data-corona]');
-    if (dots.length === 0) return;
-
-    let raf = 0;
-    const start = performance.now();
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const loop = () => {
-      const t = (performance.now() - start) / 1000;
-      const currentState = stateRef.current;
-
-      let bass = 0;
-      let treble = 0;
-      if (
-        analyserRef.current &&
-        dataRef.current &&
-        currentState === 'speaking'
-      ) {
-        analyserRef.current.getByteFrequencyData(
-          dataRef.current as unknown as Uint8Array<ArrayBuffer>
-        );
-        const d = dataRef.current;
-        const len = d.length;
-        bass = Math.min(1, (d[0] + d[1] + d[2]) / (3 * 255));
-        const tIdx = Math.min(len - 1, 6);
-        treble = Math.min(1, (d[tIdx] + d[tIdx + 1] + d[tIdx + 2]) / (3 * 255));
-      }
-
-      // Per-state palette + visibility.
-      let color: string;
-      let baseOpacity: number;
-      switch (currentState) {
-        case 'speaking':
-          color = treble > 0.4 ? 'rgba(190, 245, 220, 0.95)' : 'rgba(140, 220, 190, 0.85)';
-          baseOpacity = 0.6 + bass * 0.4;
-          break;
-        case 'listening':
-        case 'thinking':
-          color = 'rgba(140, 200, 180, 0.55)';
-          baseOpacity = 0.35;
-          break;
-        default:
-          // idle / disconnected / sleeping / error / connecting — invisible
-          color = 'rgba(140, 200, 180, 0)';
-          baseOpacity = 0;
-      }
-
-      const radialBreath = currentState === 'speaking' ? bass * 4 : 0;
-      const idleDriftAmp = reducedMotion ? 0 : 0.6;
-
-      dots.forEach((dot, i) => {
-        const baseAngle = (i / CORONA_COUNT) * Math.PI * 2;
-        // Gentle phase drift so the ring rotates lazily.
-        const angleDrift = reducedMotion ? 0 : t * 0.08;
-        const angle = baseAngle + angleDrift;
-
-        // Per-particle phase for non-uniform flares.
-        const phase = i * 0.55;
-        const idleWobble = Math.sin(t * 1.2 + phase) * idleDriftAmp;
-        // Treble flare: only dots whose phase aligns with current treble peak
-        // get pushed outward. Creates the "spike" look instead of uniform pulse.
-        const treblePhase = (Math.sin(t * 4 + phase) + 1) / 2; // 0..1
-        const flare = treble > 0.3 ? treble * CORONA_FLARE_MAX * treblePhase : 0;
-
-        const r = CORONA_BASE_RADIUS + radialBreath + flare + idleWobble;
-        const cx = 50 + Math.cos(angle) * r;
-        const cy = 50 + Math.sin(angle) * r;
-
-        dot.setAttribute('cx', cx.toFixed(2));
-        dot.setAttribute('cy', cy.toFixed(2));
-        dot.setAttribute('fill', color);
-
-        // Per-particle opacity: speaking emphasizes flared particles.
-        const opacity =
-          currentState === 'speaking'
-            ? Math.min(1, baseOpacity + (flare > 0 ? 0.3 : 0))
-            : baseOpacity + Math.sin(t * 1.4 + phase) * 0.05;
-        dot.style.opacity = String(opacity);
-      });
-
-      raf = requestAnimationFrame(loop);
-    };
-
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
-  return (
-    <svg
-      ref={svgRef}
-      viewBox='0 0 100 100'
-      aria-hidden='true'
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        pointerEvents: 'none',
-        zIndex: 2,
-        // Transition in/out smoothly when state changes between active/idle.
-        transition: 'opacity 600ms ease-out'
-      }}
-    >
-      {Array.from({ length: CORONA_COUNT }).map((_, i) => (
-        <circle
-          key={i}
-          data-corona='true'
-          cx={50}
-          cy={50}
-          r={0.9}
-          fill='rgba(140, 200, 180, 0)'
-          style={{
-            filter: 'drop-shadow(0 0 2px rgba(140, 220, 190, 0.5))',
-            transition: 'fill 500ms ease-out'
-          }}
-        />
-      ))}
-    </svg>
   );
 }
