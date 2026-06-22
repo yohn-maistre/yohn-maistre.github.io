@@ -74,6 +74,12 @@ export class GeminiLiveClient {
   private state: AgentState = 'idle'
   private ctxLang: 'en' | 'id' = 'id'
   private ctxPathname: string = '/'
+  /** Hard session ceilings — see GUARDRAILS.md (or this file) for rationale. */
+  private windDownTimer = 0
+  private hardCutoffTimer = 0
+  /** Soft wind-down at 150 s, hard cutoff at 180 s. Protects the free-tier 10 RPM / 1500 RPD budget. */
+  private static readonly WIND_DOWN_MS = 150_000
+  private static readonly HARD_CUTOFF_MS = 180_000
 
   constructor(private opts: GeminiLiveClientOpts) {
     this.ctxLang = opts.lang ?? 'id'
@@ -141,6 +147,7 @@ export class GeminiLiveClient {
       await this.openSocket(token, contextSuffix)
       await this.startCapture()
       this.sendGreetingPrimer()
+      this.armSessionCaps()
       this.setState('listening')
     } catch (e) {
       const err = this.classifyError(e)
@@ -175,6 +182,7 @@ export class GeminiLiveClient {
   }
 
   disconnect(opts: { keepState?: boolean } = {}): void {
+    this.clearSessionCaps()
     if (this.ws && this.ws.readyState !== WebSocket.CLOSED) this.ws.close()
     this.ws = undefined
     this.stopAllPlayback()
@@ -191,6 +199,37 @@ export class GeminiLiveClient {
     // When connect() fails into a sleeping/error state we don't want to
     // immediately blow it away by setting 'idle'.
     if (!opts.keepState) this.setState('idle')
+  }
+
+  /**
+   * Hard session ceilings — Gemini Live's free tier is 10 RPM / 1500 RPD.
+   * A single visitor parking on the page indefinitely could drain the day's
+   * budget for everyone, so we cap every session at 3 minutes with a 30 s
+   * graceful wind-down. The model gets a synthetic prompt at the wind-down
+   * mark telling it to wrap warmly, then the WS gets closed at the hard mark.
+   */
+  private armSessionCaps(): void {
+    this.clearSessionCaps()
+    this.windDownTimer = window.setTimeout(() => {
+      this.injectSystemTurn(
+        '[wind down — session ends in ~30 seconds. Deliver one short, warm closing line (1 sentence) in the language the user has been speaking, then stop. Do not start a new topic.]'
+      )
+    }, GeminiLiveClient.WIND_DOWN_MS)
+    this.hardCutoffTimer = window.setTimeout(() => {
+      console.log('[gemini-live] hard cutoff — session reached', GeminiLiveClient.HARD_CUTOFF_MS, 'ms')
+      this.disconnect()
+    }, GeminiLiveClient.HARD_CUTOFF_MS)
+  }
+
+  private clearSessionCaps(): void {
+    if (this.windDownTimer) {
+      window.clearTimeout(this.windDownTimer)
+      this.windDownTimer = 0
+    }
+    if (this.hardCutoffTimer) {
+      window.clearTimeout(this.hardCutoffTimer)
+      this.hardCutoffTimer = 0
+    }
   }
 
   private setState(s: AgentState) {

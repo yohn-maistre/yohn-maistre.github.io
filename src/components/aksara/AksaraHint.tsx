@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
 
+type Corner = 'tl' | 'tr' | 'bl' | 'br'
+
 interface AksaraHintProps {
   lang: 'en' | 'id'
   /** Hint only appears when Aksara is idle. */
   active: boolean
+  /** Which corner the orb is anchored to — bubble follows. Defaults to 'br'. */
+  corner?: Corner
 }
 
 const HINTS: Record<'en' | 'id', string[]> = {
@@ -39,7 +43,7 @@ function pickHint(lang: 'en' | 'id', prev: string | null): string {
   }
 }
 
-export default function AksaraHint({ lang, active }: AksaraHintProps) {
+export default function AksaraHint({ lang, active, corner = 'br' }: AksaraHintProps) {
   const [visible, setVisible] = useState(false)
   const [text, setText] = useState<string>(() => HINTS[lang][0])
   const [reducedMotion, setReducedMotion] = useState(false)
@@ -86,15 +90,59 @@ export default function AksaraHint({ lang, active }: AksaraHintProps) {
 
   if (!visible) return null
 
+  // Anchor the bubble adjacent to the orb on the same side, so dragging the
+  // orb to a different corner keeps the bubble visually near it.
+  const isTop = corner === 'tl' || corner === 'tr'
+  const isLeft = corner === 'tl' || corner === 'bl'
+  const ORB_SIZE = 70
+  const SAFE_X = 'max(env(safe-area-inset-right, 0px), 1rem)'
+  const SAFE_X_L = 'max(env(safe-area-inset-left, 0px), 1rem)'
+  const SAFE_Y = 'max(env(safe-area-inset-bottom, 0px), 1rem)'
+  const SAFE_Y_T = 'max(env(safe-area-inset-top, 0px), 1rem)'
+
+  const positionStyle: React.CSSProperties = {
+    position: 'fixed',
+    zIndex: 49,
+    ...(isTop
+      ? { top: `calc(${SAFE_Y_T} + 12px)` }
+      : { bottom: `calc(${SAFE_Y} + 12px)` }),
+    ...(isLeft
+      ? { left: `calc(${SAFE_X_L} + ${ORB_SIZE}px)` }
+      : { right: `calc(${SAFE_X} + ${ORB_SIZE}px)` })
+  }
+
+  // Tail points toward the orb — left side of the bubble when orb is on the
+  // left, right side when orb is on the right.
+  const tailStyle: React.CSSProperties = isLeft
+    ? {
+        position: 'absolute',
+        left: -6,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        width: 0,
+        height: 0,
+        borderRight: '6px solid hsl(var(--secondary) / 0.92)',
+        borderTop: '5px solid transparent',
+        borderBottom: '5px solid transparent'
+      }
+    : {
+        position: 'absolute',
+        right: -6,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        width: 0,
+        height: 0,
+        borderLeft: '6px solid hsl(var(--secondary) / 0.92)',
+        borderTop: '5px solid transparent',
+        borderBottom: '5px solid transparent'
+      }
+
   return (
     <div
       role='status'
       aria-live='polite'
       style={{
-        position: 'fixed',
-        right: 'calc(max(env(safe-area-inset-right, 0px), 1rem) + 70px)',
-        bottom: 'calc(max(env(safe-area-inset-bottom, 0px), 1rem) + 12px)',
-        zIndex: 49,
+        ...positionStyle,
         background: 'hsl(var(--secondary) / 0.92)',
         color: 'hsl(var(--secondary-foreground))',
         border: '1px solid hsl(var(--border))',
@@ -105,28 +153,17 @@ export default function AksaraHint({ lang, active }: AksaraHintProps) {
         whiteSpace: 'nowrap',
         boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
         pointerEvents: 'none',
-        animation: reducedMotion ? 'none' : 'aksaraHintIn 320ms cubic-bezier(.22,1,.36,1)',
-        transformOrigin: 'right center'
+        animation: reducedMotion
+          ? 'none'
+          : `aksaraHintIn 320ms cubic-bezier(.22,1,.36,1)`,
+        transformOrigin: isLeft ? 'left center' : 'right center'
       }}
     >
       {text}
-      <span
-        aria-hidden='true'
-        style={{
-          position: 'absolute',
-          right: -6,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: 0,
-          height: 0,
-          borderLeft: '6px solid hsl(var(--secondary) / 0.92)',
-          borderTop: '5px solid transparent',
-          borderBottom: '5px solid transparent'
-        }}
-      />
+      <span aria-hidden='true' style={tailStyle} />
       <style>{`
         @keyframes aksaraHintIn {
-          0% { opacity: 0; transform: scale(0.85) translateX(8px); }
+          0% { opacity: 0; transform: scale(0.85) translateX(${isLeft ? '-8px' : '8px'}); }
           70% { opacity: 1; transform: scale(1.05); }
           100% { opacity: 1; transform: scale(1) translateX(0); }
         }

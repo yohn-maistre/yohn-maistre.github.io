@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 
 import {
   GeminiLiveClient,
@@ -10,6 +10,7 @@ import {
   playDisconnectChime,
   playErrorChime
 } from '@/lib/voice/chimes'
+import { checkQuota, quotaCopy, recordSessionStart } from '@/lib/voice/quota'
 
 import AksaraHint from './AksaraHint'
 
@@ -17,7 +18,41 @@ interface AksaraCornerProps {
   lang?: 'en' | 'id'
 }
 
+type Corner = 'tl' | 'tr' | 'bl' | 'br'
+
+const CORNER_STORAGE_KEY = 'aksara_corner_pos_v1'
+const DRAG_THRESHOLD_PX = 6
 const ERROR_BURST_WINDOW_MS = 60_000
+
+function loadCorner(): Corner {
+  if (typeof localStorage === 'undefined') return 'br'
+  const v = localStorage.getItem(CORNER_STORAGE_KEY)
+  return v === 'tl' || v === 'tr' || v === 'bl' || v === 'br' ? v : 'br'
+}
+
+function cornerStyle(c: Corner): CSSProperties {
+  const base: CSSProperties = { position: 'fixed', zIndex: 50 }
+  const SAFE_X = 'max(env(safe-area-inset-right, 0px), 1rem)'
+  const SAFE_Y = 'max(env(safe-area-inset-bottom, 0px), 1rem)'
+  const SAFE_X_L = 'max(env(safe-area-inset-left, 0px), 1rem)'
+  const SAFE_Y_T = 'max(env(safe-area-inset-top, 0px), 1rem)'
+  switch (c) {
+    case 'tl':
+      return { ...base, top: SAFE_Y_T, left: SAFE_X_L }
+    case 'tr':
+      return { ...base, top: SAFE_Y_T, right: SAFE_X }
+    case 'bl':
+      return { ...base, bottom: SAFE_Y, left: SAFE_X_L }
+    case 'br':
+      return { ...base, bottom: SAFE_Y, right: SAFE_X }
+  }
+}
+
+function nearestCorner(x: number, y: number): Corner {
+  const isLeft = x < window.innerWidth / 2
+  const isTop = y < window.innerHeight / 2
+  return (`${isTop ? 't' : 'b'}${isLeft ? 'l' : 'r'}`) as Corner
+}
 
 function formatCountdown(seconds: number, lang: 'en' | 'id'): string {
   if (seconds <= 0) return lang === 'id' ? 'sebentar lagi…' : 'almost back…'
@@ -30,7 +65,7 @@ function formatCountdown(seconds: number, lang: 'en' | 'id'): string {
 function tooltipFor(state: AgentState, lang: 'en' | 'id'): string {
   switch (state) {
     case 'idle':
-      return lang === 'id' ? 'klik buat ngobrol' : 'tap to chat'
+      return lang === 'id' ? 'klik atau seret' : 'tap or drag me'
     case 'connecting':
       return lang === 'id' ? 'menyambung…' : 'connecting…'
     case 'listening':
@@ -52,6 +87,12 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
   const [now, setNow] = useState(() => Date.now())
   const [showTooltip, setShowTooltip] = useState(false)
   const [pulse, setPulse] = useState(0)
+
+  // Position state — corner + transient drag offset while the pointer is held.
+  const [corner, setCorner] = useState<Corner>(() => loadCorner())
+  const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null)
+  const dragRef = useRef<{ startX: number; startY: number; isDragging: boolean } | null>(null)
+
   const clientRef = useRef<GeminiLiveClient | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const dataRef = useRef<Uint8Array | null>(null)
@@ -75,7 +116,15 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
     clientRef.current?.updateContext({ lang, pathname })
   }, [lang, pathname])
 
-  // Countdown tick.
+  // Persist corner choice across sessions.
+  useEffect(() => {
+    if (typeof localStorage === 'undefined') return
+    try {
+      localStorage.setItem(CORNER_STORAGE_KEY, corner)
+    } catch {}
+  }, [corner])
+
+  // Countdown tick (only while sleeping).
   useEffect(() => {
     if (state !== 'sleeping') return
     const id = window.setInterval(() => setNow(Date.now()), 1000)
@@ -132,7 +181,6 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
     let raf = 0
     const loop = () => {
       if (analyserRef.current && dataRef.current && state === 'speaking') {
-        // Cast around the recently-tightened TS dom types for AnalyserNode.
         analyserRef.current.getByteFrequencyData(dataRef.current as unknown as Uint8Array<ArrayBuffer>)
         const avg = dataRef.current.reduce((a, b) => a + b, 0) / dataRef.current.length
         setPulse(Math.min(1, avg / 128))
@@ -150,6 +198,15 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
     if (state === 'sleeping') return
     if (!import.meta.env.PUBLIC_TOKEN_ENDPOINT) return
     setError(null)
+    const q = checkQuota()
+    if (!q.ok) {
+      console.log('[aksara-corner] quota gate', q)
+      setError({ kind: 'rate-limit', message: quotaCopy(q, lang), retryAfter: q.retryAfter })
+      wakeAtRef.current = Date.now() + (q.retryAfter ?? 60) * 1000
+      setState('sleeping')
+      return
+    }
+    recordSessionStart()
     const client = new GeminiLiveClient({
       onState: setState,
       onPlaybackTrack: handleTrack,
@@ -192,7 +249,7 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
     []
   )
 
-  const onClick =
+  const onActivate =
     state === 'sleeping'
       ? undefined
       : state === 'idle' || state === 'error'
@@ -201,9 +258,52 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
       ? undefined
       : stop
 
+  /* ---------- drag handling ---------- */
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return
+    dragRef.current = { startX: e.clientX, startY: e.clientY, isDragging: false }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const d = dragRef.current
+    if (!d) return
+    const dx = e.clientX - d.startX
+    const dy = e.clientY - d.startY
+    if (!d.isDragging && Math.hypot(dx, dy) > DRAG_THRESHOLD_PX) {
+      d.isDragging = true
+    }
+    if (d.isDragging) {
+      setDragOffset({ x: dx, y: dy })
+    }
+  }
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const d = dragRef.current
+    if (!d) return
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    } catch {}
+    const wasDragging = d.isDragging
+    dragRef.current = null
+    if (wasDragging) {
+      const next = nearestCorner(e.clientX, e.clientY)
+      setCorner(next)
+      setDragOffset(null)
+      return
+    }
+    setDragOffset(null)
+    onActivate?.()
+  }
+
+  const handlePointerCancel = () => {
+    dragRef.current = null
+    setDragOffset(null)
+  }
+
+  /* ---------- visuals ---------- */
   // Fluid 5-stop gradients per state — matches the tile orb's pastel scheme,
-  // tinted toward teal when active and cool-deep when sleeping. Each state
-  // gets its own glow ring so the orb feels alive against the page.
+  // tinted toward teal when active and cool-deep when sleeping.
   const gradients: Record<AgentState, { bg: string; glow: string; grain: number }> = {
     idle: {
       bg: 'linear-gradient(135deg, #f0e6d2 0%, #a8c9c0 25%, #e8dcc4 50%, #c4d9d4 75%, #f0e6d2 100%)',
@@ -243,25 +343,23 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
   }
   const g = gradients[state]
   const baseScale = state === 'sleeping' ? 0.94 : 1
-  const scale = baseScale + pulse * 0.18
+  const isDragging = dragOffset !== null
+  const scale = baseScale + pulse * 0.18 + (isDragging ? 0.06 : 0)
   const wakeAt = wakeAtRef.current
   const countdownSeconds = wakeAt ? Math.max(0, Math.ceil((wakeAt - now) / 1000)) : 0
+  const gradientDuration = state === 'sleeping' ? '6s' : state === 'speaking' ? '4s' : '8s'
 
-  // Slower gradient drift when sleeping for the breathing feel.
-  const gradientDuration =
-    state === 'sleeping' ? '6s' : state === 'speaking' ? '4s' : '8s'
+  const isTop = corner === 'tl' || corner === 'tr'
+  const isLeft = corner === 'tl' || corner === 'bl'
 
   return (
     <div
       style={{
-        position: 'fixed',
-        right: 'max(env(safe-area-inset-right, 0px), 1rem)',
-        bottom: 'max(env(safe-area-inset-bottom, 0px), 1rem)',
-        zIndex: 50,
+        ...cornerStyle(corner),
         pointerEvents: 'none',
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
+        flexDirection: isTop ? 'column-reverse' : 'column',
+        alignItems: isLeft ? 'flex-start' : 'flex-end',
         gap: '0.5rem'
       }}
     >
@@ -285,12 +383,15 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
       <button
         type='button'
         aria-label={`Aksara — ${tooltipFor(state, lang)}`}
-        onClick={onClick}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         onFocus={() => setShowTooltip(true)}
         onBlur={() => setShowTooltip(false)}
-        disabled={!onClick}
+        disabled={!onActivate && !isDragging}
         style={{
           pointerEvents: 'auto',
           width: 60,
@@ -298,17 +399,25 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
           borderRadius: '50%',
           border: '1px solid rgba(255,255,255,0.18)',
           padding: 0,
-          cursor: onClick ? 'pointer' : 'default',
+          cursor: isDragging ? 'grabbing' : onActivate ? 'grab' : 'default',
+          touchAction: 'none',
           // Fluid animated pastel gradient — same recipe as the tile, scaled
           // to the corner size, with the active palette swapped in.
           background: g.bg,
           backgroundSize: '300% 300%',
           animation: `aksaraCornerShift ${gradientDuration} ease-in-out infinite`,
-          boxShadow: `0 6px 22px ${g.glow}, inset 0 1px 2px rgba(255,255,255,0.25)`,
-          transform: `scale(${scale})`,
-          transition: 'transform 90ms linear, background 600ms ease-out, box-shadow 600ms ease-out',
+          boxShadow: isDragging
+            ? `0 12px 30px ${g.glow}, inset 0 1px 2px rgba(255,255,255,0.3)`
+            : `0 6px 22px ${g.glow}, inset 0 1px 2px rgba(255,255,255,0.25)`,
+          transform: isDragging
+            ? `translate(${dragOffset.x}px, ${dragOffset.y}px) scale(${scale})`
+            : `scale(${scale})`,
+          transition: isDragging
+            ? 'background 600ms ease-out, box-shadow 200ms ease-out'
+            : 'transform 280ms cubic-bezier(.22,1,.36,1), background 600ms ease-out, box-shadow 600ms ease-out',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          willChange: 'transform'
         }}
       >
         {/* Grain overlay — same fractalNoise recipe as the tile orb. */}
@@ -323,10 +432,7 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
             mixBlendMode: 'overlay'
           }}
         />
-        <svg
-          aria-hidden='true'
-          style={{ position: 'absolute', width: 0, height: 0 }}
-        >
+        <svg aria-hidden='true' style={{ position: 'absolute', width: 0, height: 0 }}>
           <filter id='aksara-corner-grain'>
             <feTurbulence
               type='fractalNoise'
@@ -367,7 +473,7 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
         )}
       </button>
 
-      {showTooltip && (
+      {showTooltip && !isDragging && (
         <div
           style={{
             background: 'rgba(0,0,0,0.7)',
@@ -376,10 +482,7 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
             borderRadius: 6,
             fontSize: 11,
             whiteSpace: 'nowrap',
-            pointerEvents: 'none',
-            position: 'absolute',
-            right: '70px',
-            bottom: '8px'
+            pointerEvents: 'none'
           }}
         >
           {tooltipFor(state, lang)}
@@ -403,7 +506,7 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
         }
       `}</style>
 
-      <AksaraHint lang={lang} active={state === 'idle'} />
+      <AksaraHint lang={lang} active={state === 'idle'} corner={corner} />
     </div>
   )
 }

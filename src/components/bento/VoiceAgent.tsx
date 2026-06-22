@@ -10,6 +10,7 @@ import {
   playDisconnectChime,
   playErrorChime
 } from '@/lib/voice/chimes'
+import { checkQuota, quotaCopy, recordSessionStart } from '@/lib/voice/quota'
 
 import OrbAnimation from './OrbAnimation'
 
@@ -113,6 +114,17 @@ export default function VoiceAgent({ lang = 'id' }: VoiceAgentProps) {
       setError({ kind: 'auth', message: 'Token endpoint not configured at build time.' })
       return
     }
+    const q = checkQuota()
+    if (!q.ok) {
+      console.log('[voice-agent] quota gate', q)
+      setError({ kind: 'rate-limit', message: quotaCopy(q, lang), retryAfter: q.retryAfter })
+      // Treat cooldown/daily like a sleeping state so the UI tells the
+      // visitor when to come back.
+      wakeAtRef.current = Date.now() + (q.retryAfter ?? 60) * 1000
+      setState('sleeping')
+      return
+    }
+    recordSessionStart()
     const client = new GeminiLiveClient({
       onState: (s) => {
         console.log('[voice-agent] state →', s)
