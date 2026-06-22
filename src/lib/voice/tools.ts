@@ -140,11 +140,82 @@ function isAllowedExternal(url: string): boolean {
   }
 }
 
+/**
+ * Routes the navigate tool will execute. Blocks Aksara from inventing
+ * URLs (e.g. /blog/cargo-cult-…) and dropping the visitor on a 404.
+ *
+ * Static routes: exact-match.
+ * Dynamic routes: match the prefix and let the dispatcher accept the slug
+ * verbatim — but only if the slug came from a search_content hit (we
+ * record those server-side here per session).
+ */
+const STATIC_ROUTES = new Set<string>([
+  '/',
+  '/id/',
+  '/id',
+  '/blog',
+  '/id/blog',
+  '/projects',
+  '/id/projects',
+  '/mind-garden',
+  '/id/mind-garden',
+  '/about',
+  '/id/about',
+  '/search',
+  '/archives',
+  '/links',
+  '/media',
+  '/tags'
+])
+
+const DYNAMIC_PREFIXES = ['/blog/', '/id/blog/', '/mind-garden/', '/id/mind-garden/', '/tags/', '/archives/']
+
+/**
+ * Slugs that came back from a search_content call this session. Aksara
+ * can navigate to them because we know they exist. Pruned on disconnect
+ * via tools.ts module reload — fine for the v1.
+ */
+const knownSlugs = new Set<string>()
+
+export function registerKnownSlugs(urls: string[]): void {
+  for (const u of urls) knownSlugs.add(u)
+}
+
+function isAllowedRoute(route: string): boolean {
+  // Strip query/hash for the check; we re-apply them on the navigation call.
+  const clean = route.split('?')[0].split('#')[0]
+  if (STATIC_ROUTES.has(clean)) return true
+  // Trailing-slash-tolerant exact match.
+  if (clean.endsWith('/') && STATIC_ROUTES.has(clean.slice(0, -1))) return true
+  // Search-returned slugs are pre-validated.
+  if (knownSlugs.has(clean) || knownSlugs.has(clean.replace(/\/$/, ''))) return true
+  // Allow same-prefix dynamic routes only if we have at least one slug
+  // for that section already (rough heuristic — prevents free invention).
+  for (const prefix of DYNAMIC_PREFIXES) {
+    if (clean.startsWith(prefix)) {
+      // Check if any known slug shares this prefix.
+      for (const slug of knownSlugs) {
+        if (slug.startsWith(prefix)) return true
+      }
+    }
+  }
+  return false
+}
+
 /* ---------- tool registry ---------- */
 export const tools = {
   navigate: {
     schema: NavigateSchema,
     handler: ({ route }, ctx) => {
+      if (!isAllowedRoute(route)) {
+        // Don't 404 the visitor. Hand back a structured error so Aksara
+        // can apologize gracefully instead of dropping them on a dead URL.
+        return {
+          ok: false,
+          reason: 'unknown route — call search_content first if you need a specific post',
+          attempted: route
+        }
+      }
       ctx.navigate(route)
       return { ok: true, currentPath: route }
     }
@@ -158,6 +229,10 @@ export const tools = {
         preferLang: ctx.lang,
         limit
       })
+      // Register every returned URL so the navigate tool will accept it
+      // on the next call. Aksara can call search_content → navigate
+      // safely; she can't invent a URL out of thin air.
+      registerKnownSlugs(hits.map((h) => h.url))
       return {
         hits: hits.map((h) => ({
           title: h.title,
@@ -243,12 +318,16 @@ export const AKSARA_GEMINI_TOOLS = [
       {
         name: 'navigate',
         description:
-          "Navigate the user to a page on Yose's site. Use whenever the user asks to go somewhere, " +
-          "or when you want to show them something to back up your answer. Examples of routes: " +
-          "'/', '/blog', '/projects', '/mind-garden', '/about', '/id/blog', '/id/projects', etc.",
+          "Navigate the visitor to a page on the site. Only call with routes you KNOW exist:\n" +
+          " • Section roots: '/', '/id/', '/blog', '/id/blog', '/projects', '/id/projects', " +
+          "'/mind-garden', '/id/mind-garden', '/about', '/id/about', '/search', '/archives'\n" +
+          " • Specific posts: ONLY URLs returned by a previous search_content call. " +
+          "Do NOT invent post slugs — if the visitor asks to read a specific post, call " +
+          "search_content first, then navigate with the exact URL from a hit.\n" +
+          "If the route is rejected, apologize and offer to search instead.",
         parameters: {
           type: 'OBJECT',
-          properties: { route: { type: 'STRING', description: 'Path like /blog or /id/projects' } },
+          properties: { route: { type: 'STRING', description: 'Path like /blog or a URL returned by search_content' } },
           required: ['route']
         }
       },
