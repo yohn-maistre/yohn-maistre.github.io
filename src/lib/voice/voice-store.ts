@@ -46,6 +46,21 @@ let _track: MediaStreamTrack | undefined
 let _wakeAt: number | null = null
 
 /**
+ * Cached snapshot. CRITICAL: useSyncExternalStore demands referential
+ * stability — if getSnapshot returns a new object every call, React
+ * detects "constant state change" and either spams renders or throws
+ * "Maximum update depth exceeded" and unmounts the subscriber. So we
+ * rebuild the snapshot only when something actually changed, via emit().
+ */
+let _snapshot: Snapshot = {
+  state: _state,
+  error: _error,
+  track: _track,
+  wakeAt: _wakeAt,
+  isActive: false
+}
+
+/**
  * Same-kind error bursts within this window scale the sleep delay. Identical
  * to what the individual components used to track — moved up here so it
  * persists across nav like the rest of the session state.
@@ -55,18 +70,19 @@ let _recentErrors: Array<{ kind: string; at: number }> = []
 
 const _listeners = new Set<Listener>()
 
-function emit(): void {
-  for (const fn of _listeners) fn()
-}
-
-function snapshot(): Snapshot {
-  return {
+function rebuildSnapshot(): void {
+  _snapshot = {
     state: _state,
     error: _error,
     track: _track,
     wakeAt: _wakeAt,
     isActive: _client !== null
   }
+}
+
+function emit(): void {
+  rebuildSnapshot()
+  for (const fn of _listeners) fn()
 }
 
 function setState(s: AgentState): void {
@@ -98,7 +114,7 @@ function ensureWakeWatcher(): void {
 }
 
 export const voiceStore = {
-  getSnapshot: snapshot,
+  getSnapshot: () => _snapshot,
 
   subscribe(fn: Listener): () => void {
     _listeners.add(fn)
