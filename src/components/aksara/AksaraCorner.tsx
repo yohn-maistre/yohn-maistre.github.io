@@ -11,6 +11,8 @@ import {
   playErrorChime
 } from '@/lib/voice/chimes'
 
+import AksaraHint from './AksaraHint'
+
 interface AksaraCornerProps {
   lang?: 'en' | 'id'
 }
@@ -343,6 +345,8 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
           [data-aksara-zzz] { display: none !important; }
         }
       `}</style>
+
+      <AksaraHint lang={lang} active={state === 'idle'} />
     </div>
   )
 }
