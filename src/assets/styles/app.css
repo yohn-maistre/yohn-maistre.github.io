@@ -157,3 +157,21 @@ a {
   font-size: 1.2rem;
   line-height: 1.7;
 }
+
+/*
+ * Astro View Transitions defaults `::view-transition-old(root)` and
+ * `::view-transition-new(root)` to a WHITE background, which flashes the
+ * whole page (and bleeds through bento tiles like the 3D Iatmul statue
+ * that draw on a transparent canvas). Force the page background through
+ * so dark mode and bento tiles stay consistent across nav.
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  background: hsl(var(--background));
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

@@ -201,20 +201,55 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
       ? undefined
       : stop
 
-  // Visual color per state.
-  const colors: Record<AgentState, { from: string; to: string; glow: string }> = {
-    idle: { from: '#1e3a5f', to: '#244e6e', glow: 'rgba(70,120,180,0.55)' },
-    connecting: { from: '#533c32', to: '#6c4d3e', glow: 'rgba(200,170,150,0.55)' },
-    listening: { from: '#4a9d8e', to: '#5fbfa8', glow: 'rgba(140,200,180,0.7)' },
-    thinking: { from: '#4a9d8e', to: '#5fbfa8', glow: 'rgba(140,200,180,0.7)' },
-    speaking: { from: '#4a9d8e', to: '#7ed7c0', glow: 'rgba(140,200,180,0.85)' },
-    sleeping: { from: '#243845', to: '#2c4a52', glow: 'rgba(80,130,130,0.45)' },
-    error: { from: '#5a2c2c', to: '#6e3a3a', glow: 'rgba(200,120,120,0.55)' }
+  // Fluid 5-stop gradients per state — matches the tile orb's pastel scheme,
+  // tinted toward teal when active and cool-deep when sleeping. Each state
+  // gets its own glow ring so the orb feels alive against the page.
+  const gradients: Record<AgentState, { bg: string; glow: string; grain: number }> = {
+    idle: {
+      bg: 'linear-gradient(135deg, #f0e6d2 0%, #a8c9c0 25%, #e8dcc4 50%, #c4d9d4 75%, #f0e6d2 100%)',
+      glow: 'rgba(140, 180, 175, 0.45)',
+      grain: 0.16
+    },
+    connecting: {
+      bg: 'linear-gradient(135deg, #f0d8c2 0%, #d4a890 25%, #e8c8b0 50%, #c8a890 75%, #f0d8c2 100%)',
+      glow: 'rgba(200, 170, 140, 0.55)',
+      grain: 0.16
+    },
+    listening: {
+      bg: 'linear-gradient(135deg, #d8ece4 0%, #6dbeac 25%, #c8e4d8 50%, #80c4b4 75%, #d8ece4 100%)',
+      glow: 'rgba(140, 200, 180, 0.65)',
+      grain: 0.16
+    },
+    thinking: {
+      bg: 'linear-gradient(135deg, #d8ece4 0%, #6dbeac 25%, #c8e4d8 50%, #80c4b4 75%, #d8ece4 100%)',
+      glow: 'rgba(140, 200, 180, 0.55)',
+      grain: 0.18
+    },
+    speaking: {
+      bg: 'linear-gradient(135deg, #e0f4ec 0%, #5fcfb4 25%, #d0ecdc 50%, #7eddc4 75%, #e0f4ec 100%)',
+      glow: 'rgba(140, 220, 190, 0.85)',
+      grain: 0.14
+    },
+    sleeping: {
+      bg: 'linear-gradient(135deg, #2c4a52 0%, #244853 25%, #2c4a52 50%, #1f3a44 75%, #2c4a52 100%)',
+      glow: 'rgba(80, 130, 130, 0.4)',
+      grain: 0.22
+    },
+    error: {
+      bg: 'linear-gradient(135deg, #f0d2d2 0%, #c89090 25%, #e8c4c4 50%, #c8a4a4 75%, #f0d2d2 100%)',
+      glow: 'rgba(200, 140, 140, 0.5)',
+      grain: 0.18
+    }
   }
-  const c = colors[state]
-  const scale = 1 + pulse * 0.18
+  const g = gradients[state]
+  const baseScale = state === 'sleeping' ? 0.94 : 1
+  const scale = baseScale + pulse * 0.18
   const wakeAt = wakeAtRef.current
   const countdownSeconds = wakeAt ? Math.max(0, Math.ceil((wakeAt - now) / 1000)) : 0
+
+  // Slower gradient drift when sleeping for the breathing feel.
+  const gradientDuration =
+    state === 'sleeping' ? '6s' : state === 'speaking' ? '4s' : '8s'
 
   return (
     <div
@@ -258,41 +293,58 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
         disabled={!onClick}
         style={{
           pointerEvents: 'auto',
-          width: 56,
-          height: 56,
+          width: 60,
+          height: 60,
           borderRadius: '50%',
-          border: 'none',
+          border: '1px solid rgba(255,255,255,0.18)',
           padding: 0,
           cursor: onClick ? 'pointer' : 'default',
-          background: `radial-gradient(circle at 30% 30%, ${c.to} 0%, ${c.from} 75%)`,
-          boxShadow: `0 4px 14px ${c.glow}, inset 0 1px 2px rgba(255,255,255,0.2)`,
+          // Fluid animated pastel gradient — same recipe as the tile, scaled
+          // to the corner size, with the active palette swapped in.
+          background: g.bg,
+          backgroundSize: '300% 300%',
+          animation: `aksaraCornerShift ${gradientDuration} ease-in-out infinite`,
+          boxShadow: `0 6px 22px ${g.glow}, inset 0 1px 2px rgba(255,255,255,0.25)`,
           transform: `scale(${scale})`,
-          transition: 'transform 90ms linear, background 400ms ease-out, box-shadow 400ms ease-out',
+          transition: 'transform 90ms linear, background 600ms ease-out, box-shadow 600ms ease-out',
           position: 'relative',
-          overflow: 'hidden',
-          filter: 'url(#aksara-corner-goo)'
+          overflow: 'hidden'
         }}
       >
-        <svg width='0' height='0' style={{ position: 'absolute' }}>
-          <filter id='aksara-corner-goo'>
-            <feGaussianBlur in='SourceGraphic' stdDeviation='2' result='b' />
-            <feColorMatrix
-              in='b'
-              type='matrix'
-              values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9'
-              result='g'
-            />
-            <feBlend in='SourceGraphic' in2='g' />
-          </filter>
-        </svg>
+        {/* Grain overlay — same fractalNoise recipe as the tile orb. */}
         <span
           aria-hidden='true'
           style={{
             position: 'absolute',
             inset: 0,
-            opacity: state === 'speaking' ? 0.85 : 0.5,
+            opacity: g.grain,
+            pointerEvents: 'none',
+            filter: 'url(#aksara-corner-grain)',
+            mixBlendMode: 'overlay'
+          }}
+        />
+        <svg
+          aria-hidden='true'
+          style={{ position: 'absolute', width: 0, height: 0 }}
+        >
+          <filter id='aksara-corner-grain'>
+            <feTurbulence
+              type='fractalNoise'
+              baseFrequency='0.9'
+              numOctaves='2'
+              stitchTiles='stitch'
+            />
+          </filter>
+        </svg>
+        {/* Highlight for round-feeling depth. */}
+        <span
+          aria-hidden='true'
+          style={{
+            position: 'absolute',
+            inset: 0,
+            pointerEvents: 'none',
             background:
-              'radial-gradient(circle at 70% 70%, rgba(255,255,255,0.35) 0%, transparent 35%)'
+              'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 45%)'
           }}
         />
         {state === 'sleeping' && (
@@ -301,15 +353,16 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
             data-aksara-zzz
             style={{
               position: 'absolute',
-              right: 8,
-              top: 4,
+              right: 10,
+              top: 6,
               fontSize: 12,
               fontWeight: 700,
-              color: 'rgba(220,240,240,0.9)',
-              fontFamily: 'system-ui'
+              color: 'rgba(220,240,240,0.92)',
+              fontFamily: 'system-ui',
+              textShadow: '0 0 4px rgba(120,200,200,0.5)'
             }}
           >
-            z
+            zZ
           </span>
         )}
       </button>
@@ -337,12 +390,16 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
       )}
 
       <style>{`
-        @keyframes aksaraCornerBreath {
-          0%, 100% { filter: brightness(0.9); }
-          50% { filter: brightness(1.05); }
+        @keyframes aksaraCornerShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
         @media (prefers-reduced-motion: reduce) {
           [data-aksara-zzz] { display: none !important; }
+          button[aria-label^='Aksara'] {
+            animation: none !important;
+          }
         }
       `}</style>
 

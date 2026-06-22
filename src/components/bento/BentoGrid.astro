@@ -13,7 +13,11 @@ import { getLangFromUrl } from '@/lib/i18n'
 const lang = getLangFromUrl(Astro.url)
 ---
 
-<section class='bento-grid' aria-label='Personal information and activity grid'>
+<section
+  class='bento-grid'
+  aria-label='Personal information and activity grid'
+  transition:animate='none'
+>
   <div
     class="bento-tile first aspect-square bg-[url('/bento/about-square.webp')] [grid-area:a] sm:aspect-[2.1/1] sm:bg-[url('/bento/about.webp')] xl:aspect-auto"
     role='img'
