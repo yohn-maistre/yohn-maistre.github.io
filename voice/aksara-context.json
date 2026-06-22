@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-22T00:33:36.084Z",
+  "generated_at": "2026-06-22T01:02:10.704Z",
   "site": {
     "url": "https://yose.is-a.dev",
     "title": "yose.is-a.dev"
@@ -118,10 +118,10 @@
       "description": "Cargo cult bukan cuma di PNG dulu. De ada di kantor-kantor pemerintah, kampus, dan startup hari ini.",
       "date": "2026-05-07",
       "tags": [
-        "Philosophy",
         "Papua",
-        "Culture",
-        "Science"
+        "Budaya",
+        "Sains",
+        "Opini"
       ],
       "excerpt": "Berapa tahun lalu sa baca cerita yang sa rasa semua yang besar di Papua mungkin pernah rasa juga. Cerita ini dari masa Perang Dunia kedua, di kepulauan Pasifik, termasuk di tong pu sodara-sodara di PNG dan Vanuatu. Pas perang, pesawat-pesawat tentara datang turun di pulau - bawa makanan kaleng, pakaian, alat, semua barang yang asing dan ajaib yang tra pernah dong lihat sebelumnya. Habis perang selesai, tentara pergi, pesawat tra datang lagi. Tapi orang-orang masih ingat barang-barang itu, dan dong mau supaya datang lagi. Jadi dong bangun landasan dari bambu, bikin tower dari kayu, ada satu orang duduk di situ pake \"headset\" dari batok kelapa, antena dari ranting. De pu bentuk persis sama dengan apa yang dong lihat dari tentara…"
     },
@@ -179,140 +179,132 @@
       "excerpt": "import { Steps, Aside, Tabs, TabItem } from '@yohn-maistre/astro-pure-fork/user' Fine-tuning TTS Models: A Practical Guide This is a straight-to-the-point guide on fine-tuning Text-to-Speech (TTS) models. We'll be using Unsloth to speed up the process. The goal is to customize a TTS model for a specific voice or style. Fine-tuning vs. Zero-shot <Aside type='note' Zero-shot cloning is fast but often robotic. It captures tone but not the nuances of speech. Fine-tuning is more involved but produces a much more realistic and expressive voice. </Aside Model Selection Smaller models are generally better for TTS due to lower latency. Models under 3B parameters are a good starting point. <Tabs <TabItem label='Sesame-CSM (1B)' CSM-1B is a base model. It needs audio context for each…"
     },
     {
-      "slug": "garden/integrations/advanced",
+      "slug": "garden/data-science/datasette",
       "lang": "en",
-      "title": "Advanced Components",
-      "description": "Advanced components with advanced docs",
+      "title": "Datasette",
+      "description": "Notes and resources about Datasette.",
       "tags": [],
-      "excerpt": "import { MdxRepl } from '@yohn-maistre/astro-pure-fork/user' Web Content Render Quote The Quote component is a simple component that displays a random quote. <MdxRepl import { Quote } from '@yohn-maistre/astro-pure-fork/advanced' <Quote / <Fragment slot='desc' </Fragment </MdxRepl Config: Quotable is a open-source API that provides random English quotes. For Chinese quotes, you can use Hitokoto. GitHub Card The GithubCard component is a simple component that displays a GitHub user card. <MdxRepl width='80%' import { GithubCard } from '@yohn-maistre/astro-pure-fork/advanced' <GithubCard repo='cworld1/astro-theme-pure' / <Fragment slot='desc' </Fragment </MdxRepl Link Preview Preview any link inserted in the content. <MdxRepl width='80%' import { LinkPreview } from '@yohn-maistre/astro-pure-fork/advanced' <LinkPreview href='https://www.mozilla.org/en-US/' / <LinkPreview href='https://www.cloudflare.com/' hideMedia / <Fragment slot='desc' </Fragment </MdxRepl Data Transformer QRCode <MdxRepl import { QRCode } from…"
+      "excerpt": "--- title: Datasette --- Links - Datasette Lite - Datasette running in your browser using WebAssembly and Pyodide. (HN) - datasette-upload-dbs - Upload SQLite database files to Datasette. - Google Calendar to SQLite - Create a SQLite database containing your data from Google Calendar. - Architecture Notes: Datasette - Write Datasette canned queries as plain SQL files - Template repository for creating new Datasette plugins"
     },
     {
-      "slug": "garden/integrations/comment",
+      "slug": "garden/data-science/data-visualization",
       "lang": "en",
-      "title": "Comment System",
-      "description": "Comment system for pages at the bottom",
+      "title": "Data Visualization",
+      "description": "Vega is great. Hands-On Data Visualization Book is nice intro.",
       "tags": [],
-      "excerpt": "import { Aside } from '@yohn-maistre/astro-pure-fork/user' Waline Comment System <Aside This theme has integrated the Waline comment system. You can configure it at the integrationConfig.waline in file src/site.config.ts. </Aside The theme's comment, read statistics, likes, and other functionalities are all provided by Waline. Remove If you have some reasons to remove the comment system, or just learn how to change to other comment systems, this section might help you. But if you want to know how to configure it, you can skip this section. Remove it by the following steps: 1. set enable to false in src/site.config.ts. 2. Remove dependency @waline/client: 3. Remove folder src/components/waline. 4. Remove relative code in these layouts: - src/layouts/CommonPage.astro - src/layouts/BlogPost.astro 5. Remove relative config…"
+      "excerpt": "Vega is great. Hands-On Data Visualization Book is nice intro. Nice examples - America’s Highest Earners And Their Taxes Revealed Notes - Next time you want to lie with data, use areas. Next time you see a chart with areas, know you’re being lied to. Links - Vega - Declarative format for creating, saving, and sharing visualization designs. (Code) - Vega-Lite - High-level grammar of interactive graphics. Provides a concise JSON syntax for rapidly generating visualizations to support analysis. (Code) (HN) - Vega-Lite API - JavaScript API for Vega-Lite. - Vega Editor - VegaGraphs - Implements graph visualization with Vega-Lite. - vega-bundler - Compile optimized Vega and Vega-Lite bundles. - react-vega - Convert Vega spec into React class conveniently. -…"
     },
     {
-      "slug": "garden/integrations/unocss",
+      "slug": "garden/data-science/data-processing",
       "lang": "en",
-      "title": "UnoCSS & Styles",
-      "description": "Change the appearance of the site & create custom styles",
+      "title": "Data processing",
+      "description": "Ibis & Orchest are nice.",
       "tags": [],
-      "excerpt": "UnoCSS Change Appearance You can customize the theme default UnoCSS palette by modifying the CSS file at src/assets/styles/app.css. For example, if you want to change the default theme color, you can modify the following code: And the same way to change the default font family, you can modify the following code: Make sure to put your custom font file in the public/fonts directory. UnoCSS Configuration File: uno.config.ts Get to know more: - UnoCSS: Astro Integration - UnoCSS: Configuring UnoCSS @unocss/preset-typography Typography config can be modified in uno.config.ts: But if you want to customize the typography by UnoCSS, or just change the preset typography theme, you can do it in src/site.config.ts: Checkout Typography preset for more."
+      "excerpt": "Ibis & Orchest are nice. Notes - [A simple use of array of JSON to store tabular data seems nice. [{row1}, {row2}, {row3}].](https://news.ycombinator.com/item?id=31220841) Links - Bigslice - System for fast, large-scale, serverless data processing using Go. - Reflow - Language and runtime for distributed, incremental data processing in the cloud. - Self-managing serverless computing with Bigmachine (2019) - Bigslice: a cluster computing system for Go (2019) - When your data doesn’t fit in memory: the basic techniques (2019) (HN) - Differential Dataflow - Implementation of differential dataflow using timely dataflow on Rust. (Book) (HN) - The Log: What every software engineer should know about real-time data's unifying abstraction (2013) - Luna - Data processing and visualization environment built on a…"
     },
     {
-      "slug": "garden/integrations/others",
+      "slug": "garden/data-science/kafka",
       "lang": "en",
-      "title": "Other Integrations",
-      "description": "Other integrations that help improve your site",
+      "title": "Apache Kafka",
+      "description": "This talk is good intro.",
       "tags": [],
-      "excerpt": "import { Aside, Tabs, TabItem, Steps } from '@yohn-maistre/astro-pure-fork/user' <AsideDocs are still in progress.</Aside medium-zoom Checkout medium-zoom for more. This theme has integrated it in BlogPost.astro by default, which means any content in src/content/blog doesn't need to import. If you want to use it in any other layout or page, you can use the following code: <Tabs <TabItem label='Astro' </TabItem <TabItem label='MDX' </TabItem </Tabs @playform/compress Checkout playform/compress for more. Friend-Circle-Lite See Friend Links #Integrated with Friend-Circle-Lite. LateX support In case any time in the future this theme removes default support for LateX, there's a tutorial to help you add support for it. Rendering LaTeX in Astro.js enriches your markdown files with mathematical expressions, making your content both engaging and informative.…"
+      "excerpt": "--- title: Apache Kafka --- This talk is good intro. Notes - Same goes with all the Kafka usage, making development literally Kafkaesque. The data eventually flows through your microservice landscape, being eventually consistent and performance issues become a whole different nightmare. Yea, maybe I just didn't read enough of the documentation but maybe your 1500 users per month web-app doesn't need 7 microservices and Kafka as single source of truth, all hold together by 8 developers. Links - Confluent - Complete Event Streaming Platform For Apache Kafka. - Kafka ecosystem ... but step by step - Playground for Kafka/Confluent Docker experimentations - Goka - Compact yet powerful distributed stream processing library for Apache Kafka written in Go. - Streams…"
     },
     {
-      "slug": "garden/integrations/code",
+      "slug": "garden/data-science/data-science",
       "lang": "en",
-      "title": "Shiki Code",
-      "description": "Some methods for better using shiki code",
+      "title": "Data Science",
+      "description": "Equals, Tably, DataStation, Datasette are neat. Want to learn scikit-learn libraries more.",
       "tags": [],
-      "excerpt": "import { MdxRepl } from '@yohn-maistre/astro-pure-fork/user' Basic Usage For .astro file: For .mdx and .md file: shell git log --oneline Add Title <MdxRepl width='80%' <Fragment slot='desc' shell title=\"start.sh\" #!/bin/bash bun check & bun dev </Fragment </MdxRepl Show Diff Supports add and del lines. <MdxRepl width='80%' <Fragment slot='desc' shell title=\"deploy.sh\" #!/bin/bash bun check bun lint bun format # [\\!code ++] No need for vercel or other ci/cd bun run build # [\\!code --] git push </Fragment </MdxRepl Show Highlight <MdxRepl width='80%' <Fragment slot='desc' html <!doctype html<html<head<meta name=\"color-scheme\" content=\"dark\"</head<body style='overflow:hidden' <!-- Highlight a single line -- <p style='text-align:center'君指先跃动の光は、私の一生不変の信仰に、唯私の超电磁炮永生き！</p <!-- [\\!code highlight] -- <!-- You can also highlight multiple lines with a single comment: -- <canvas id=\"can\" width=\"400\" height=\"400\" style=\"background:Black;display:block;margin:20px auto;\"</canvas <script //…"
+      "excerpt": "Equals, Tably, DataStation, Datasette are neat. Want to learn scikit-learn libraries more. Notes - If you can solve a problem with a simple heuristic, do that. Sometimes you don't need machine learning. - Data is not always useful and it doesn't matter how much of it you have. There’s no mathematical tool to tell you if your hypothesis is true; you can only see whether it is consistent with the data, and if the data is sparse or unclear, your conclusions are uncertain. - By writing the data generating process first, and therefore knowing parameters, you can get more confidence that your model is well constructed. - Building a data pipeline in 2020 is like building a bridge in the…"
     },
     {
-      "slug": "garden/integrations/components",
+      "slug": "garden/psychology/psychology",
       "lang": "en",
-      "title": "User Components",
-      "description": "Easily extend your content page more interactive",
+      "title": "Psychology",
+      "description": "Notes and resources about Psychology.",
       "tags": [],
-      "excerpt": "import { Aside, Tabs, TabItem, MdxRepl } from '@yohn-maistre/astro-pure-fork/user' Components let you easily reuse a piece of UI or styling consistently. You can use them not just in .astro files, but also in .mdx files. <Aside type='tip' MDX is a format that lets you write JSX embedded inside Markdown. And it has no difference with markdown files in other ways. </Aside For .astro, you can directly import and use components and use. An example will also shown in the first section. <Aside type='tip' If you always import some components in your contents, you can use astro-auto-import to automatically import them instead of manually importing them in every file. </Aside Containers Card <MdxRepl import { Card } from '@yohn-maistre/astro-pure-fork/user' <Card as='a'…"
+      "excerpt": "Notes - To fix unconscious issues one must make them conscious- by experiencing them, rather than turning away because they make one uncomfortable. Have to push through the fear. Links - Derren Brown Advertising Agency Task - Best be aware of the power that advertising has on day to day life. - Stan Grof, 'the depths of the psyche' (2019) - Celeste Kidd - NeurIPS 2019 - How to Know (Summary) - The Generalizability Crisis (2020) - Cognitive Biases in Software Development (HN) - Signaling as a Service (2020) (HN) - Psychopath Code - Cracking The Predators That Stalk Us - The Century of the Self documentary (2002) - Dopamine is not addictive (2017) (HN) - The mechanics and psychology…"
     },
     {
-      "slug": "garden/integrations/links",
+      "slug": "garden/psychology/marketing",
       "lang": "en",
-      "title": "Friend Links",
-      "description": "Configurations for friend links",
+      "title": "Marketing",
+      "description": "How to drive SaaS product adoption article is nice.",
       "tags": [],
-      "excerpt": "import { Steps } from '@yohn-maistre/astro-pure-fork/user' Remove Links Page Links page is a page for showing your friend blog links, which is enabled by default. If you want to remove the links page for any reason, follow the steps in this section. Otherwise, you can skip ahead to the next chapter. Set links.enable to false in src/site.config.ts: And also, remember to delete the following folders & files: - src/components/links/ - src/pages/links/ - public/links.json Basic Configurations A basic configuration for friend links is in src/site.config.ts. You can add your friend's logbook or your own link info. Friend Links The friend links configurations are at public/links.json. Integrated with Friend-Circle-Lite Friend-Circle-Lite is a stripped-down friend-link app with no backend and running only using…"
+      "excerpt": "How to drive SaaS product adoption article is nice. Think Poolsuite does marketing incredibly well. All the products they release evoke emotion. One way to do launches with possible virality is rewarding people who retweet with potential to win some amazing reward like life time subscription. Nice ads - Kyrö Distillery: Presented by a naked man - Introducing Descript Nice company Twitter accounts - Poolsuite Notes - Every startup should focus on its inbound and outbound strategies. - Inbound Marketing: Publish great content (blog posts, white papers, videos, resources things people will find genuinely useful) across the web on topics related to your service so that users find you. Out the most compelling resources behind a lead form that helps…"
     },
     {
-      "slug": "garden/setup/configuration",
+      "slug": "garden/psychology/decision-making",
       "lang": "en",
-      "title": "Configuration",
-      "description": "Configuration files",
+      "title": "Decision making",
+      "description": "Try Amazon Leadership Principles as a framework for making better decisions.",
       "tags": [],
-      "excerpt": "Theme Configuration File: src/site.config.ts pending update... Astro Configuration File: astro.config.mjs You can configure it to change deployment methods, add rehype & remark plugins, and more. Read more about Astro configuration here. ESLint Configuration File: eslint.config.mjs You can configure ESLint to change rules and security checks. Read more about ESLint configuration here. Prettier Configuration File: prettier.config.mjs You can configure Prettier to change code formatting rules, this can change your experience using package command format and extension support for your favorite IDE. Options are available here. UnoCSS Configuration File: uno.config.ts It is a utility-first CSS framework building custom designs. Theme also uses its preset typography to make type settings. Checkout UnoCSS & Styles for more info. Typescript Configuration File: tsconfig.json"
+      "excerpt": "Try Amazon Leadership Principles as a framework for making better decisions. Notes - Obama used 'decision memos' with choices of: 1. agree. 2. disagree 3. let's discuss - Never judge a decision just by its outcome as there are many unknowns. - Good decisions are made by groups, great decisions are made by individuals. When risk mitigation is the key, committees work well. When upside creation is the goal, the smaller the circle the better. - Don't make decisions purely on instinct. Links - What Really Drives Our Decision-Making? (2019) - Things to consider when making a decision - How to Make Decisions: A Guide for When You Can't Choose - Making the case to decision makers: the presentation format…"
     },
     {
-      "slug": "garden/setup/content",
+      "slug": "garden/psychology/biases",
       "lang": "en",
-      "title": "Authoring Content",
-      "description": "Making your own content",
+      "title": "Biases",
+      "description": "Notes and resources about Biases.",
       "tags": [],
-      "excerpt": "import { Aside } from '@yohn-maistre/astro-pure-fork/user' Astro helps you author and present your content. You can write a blog post directly in Astro using Markdown/MDX, or fetch your content from a headless CMS. Astro lets you build a site around your content: you can add a layout to your pages, create an index of posts, and set up an RSS feed to allow readers to subscribe. Writing Content In Astro, you can author your content in a variety of ways: - In Markdown files (.md or alternative extensions), designed to make it easy to write rich text content. - In MDX (.mdx) or Markdoc (.mdoc) files with an official integration, which can include components and dynamic expressions in your document.…"
+      "excerpt": "Refs - Dunning–Kruger effect - The less you know about something, the more likely you are to think there isn't much to know about it. - Negativity bias - Notion that, even when of equal intensity, things of a more negative nature (e.g. unpleasant thoughts, emotions, or social interactions; harmful/traumatic events) have a greater effect on one's psychological state and processes than neutral or positive things. In theory it protects you to from forgetting things that could harm you, and helps you notice potentially dangerous situations. Links - List of biases that cloud our judgement - Cognitive biases to learn (so you can think clearly and make better decisions) (2021) - Guide to cognitive biases (HN) - 50 cognitive biases…"
     },
     {
-      "slug": "garden/setup/getting-started",
+      "slug": "garden/psychology/addiction",
       "lang": "en",
-      "title": "Getting Started",
-      "description": "Get started with the Astro Theme Pure",
+      "title": "Addiction",
+      "description": "This video I feel summarizes addiction quite well.",
       "tags": [],
-      "excerpt": "import { Steps, Aside, Tabs, TabItem } from '@yohn-maistre/astro-pure-fork/user' Installation Two way to install. \"Template\" way is lightweight and simple, but hard to update; while \"Fork\" way is easy to update but needs some skills for git. Install Using Template <Aside type='tip' Astro has a great article teaching you setting up project: Install and set up Astro #Use a theme or starter template </Aside <Steps 1. Install the theme Execute the following command in the your user directory to install the theme: <Tabs <TabItem label='bun' <Aside type='tip' For Bun, if the installation is slow, it is recommended to use a mirror configuration by creating bunfig.toml under the project root directory: For details about other PM mirror configs, you may need…"
+      "excerpt": "This video I feel summarizes addiction quite well. Notes - If you were perfectly healthy and wealthy and just as lazy as hell you might be able to just hire someone to carry you around to every anywhere you wanted to go, do anything that needed to be done, lift anything that needed to be lifted. This would have serious effects on your body, you'd lose muscle mass and become weaker and weaker over time to the point where you'd not just want your helper to carry, do, and lift everything, you would need that help. If your helper left you'd either hire a new one or struggle to get up off your ass and recover from the mess you'd…"
     },
     {
-      "slug": "garden/setup/deployment",
+      "slug": "garden/psychology/negotiating",
       "lang": "en",
-      "title": "Deployment",
-      "description": "Deploy your site to various platforms",
+      "title": "Negotiating",
+      "description": "2. Propose your result + a ton of wild unreasonable additions.",
       "tags": [],
-      "excerpt": "import { Aside, Steps } from '@yohn-maistre/astro-pure-fork/user' Package Mode This theme which = v4.0.0 has integrated NPM package mode. Recommended way is remove local package file, and install the theme integration from NPM. If there's some reason you want to change the package content, you should link local package to your theme template. A bun method is integrated. You should: 1. Add environment variable BUNLINKPKG=true. 2. Run bun pure check to link the package automatically. This method can also work on Deployment for other platforms like 'Vercel'. All you need is to add the environment variable to build options on your platform control settings. The build command @yohn-maistre/astro-pure-fork check && astro check && astro build will automatically link the package.…"
+      "excerpt": "Notes - Start off with a strong position, then negotiate back to the place where you want it to be. - In short: 1. Know what result you want. 2. Propose your result + a ton of wild unreasonable additions. 3. Your opponent gets all disheveled by the unreasonable additions. 4. You 'compromise' by walking back to what you want. You opponent gets a win and you get what you wanted all along. - It doesn’t matter what you were paid at your previous gig, and don’t answer if they ask. - My current compensation is part of the reason why am looking into other opportunities. - Never overplay your hand when negotiating a major deal -- especially not against…"
     },
     {
-      "slug": "garden/training-and-fine-tuning/text-to-speech-fine-tuning",
+      "slug": "garden/privacy/privacy",
       "lang": "en",
-      "title": "Text-to-Speech (TTS) Fine-tuning",
-      "description": "Learn how to fine-tune Text-to-Speech (TTS) models to adapt them to your specific dataset, use case, or desired style and tone.",
+      "title": "Privacy",
+      "description": "I try to be aware of my digital fingerprint on the Internet. Who owns the data I create and the data traces I leave.",
       "tags": [],
-      "excerpt": "Text-to-Speech (TTS) Fine-tuning Fine-tuning TTS models allows them to adapt to your specific dataset, use case, or desired style and tone. The goal is to customize these models to clone voices, adapt speaking styles and tones, support new languages, handle specific tasks and more. We also support Speech-to-Text (STT) models like OpenAI's Whisper. With Unsloth, you can fine-tune TTS models 1.5x faster with 50% less memory than other implementations with Flash Attention 2. This support includes Sesame CSM, Orpheus, and models supported by transformers (e.g. CrisperWhisper, Spark and more). :::info Zero-shot cloning captures tone but misses pacing and expression, often sounding robotic and unnatural. Fine-tuning delivers far more accurate and realistic voice replication. Read more here. ::: We've uploaded TTS…"
+      "excerpt": "I try to be aware of my digital fingerprint on the Internet. Who owns the data I create and the data traces I leave. And I have deep interest in Differential privacy and Homomorphic encryption. Notes - Facebook is not a private nor a secure platform for sharing sensitive information. Every character that you type into their text boxes is immediately parsed and sent to their servers, regardless of whether you actually complete a post and submit it. - Marketing most importantly is about establishing wants that you didn't have. - Apple spent the entire summer telling the public that they were confident they could resist government pressure, when defending their CSAM scanning system. Today they’re pulling voting guides from…"
     },
     {
-      "slug": "garden/advanced/update",
+      "slug": "garden/privacy/tor",
       "lang": "en",
-      "title": "Update Theme",
-      "description": "Update astro theme pure to the latest version",
+      "title": "Tor Project",
+      "description": "Notes and resources about Tor Project.",
       "tags": [],
-      "excerpt": "import { Aside } from '@yohn-maistre/astro-pure-fork/user' <Aside type='caution' This theme is updated frequently, and updating the theme may be a little bit complex. Please read the following breaking changes carefully. </Aside Breaking Changes v4.0.8 No breaking changes. v4.0.7 - Changed the Button component to use variant prop instead of style prop. This can help you add custom styles without conflicts. You should change your code like this: - Changed the ExternalLinks configuration in src/site.config.ts. You should change your config like this: - Changed the Waline files out of package! Checkout Commit 5119694 to see how to change your existing pages & layouts. Don't forget to copy files at src/components/waline to your project. v4.0.6 - Changed the project card var name…"
+      "excerpt": "--- title: Tor Project --- Notes - For users wanting to prevent their ISP from sniffing around then tor works as intended. Against advertisers it also work decently as a self cleaning browsers that constantly change its IP address. - For developers and sysadmins that want to get an outside look at their own services or investigate third party websites (like fraudulent lookalike) it work pretty effective with some caveats. - It also works mostly fine against national and ISP firewalls that is intended to censor citizens and lead people away from places which the state has declared unsuited for its population. - Against police force it seem to mostly work as a free tool that get used by criminals…"
     },
     {
-      "slug": "garden/advanced/customize",
+      "slug": "garden/privacy/adblocking",
       "lang": "en",
-      "title": "Customize Theme",
-      "description": "Custom theme by yourself",
+      "title": "Ad blocking",
+      "description": "Notes and resources about Ad blocking.",
       "tags": [],
-      "excerpt": "import { Aside, Spoiler, Steps } from '@yohn-maistre/astro-pure-fork/user' You Should Know This theme is designed to \"NPM Package\" for the following reasons: 1. The code written in package may be frequently changed. If users change them at will, it will significantly increase the cost of subsequent updates and merging (various conflicts for code) 2. Roll back and switch between different versions easily, to maintain user stability 3. Reduce system coupling & increase reuse ability 4. The NPM Package mode can be used as a \"Astro plugin\" to append additional operations that enhance user experience during the build phase 5. Support some built-in commands like new, check, info, etc. 6. Use as component library for other Astro projects (yes, this project…"
+      "excerpt": "Links - Pi-hole - Network-wide ad blocking via your own Linux hardware. (Docs) (Docs Code) (Code) - Pi-hole in a docker container - Hosts - Extending and consolidating hosts files from several well-curated sources. - Bromite - Chromium plus ad blocking and privacy enhancements; take back your browser. - Resilience - Ad blocker for your computer. - Ad Block engine in Rust - Native Rust module for Adblock Plus syntax (e.g. EasyList, EasyPrivacy) filter parsing and matching. - Ad blocking with Raspberry Pi and Pi-hole (2020) (HN) - Hole Stats - Follow up and manage the status of your Pi-hole with this simple macOS app that lives in your menu bar. - Pi Stats - macOS app to visualize Pi-hole…"
     },
     {
-      "slug": "garden/advanced/faq",
+      "slug": "garden/privacy/self-hosting",
       "lang": "en",
-      "title": "FAQs",
-      "description": "Frequently asked questions",
+      "title": "Self hosting",
+      "description": "Notes and resources about Self hosting.",
       "tags": [],
-      "excerpt": "Routes Blog specific route Routing blogs format like /blog/:year/:id See 4.0.2-beta如何使文章链接中包含年份. Content Support web images for heroImage It should be used with inferSize: true to get the image size. Example: Vite Vite Block Request See option server.allowedHosts doesn't take into account \"true\" Packages Problem with BUNLINKPKG See BUNLINKPKG 环境变量无法设置成功"
+      "excerpt": "Links - Lobsters: What are you self hosting? (2021) (2019 version) (2020 version) - Ask HN: What do you self-host? (2019) - List of \"only yours\" cloud services for everyday needs - Reddit: List what you have self hosted? (2020) - Install 70+ self-hosted apps and services via HomelabOS with one command - The Homebrewserver Club (HN) - linx-server - Self-hosted file/media sharing website. - Traefik v2 - Advanced Config with Examples (2020) - Self-Hosted Homelab Website (HN) - Awesome Self Hosted - Awesome-Self-Hosted - List of Free Software network services and web applications which can be hosted on your own servers. - Use managed services. Please. (2020) (Lobsters) - Screw it, I’ll host it myself (2021) (HN) - Forem…"
     },
     {
-      "slug": "garden/advanced/thanks",
+      "slug": "garden/privacy/freedom",
       "lang": "en",
-      "title": "Acknowledgements",
-      "description": "Acknowledgements for this theme project",
+      "title": "Freedom",
+      "description": "Notes and resources about Freedom.",
       "tags": [],
-      "excerpt": "import { GithubCard } from '@yohn-maistre/astro-pure-fork/advanced' import { Button } from '@yohn-maistre/astro-pure-fork/user' The astro-theme-pure theme is open source under the Apache 2.0 license. Please abide by this license for any further development. <GithubCard repo='cworld1/astro-theme-pure' / Contributions A big thank you to everyone who has contributed to the astro-theme-pure. The open-source community is amazing because of you. [](https://github.com/cworld1/astro-theme-pure/graphs/contributors) Sponsorship We would like to express our gratitude to all the sponsors. <Button href='https://cworld0.com/projects#sponsorship' target='blank' title='Become a Sponsor' variant='ahead' / Open Source References This theme uses/references/derives content from the following projects: Framework: - astro - unocss Content rendering: - mdx - @unocss/preset-typography - @unifiedjs/rehype - @unifiedjs/remark Integrations: - Code block: Shiki - Image lightbox: Medium Zoom - Comment: Waline - Search: Pagefind Others:…"
-    },
-    {
-      "slug": "garden/advanced/optimize",
-      "lang": "en",
-      "title": "Optimize Your Site",
-      "description": "Improve your site performance and user experience",
-      "tags": [],
-      "excerpt": "import { Aside } from '@yohn-maistre/astro-pure-fork/user' Integrations This theme has integrated with: - sharp: image optimization - @playform/compress: HTML, CSS, JS, images minify CDN Some light-weighted libraries are using js static links. You can configure CDN links to improve your site performance. Coding It is a good way to use \"Typescript-like\" syntax comment in your .astro files. It can ensure your comment will not be rendered in the final production HTML file. Pictures Use optimized component Display optimized images with the <Image / component: Use the built-in <Image / Astro component to display optimized versions of: - your local images located within the src/ folder - configured remote images from authorized sources <Image / can transform a local or authorized…"
+      "excerpt": "Links - Modern Mind Control: Public Opinion Manipulation in Our Online World - Number of journalists in jail reaches global high (2021) (HN)"
     },
     {
       "slug": "garden/gen-ai/text-to-speech-fine-tuning",
@@ -321,6 +313,22 @@
       "description": "A technical guide to fine-tuning Text-to-Speech (TTS) models with Unsloth.",
       "tags": [],
       "excerpt": "import { Steps, Aside, Tabs, TabItem } from '@yohn-maistre/astro-pure-fork/user' Fine-tuning TTS Models: A Practical Guide This is a straight-to-the-point guide on fine-tuning Text-to-Speech (TTS) models. We'll be using Unsloth to speed up the process. The goal is to customize a TTS model for a specific voice or style. Fine-tuning vs. Zero-shot <Aside type='note' Zero-shot cloning is fast but often robotic. It captures tone but not the nuances of speech. Fine-tuning is more involved but produces a much more realistic and expressive voice. </Aside Model Selection Smaller models are generally better for TTS due to lower latency. Models under 3B parameters are a good starting point. <Tabs <TabItem label='Sesame-CSM (1B)' CSM-1B is a base model. It needs audio context for each…"
+    },
+    {
+      "slug": "garden/physics/quantum-physics",
+      "lang": "en",
+      "title": "Quantum physics",
+      "description": "Notes and resources about Quantum physics.",
+      "tags": [],
+      "excerpt": "Notes - This is the reason why the word observer is cursed. Because it leads to people to conclude consciousness and other wrong concepts are associated with the results. All that happens is a measurement, an interaction or interference, so no, you dont need a conscious observer, because the act of measurement is what interacts with the wave function, it happens irregardless of being made by a dog, a tardigrade or a computer, because anything that measures the wave function is interfering with it. - If you have just one half of an entangled pair, it is impossible to know if the other has been measured, even if you measure your half. - Quantum teleportation requires entanglement, but the communication…"
+    },
+    {
+      "slug": "garden/physics/quantum-gravity",
+      "lang": "en",
+      "title": "Quantum gravity",
+      "description": "Notes and resources about Quantum gravity.",
+      "tags": [],
+      "excerpt": "--- title: Quantum gravity --- Links - Loop Quantum Gravity Explained (2019) - What is loop quantum gravity and how does it differ from String Theory? - String Theory Meets Loop Quantum Gravity - Is This Geometric Structure The Theory Of Everything? (2018) - QISS Virtual Seminar: Eugenio Bianchi (2020) - Quantum Gravity | The Search For a Theory of Everything (2020) - How To Test Quantum Gravity (2020) - Physical Warp Drives (2021) (HN) - Mathematicians Prove 2D Version of Quantum Gravity Really Works (2021) (Reddit)"
     }
   ]
 }
