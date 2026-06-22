@@ -346,10 +346,7 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
             : 'transform 280ms cubic-bezier(.22,1,.36,1), background 600ms ease-out, box-shadow 600ms ease-out',
           position: 'relative',
           overflow: 'hidden',
-          willChange: 'transform',
-          // Shared transition name with the bento tile — astro view transitions
-          // animate the size + position + shape morph across nav for free.
-          viewTransitionName: 'aksara-shell'
+          willChange: 'transform'
         }}
       >
         <span

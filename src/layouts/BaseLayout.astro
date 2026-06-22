@@ -49,15 +49,13 @@ const lang = getLangFromUrl(Astro.url)
     </div>
 
     {/*
-      AksaraCorner mounts on every page (including home) so the module-level
-      voice store survives navigation. On home the component returns null
-      from its render but keeps the React tree alive — that means the bento
-      tile orb and the corner orb both subscribe to ONE WebSocket. Starting
-      a conversation on the home bento and asking Aksara to navigate to
-      /blog keeps the WS connected; she just morphs from the big tile shape
-      into the corner blob via the shared `view-transition-name`.
+      AksaraCorner mounts on every page (including home, where it returns
+      null from render). The WS lives in src/lib/voice/voice-store.ts at
+      module scope — that's what survives navigation, not this React tree.
+      So we don't need transition:persist (which was causing layout
+      collapse via auto-applied view-transition-name on the wrapper).
     */}
-    <AksaraCorner client:load transition:persist='aksara-corner' lang={lang} />
+    <AksaraCorner client:load lang={lang} />
 
     {/* Set highlight color */}
     <style define:vars={{ highlightColor }}>

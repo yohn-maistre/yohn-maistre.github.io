@@ -88,10 +88,7 @@ export default function VoiceAgent({ lang = 'id' }: VoiceAgentProps) {
   const remainingSeconds = wakeAt ? Math.max(0, Math.ceil((wakeAt - Date.now()) / 1000)) : 0
 
   return (
-    <div
-      className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-3xl bg-secondary/25'
-      style={{ viewTransitionName: 'aksara-shell' }}
-    >
+    <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-3xl bg-secondary/25'>
       <div className='relative flex h-full w-full items-center justify-center'>
         <OrbAnimation
           state={stateToOrb[state]}
