@@ -202,6 +202,45 @@ export class GeminiLiveClient {
   }
 
   /**
+   * Pause the session WITHOUT killing the WebSocket. The mic tracks are
+   * muted (still producing silence, no upstream tokens spent), playback
+   * is stopped mid-chunk, the hard-cutoff timer is paused. A subsequent
+   * resume() un-mutes the mic and Aksara picks up the same conversation
+   * — no auth_tokens call, no fresh setup turn, no mic check.
+   *
+   * Used by voiceStore.stop() so "stop and start again within the same
+   * visit" doesn't lose the conversational thread.
+   */
+  pause(): void {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return
+    this.mic?.getTracks().forEach((t) => (t.enabled = false))
+    this.stopAllPlayback()
+    this.clearSessionCaps()
+    this.setState('idle')
+  }
+
+  /**
+   * Inverse of pause(). Returns true if the existing WS could be reused;
+   * false means the WS is dead and the caller should do a full connect().
+   */
+  resume(): boolean {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return false
+    this.mic?.getTracks().forEach((t) => (t.enabled = true))
+    this.armSessionCaps()
+    // Quick acknowledgement nudge so Aksara doesn't just sit silent.
+    this.injectSystemTurn(
+      '[user resumed after a brief pause within the same visit — acknowledge them briefly in the language they were using (e.g. "hai lagi" / "hey, you\'re back"), then go quiet. DO NOT re-do the mic check or the full greeting. The conversation history above this hint is intact — pick up where you left off if relevant.]'
+    )
+    this.setState('listening')
+    return true
+  }
+
+  /** True iff the WS is alive and the session can be resumed. */
+  get isResumable(): boolean {
+    return this.ws !== undefined && this.ws.readyState === WebSocket.OPEN
+  }
+
+  /**
    * Hard session ceilings — Gemini Live's free tier is 10 RPM / 1500 RPD.
    * A single visitor parking on the page indefinitely could drain the day's
    * budget for everyone, so we cap every session at 3 minutes with a 30 s
@@ -442,7 +481,20 @@ export class GeminiLiveClient {
       navigate:
         this.opts.navigate ??
         ((path) => {
-          if (typeof window !== 'undefined') window.location.assign(path)
+          if (typeof window === 'undefined') return
+          // Prefer Astro's client-side navigate (exposed by BaseLayout as
+          // window.__astroNavigate) — it preserves module-level state, so
+          // the WebSocket + audio playback survive the route swap.
+          // window.location.assign would do a full reload and kill the WS,
+          // cutting Aksara off mid-sentence.
+          const astroNav = (window as any).__astroNavigate as
+            | ((p: string) => void)
+            | undefined
+          if (typeof astroNav === 'function') {
+            astroNav(path)
+          } else {
+            window.location.assign(path)
+          }
         }),
       toast: this.opts.toast,
       injectSystemTurn: (t) => this.injectSystemTurn(t)

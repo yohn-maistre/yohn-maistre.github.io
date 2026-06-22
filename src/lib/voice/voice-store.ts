@@ -124,6 +124,14 @@ export const voiceStore = {
   },
 
   async start(opts: { lang: 'en' | 'id'; pathname: string }): Promise<void> {
+    // RESUME path — if a client exists, its WS is still alive, and we're
+    // currently idle, just un-mute the mic. No auth_tokens call, no mic
+    // check, conversation history intact.
+    if (_client && _client.isResumable && _state === 'idle') {
+      console.log('[voice-store] resuming paused session')
+      _client.resume()
+      return
+    }
     if (_client) return
     if (_state === 'sleeping') return
     if (!import.meta.env.PUBLIC_TOKEN_ENDPOINT) {
@@ -182,7 +190,25 @@ export const voiceStore = {
     }
   },
 
+  /**
+   * "Stop" from the visitor's perspective = pause. The WebSocket stays
+   * open, the mic mutes, playback halts. Next start() in the same visit
+   * resumes the conversation without a fresh greeting/mic check. The WS
+   * is fully closed by destroy() on page unload (registered below).
+   */
   stop(): void {
+    if (_client?.isResumable) {
+      _client.pause()
+    } else {
+      _client?.disconnect()
+      _client = null
+      _track = undefined
+    }
+    emit()
+  },
+
+  /** Hard close — used on page unload + after the 3 min hard cutoff. */
+  destroy(): void {
     _client?.disconnect()
     _client = null
     _track = undefined
@@ -197,6 +223,12 @@ export const voiceStore = {
   updateContext(next: { lang?: 'en' | 'id'; pathname?: string }): void {
     _client?.updateContext(next)
   }
+}
+
+// Close the WS for real when the visitor leaves the site. Without this
+// the session would linger as a held connection on Yose's free tier.
+if (typeof window !== 'undefined') {
+  window.addEventListener('pagehide', () => voiceStore.destroy())
 }
 
 export type { Snapshot }

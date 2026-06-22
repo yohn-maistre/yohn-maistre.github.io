@@ -57,6 +57,18 @@ const lang = getLangFromUrl(Astro.url)
     */}
     <AksaraCorner client:load lang={lang} />
 
+    {/*
+      Expose Astro's client-side navigate() to the voice agent so when
+      Aksara calls the `navigate` tool, the route swaps WITHOUT a hard
+      reload — module state stays alive, WebSocket survives, audio
+      continues. Without this we'd fall back to window.location.assign
+      which obliterates the JS context mid-sentence.
+    */}
+    <script>
+      import { navigate } from 'astro:transitions/client'
+      ;(window as any).__astroNavigate = (path: string) => navigate(path)
+    </script>
+
     {/* Set highlight color */}
     <style define:vars={{ highlightColor }}>
       :global(.highlight) {
