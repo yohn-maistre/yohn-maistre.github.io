@@ -19,9 +19,6 @@ const {
 } = Astro.props
 
 const lang = getLangFromUrl(Astro.url)
-const pathname = Astro.url.pathname
-// Home pages have the in-bento Aksara tile. The corner is for every other route.
-const isHome = pathname === '/' || pathname === '/id' || pathname === '/id/'
 ---
 
 <html lang={config.locale.lang}>
@@ -52,15 +49,15 @@ const isHome = pathname === '/' || pathname === '/id' || pathname === '/id/'
     </div>
 
     {/*
-      Global Aksara corner: present on every non-home page. `transition:persist`
-      keeps the React tree (and the WebSocket) alive across client-side nav
-      between content pages, so a conversation started on /blog continues
-      seamlessly through /projects. On the home page, the bento tile owns
-      Aksara instead — see BentoGrid.astro.
+      AksaraCorner mounts on every page (including home) so the module-level
+      voice store survives navigation. On home the component returns null
+      from its render but keeps the React tree alive — that means the bento
+      tile orb and the corner orb both subscribe to ONE WebSocket. Starting
+      a conversation on the home bento and asking Aksara to navigate to
+      /blog keeps the WS connected; she just morphs from the big tile shape
+      into the corner blob via the shared `view-transition-name`.
     */}
-    {!isHome && (
-      <AksaraCorner client:load transition:persist='aksara-corner' lang={lang} />
-    )}
+    <AksaraCorner client:load transition:persist='aksara-corner' lang={lang} />
 
     {/* Set highlight color */}
     <style define:vars={{ highlightColor }}>

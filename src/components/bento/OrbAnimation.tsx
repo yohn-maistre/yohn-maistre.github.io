@@ -42,15 +42,16 @@ const PALETTES: Record<string, Palette> = {
     glow: 'rgba(220, 190, 170, 0.95)'
   },
   active: {
-    // listening / thinking / speaking
-    tip: [22, 64, 58], // #16403a dark teal
-    edge: [126, 215, 192], // #7ed7c0 bright mint
-    glow: 'rgba(140, 220, 190, 0.95)'
+    // listening / thinking / speaking — shifted bluer per yose's call
+    // (was mint #16403a → #7ed7c0, now blue-teal #0e3a52 → #5fbedc).
+    tip: [14, 58, 82], // #0e3a52 deep blue-teal
+    edge: [95, 190, 220], // #5fbedc bright cyan
+    glow: 'rgba(110, 195, 235, 0.95)'
   },
   sleeping: {
-    tip: [20, 51, 58], // #14333a very dark teal
-    edge: [80, 130, 145], // #508291 medium cool
-    glow: 'rgba(100, 160, 170, 0.45)'
+    tip: [18, 48, 64], // #123040 darker blue-teal (matches active hue family)
+    edge: [70, 120, 145], // #467891 cool dim
+    glow: 'rgba(95, 155, 185, 0.45)'
   }
 };
 

@@ -1,16 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 
-import {
-  GeminiLiveClient,
-  type AgentError,
-  type AgentState
-} from '@/lib/voice/gemini-live-client'
-import {
-  playConnectChime,
-  playDisconnectChime,
-  playErrorChime
-} from '@/lib/voice/chimes'
-import { checkQuota, quotaCopy, recordSessionStart } from '@/lib/voice/quota'
+import type { AgentState } from '@/lib/voice/gemini-live-client'
+import { useVoiceStore } from '@/lib/voice/use-voice-store'
+import { voiceStore } from '@/lib/voice/voice-store'
 
 import AksaraHint from './AksaraHint'
 
@@ -22,7 +14,6 @@ type Corner = 'tl' | 'tr' | 'bl' | 'br'
 
 const CORNER_STORAGE_KEY = 'aksara_corner_pos_v1'
 const DRAG_THRESHOLD_PX = 6
-const ERROR_BURST_WINDOW_MS = 60_000
 
 function loadCorner(): Corner {
   if (typeof localStorage === 'undefined') return 'br'
@@ -51,7 +42,7 @@ function cornerStyle(c: Corner): CSSProperties {
 function nearestCorner(x: number, y: number): Corner {
   const isLeft = x < window.innerWidth / 2
   const isTop = y < window.innerHeight / 2
-  return (`${isTop ? 't' : 'b'}${isLeft ? 'l' : 'r'}`) as Corner
+  return `${isTop ? 't' : 'b'}${isLeft ? 'l' : 'r'}` as Corner
 }
 
 function formatCountdown(seconds: number, lang: 'en' | 'id'): string {
@@ -87,83 +78,57 @@ function tooltipFor(state: AgentState, lang: 'en' | 'id'): string {
 }
 
 export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
-  const [state, setState] = useState<AgentState>('idle')
-  const [error, setError] = useState<AgentError | null>(null)
+  const { state, error, track, wakeAt } = useVoiceStore()
   const [now, setNow] = useState(() => Date.now())
   const [showTooltip, setShowTooltip] = useState(false)
   const [pulse, setPulse] = useState(0)
 
-  // Position state — corner + transient drag offset while the pointer is held.
   const [corner, setCorner] = useState<Corner>(() => loadCorner())
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null)
   const dragRef = useRef<{ startX: number; startY: number; isDragging: boolean } | null>(null)
 
-  const clientRef = useRef<GeminiLiveClient | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const dataRef = useRef<Uint8Array | null>(null)
   const audioCtxRef = useRef<AudioContext | null>(null)
-  const recentErrorsRef = useRef<Array<{ kind: string; at: number }>>([])
-  const wakeAtRef = useRef<number | null>(null)
-  const prevStateRef = useRef<AgentState>('idle')
 
-  // Track pathname for the tool dispatcher.
+  // Track pathname so the corner orb knows to hide itself on home (the bento
+  // tile owns the UI there) while keeping the WS alive in the shared store.
   const [pathname, setPathname] = useState(() =>
     typeof window !== 'undefined' ? window.location.pathname : '/'
   )
   useEffect(() => {
-    const onPageLoad = () => setPathname(window.location.pathname)
+    const onPageLoad = () => {
+      const next = window.location.pathname
+      setPathname(next)
+      voiceStore.updateContext({ pathname: next })
+    }
     document.addEventListener('astro:after-swap', onPageLoad)
     return () => document.removeEventListener('astro:after-swap', onPageLoad)
   }, [])
 
-  // Push lang+pathname into the live client whenever they change.
   useEffect(() => {
-    clientRef.current?.updateContext({ lang, pathname })
-  }, [lang, pathname])
+    voiceStore.updateContext({ lang })
+  }, [lang])
 
-  // Persist corner choice across sessions.
+  // Persist corner choice.
   useEffect(() => {
     if (typeof localStorage === 'undefined') return
     try {
       localStorage.setItem(CORNER_STORAGE_KEY, corner)
-    } catch {}
+    } catch {
+      /* private mode */
+    }
   }, [corner])
 
-  // Countdown tick (only while sleeping).
+  // Countdown tick when sleeping.
   useEffect(() => {
     if (state !== 'sleeping') return
     const id = window.setInterval(() => setNow(Date.now()), 1000)
     return () => window.clearInterval(id)
   }, [state])
 
-  useEffect(() => {
-    if (state !== 'sleeping') return
-    const wakeAt = wakeAtRef.current
-    if (wakeAt && Date.now() >= wakeAt) {
-      wakeAtRef.current = null
-      setError(null)
-      setState('idle')
-    }
-  }, [state, now])
-
-  // Chimes.
-  useEffect(() => {
-    const prev = prevStateRef.current
-    if (prev !== state) {
-      if (prev === 'idle' && state === 'listening') playConnectChime()
-      if (
-        (prev === 'listening' || prev === 'speaking' || prev === 'thinking') &&
-        state === 'idle'
-      ) {
-        playDisconnectChime()
-      }
-      if (state === 'sleeping' || state === 'error') playErrorChime()
-      prevStateRef.current = state
-    }
-  }, [state])
-
   // Amplitude analysis off the playback track for the speaking pulse.
-  const handleTrack = useCallback((track: MediaStreamTrack | undefined) => {
+  useEffect(() => {
     if (audioCtxRef.current) {
       audioCtxRef.current.close().catch(() => {})
       audioCtxRef.current = null
@@ -180,7 +145,10 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
     audioCtxRef.current = ctx
     analyserRef.current = an
     dataRef.current = new Uint8Array(an.frequencyBinCount)
-  }, [])
+    return () => {
+      ctx.close().catch(() => {})
+    }
+  }, [track])
 
   useEffect(() => {
     let raf = 0
@@ -198,61 +166,13 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
     return () => cancelAnimationFrame(raf)
   }, [state, pulse])
 
-  const start = useCallback(async () => {
-    if (clientRef.current) return
-    if (state === 'sleeping') return
-    if (!import.meta.env.PUBLIC_TOKEN_ENDPOINT) return
-    setError(null)
-    const q = checkQuota()
-    if (!q.ok) {
-      console.log('[aksara-corner] quota gate', q)
-      setError({ kind: 'rate-limit', message: quotaCopy(q, lang), retryAfter: q.retryAfter })
-      wakeAtRef.current = Date.now() + (q.retryAfter ?? 60) * 1000
-      setState('sleeping')
-      return
-    }
-    recordSessionStart()
-    const client = new GeminiLiveClient({
-      onState: setState,
-      onPlaybackTrack: handleTrack,
-      onError: (e) => {
-        console.error('[aksara-corner]', e.kind, e.message)
-        setError(e)
-        const cutoff = Date.now() - ERROR_BURST_WINDOW_MS
-        recentErrorsRef.current = recentErrorsRef.current.filter((r) => r.at >= cutoff)
-        recentErrorsRef.current.push({ kind: e.kind, at: Date.now() })
-        const sameKindBurst = recentErrorsRef.current.filter((r) => r.kind === e.kind).length
-        const baseDelay = (e.retryAfter ?? 60) * 1000
-        const burst = Math.min(2 ** Math.max(0, sameKindBurst - 1), 32)
-        const sleepFor = Math.min(baseDelay * burst, 10 * 60_000)
-        if (e.kind === 'rate-limit' || e.kind === 'quota') {
-          wakeAtRef.current = Date.now() + sleepFor
-        }
-      },
-      lang,
-      pathname
-    })
-    clientRef.current = client
-    try {
-      await client.connect()
-    } catch {
-      clientRef.current = null
-    }
-  }, [lang, pathname, state, handleTrack])
+  const start = useCallback(() => {
+    void voiceStore.start({ lang, pathname })
+  }, [lang, pathname])
 
   const stop = useCallback(() => {
-    clientRef.current?.disconnect()
-    clientRef.current = null
+    voiceStore.stop()
   }, [])
-
-  useEffect(
-    () => () => {
-      clientRef.current?.disconnect()
-      clientRef.current = null
-      audioCtxRef.current?.close().catch(() => {})
-    },
-    []
-  )
 
   const onActivate =
     state === 'sleeping'
@@ -288,7 +208,9 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
     if (!d) return
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch {}
+    } catch {
+      /* already released */
+    }
     const wasDragging = d.isDragging
     dragRef.current = null
     if (wasDragging) {
@@ -307,8 +229,8 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
   }
 
   /* ---------- visuals ---------- */
-  // Fluid 5-stop gradients per state — matches the tile orb's pastel scheme,
-  // tinted toward teal when active and cool-deep when sleeping.
+  // Mirrors the OrbAnimation palette so the morph between tile and corner
+  // stays in the same hue family.
   const gradients: Record<AgentState, { bg: string; glow: string; grain: number }> = {
     idle: {
       bg: 'linear-gradient(135deg, #f0e6d2 0%, #a8c9c0 25%, #e8dcc4 50%, #c4d9d4 75%, #f0e6d2 100%)',
@@ -321,23 +243,23 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
       grain: 0.16
     },
     listening: {
-      bg: 'linear-gradient(135deg, #d8ece4 0%, #6dbeac 25%, #c8e4d8 50%, #80c4b4 75%, #d8ece4 100%)',
-      glow: 'rgba(140, 200, 180, 0.65)',
+      bg: 'linear-gradient(135deg, #d8e8ec 0%, #5fbedc 25%, #c8dee8 50%, #80b4cf 75%, #d8e8ec 100%)',
+      glow: 'rgba(110, 195, 235, 0.6)',
       grain: 0.16
     },
     thinking: {
-      bg: 'linear-gradient(135deg, #d8ece4 0%, #6dbeac 25%, #c8e4d8 50%, #80c4b4 75%, #d8ece4 100%)',
-      glow: 'rgba(140, 200, 180, 0.55)',
+      bg: 'linear-gradient(135deg, #d8e8ec 0%, #5fbedc 25%, #c8dee8 50%, #80b4cf 75%, #d8e8ec 100%)',
+      glow: 'rgba(110, 195, 235, 0.5)',
       grain: 0.18
     },
     speaking: {
-      bg: 'linear-gradient(135deg, #e0f4ec 0%, #5fcfb4 25%, #d0ecdc 50%, #7eddc4 75%, #e0f4ec 100%)',
-      glow: 'rgba(140, 220, 190, 0.85)',
+      bg: 'linear-gradient(135deg, #e0f0f4 0%, #5fcfdc 25%, #d0e4ec 50%, #7ec4dc 75%, #e0f0f4 100%)',
+      glow: 'rgba(110, 215, 235, 0.85)',
       grain: 0.14
     },
     sleeping: {
-      bg: 'linear-gradient(135deg, #2c4a52 0%, #244853 25%, #2c4a52 50%, #1f3a44 75%, #2c4a52 100%)',
-      glow: 'rgba(80, 130, 130, 0.4)',
+      bg: 'linear-gradient(135deg, #2c4852 0%, #244853 25%, #2c4852 50%, #1f3a44 75%, #2c4852 100%)',
+      glow: 'rgba(95, 155, 185, 0.4)',
       grain: 0.22
     },
     error: {
@@ -350,9 +272,13 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
   const baseScale = state === 'sleeping' ? 0.94 : 1
   const isDragging = dragOffset !== null
   const scale = baseScale + pulse * 0.18 + (isDragging ? 0.06 : 0)
-  const wakeAt = wakeAtRef.current
   const countdownSeconds = wakeAt ? Math.max(0, Math.ceil((wakeAt - now) / 1000)) : 0
   const gradientDuration = state === 'sleeping' ? '6s' : state === 'speaking' ? '4s' : '8s'
+
+  // Home pages already show the bento-tile orb; the corner orb hides itself
+  // there but stays MOUNTED so the WS in the store keeps running.
+  const isHome = pathname === '/' || pathname === '/id/' || pathname === '/id'
+  if (isHome) return null
 
   const isTop = corner === 'tl' || corner === 'tr'
   const isLeft = corner === 'tl' || corner === 'bl'
@@ -406,8 +332,6 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
           padding: 0,
           cursor: isDragging ? 'grabbing' : onActivate ? 'grab' : 'default',
           touchAction: 'none',
-          // Fluid animated pastel gradient — same recipe as the tile, scaled
-          // to the corner size, with the active palette swapped in.
           background: g.bg,
           backgroundSize: '300% 300%',
           animation: `aksaraCornerShift ${gradientDuration} ease-in-out infinite`,
@@ -422,10 +346,12 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
             : 'transform 280ms cubic-bezier(.22,1,.36,1), background 600ms ease-out, box-shadow 600ms ease-out',
           position: 'relative',
           overflow: 'hidden',
-          willChange: 'transform'
+          willChange: 'transform',
+          // Shared transition name with the bento tile — astro view transitions
+          // animate the size + position + shape morph across nav for free.
+          viewTransitionName: 'aksara-shell'
         }}
       >
-        {/* Grain overlay — same fractalNoise recipe as the tile orb. */}
         <span
           aria-hidden='true'
           style={{
@@ -447,7 +373,6 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
             />
           </filter>
         </svg>
-        {/* Highlight for round-feeling depth. */}
         <span
           aria-hidden='true'
           style={{
@@ -458,24 +383,6 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
               'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 45%)'
           }}
         />
-        {state === 'sleeping' && (
-          <span
-            aria-hidden='true'
-            data-aksara-zzz
-            style={{
-              position: 'absolute',
-              right: 10,
-              top: 6,
-              fontSize: 12,
-              fontWeight: 700,
-              color: 'rgba(220,240,240,0.92)',
-              fontFamily: 'system-ui',
-              textShadow: '0 0 4px rgba(120,200,200,0.5)'
-            }}
-          >
-            zZ
-          </span>
-        )}
       </button>
 
       {showTooltip && !isDragging && (
@@ -504,7 +411,6 @@ export default function AksaraCorner({ lang = 'id' }: AksaraCornerProps) {
           100% { background-position: 0% 50%; }
         }
         @media (prefers-reduced-motion: reduce) {
-          [data-aksara-zzz] { display: none !important; }
           button[aria-label^='Aksara'] {
             animation: none !important;
           }

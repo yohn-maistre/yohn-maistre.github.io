@@ -1,16 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 
-import {
-  GeminiLiveClient,
-  type AgentError,
-  type AgentState
-} from '@/lib/voice/gemini-live-client'
-import {
-  playConnectChime,
-  playDisconnectChime,
-  playErrorChime
-} from '@/lib/voice/chimes'
-import { checkQuota, quotaCopy, recordSessionStart } from '@/lib/voice/quota'
+import type { AgentError, AgentState } from '@/lib/voice/gemini-live-client'
+import { useVoiceStore } from '@/lib/voice/use-voice-store'
+import { voiceStore } from '@/lib/voice/voice-store'
 
 import OrbAnimation from './OrbAnimation'
 
@@ -30,9 +22,6 @@ interface VoiceAgentProps {
   lang?: 'en' | 'id'
 }
 
-// Same-kind error bursts within this window scale the sleep delay.
-const ERROR_BURST_WINDOW_MS = 60_000
-
 function formatCountdown(seconds: number, lang: 'en' | 'id'): string {
   if (seconds <= 0) return lang === 'id' ? 'sebentar lagi…' : 'almost back…'
   if (seconds < 60) {
@@ -43,8 +32,6 @@ function formatCountdown(seconds: number, lang: 'en' | 'id'): string {
     const s = seconds % 60
     return lang === 'id' ? `siap dalam ${m}m ${s}s` : `back in ${m}m ${s}s`
   }
-  // > 1 hour means the daily quota was hit. Don't pretend Aksara is on a
-  // short break — say it plainly so the visitor knows it's a local cap.
   const h = Math.floor(seconds / 3600)
   const m = Math.floor((seconds % 3600) / 60)
   return lang === 'id'
@@ -57,7 +44,7 @@ function errorCopy(err: AgentError, lang: 'en' | 'id'): string {
     return lang === 'id' ? 'butuh izin mikrofon ya' : 'mic permission needed'
   }
   if (err.kind === 'rate-limit' || err.kind === 'quota') {
-    return lang === 'id' ? 'Aksara lagi istirahat sebentar 😴' : 'Aksara is resting for a moment 😴'
+    return err.message
   }
   if (err.kind === 'auth') {
     return lang === 'id' ? 'tidak bisa otentikasi' : 'auth failed'
@@ -69,131 +56,42 @@ function errorCopy(err: AgentError, lang: 'en' | 'id'): string {
 }
 
 export default function VoiceAgent({ lang = 'id' }: VoiceAgentProps) {
-  const [state, setState] = useState<AgentState>('idle')
-  const [track, setTrack] = useState<MediaStreamTrack | undefined>()
-  const [error, setError] = useState<AgentError | null>(null)
-  const [now, setNow] = useState(() => Date.now())
-  const clientRef = useRef<GeminiLiveClient | null>(null)
-  const recentErrorsRef = useRef<Array<{ kind: string; at: number }>>([])
-  const wakeAtRef = useRef<number | null>(null)
-  const prevStateRef = useRef<AgentState>('idle')
+  const { state, error, track, wakeAt } = useVoiceStore()
 
-  // Tick clock once a second while sleeping.
+  // Push current locale into the live client whenever the prop changes.
+  // The store handles the pathname-on-nav side via AksaraCorner's listener;
+  // the bento only ever lives on home, so we don't need to track route here.
   useEffect(() => {
-    if (state !== 'sleeping' && wakeAtRef.current === null) return
-    const id = window.setInterval(() => setNow(Date.now()), 1000)
-    return () => window.clearInterval(id)
-  }, [state])
+    voiceStore.updateContext({ lang })
+  }, [lang])
 
-  // Auto-wake when the cooldown elapses.
-  useEffect(() => {
-    if (state !== 'sleeping') return
-    const wakeAt = wakeAtRef.current
-    if (!wakeAt) return
-    if (Date.now() >= wakeAt) {
-      wakeAtRef.current = null
-      setError(null)
-      setState('idle')
-    }
-  }, [state, now])
-
-  // Chimes on state transition.
-  useEffect(() => {
-    const prev = prevStateRef.current
-    if (prev !== state) {
-      if (prev === 'idle' && state === 'listening') playConnectChime()
-      if (
-        (prev === 'listening' || prev === 'speaking' || prev === 'thinking') &&
-        state === 'idle'
-      ) {
-        playDisconnectChime()
-      }
-      if (state === 'sleeping' || state === 'error') playErrorChime()
-      prevStateRef.current = state
-    }
-  }, [state])
-
-  const start = useCallback(async () => {
-    if (clientRef.current) return
-    if (state === 'sleeping') return
-    setError(null)
-    const endpoint = import.meta.env.PUBLIC_TOKEN_ENDPOINT
-    console.log('[voice-agent] start, endpoint =', endpoint)
-    if (!endpoint) {
-      setError({ kind: 'auth', message: 'Token endpoint not configured at build time.' })
-      return
-    }
-    const q = checkQuota()
-    if (!q.ok) {
-      console.log('[voice-agent] quota gate', q)
-      setError({ kind: 'rate-limit', message: quotaCopy(q, lang), retryAfter: q.retryAfter })
-      // Treat cooldown/daily like a sleeping state so the UI tells the
-      // visitor when to come back.
-      wakeAtRef.current = Date.now() + (q.retryAfter ?? 60) * 1000
-      setState('sleeping')
-      return
-    }
-    recordSessionStart()
-    const client = new GeminiLiveClient({
-      onState: (s) => {
-        console.log('[voice-agent] state →', s)
-        setState(s)
-      },
-      onPlaybackTrack: setTrack,
-      onError: (e) => {
-        console.error('[voice-agent]', e.kind, e.message, 'retryAfter=', e.retryAfter)
-        setError(e)
-        const cutoff = Date.now() - ERROR_BURST_WINDOW_MS
-        recentErrorsRef.current = recentErrorsRef.current.filter((r) => r.at >= cutoff)
-        recentErrorsRef.current.push({ kind: e.kind, at: Date.now() })
-
-        const sameKindBurst = recentErrorsRef.current.filter((r) => r.kind === e.kind).length
-        const baseDelay = (e.retryAfter ?? 60) * 1000
-        const burstMultiplier = Math.min(2 ** Math.max(0, sameKindBurst - 1), 32)
-        const sleepFor = Math.min(baseDelay * burstMultiplier, 10 * 60_000)
-        if (e.kind === 'rate-limit' || e.kind === 'quota') {
-          wakeAtRef.current = Date.now() + sleepFor
-        }
-      },
-      lang
+  const start = useCallback(() => {
+    void voiceStore.start({
+      lang,
+      pathname: typeof window !== 'undefined' ? window.location.pathname : '/'
     })
-    clientRef.current = client
-    try {
-      await client.connect()
-    } catch {
-      clientRef.current = null
-    }
-  }, [lang, state])
+  }, [lang])
 
   const stop = useCallback(() => {
-    console.log('[voice-agent] stop')
-    clientRef.current?.disconnect()
-    clientRef.current = null
+    voiceStore.stop()
   }, [])
 
-  useEffect(
-    () => () => {
-      clientRef.current?.disconnect()
-      clientRef.current = null
-    },
-    []
-  )
+  const onOrbClick =
+    state === 'sleeping'
+      ? undefined
+      : state === 'idle' || state === 'error'
+      ? start
+      : state === 'connecting'
+      ? undefined
+      : stop
 
-  // OrbAnimation no longer needs the `key={phase}` remount — the new version
-  // derives its connecting visual from `state` directly and the click handler
-  // is unconditional. Removing the remount fixes the "particles snap to grid
-  // square on click" flash, and lets the cursor decay smoothly to center.
-  const phase: 'idle' | 'active' | 'asleep' =
-    state === 'sleeping' ? 'asleep' : state === 'idle' || state === 'error' ? 'idle' : 'active'
-  const onOrbClick = phase === 'idle' ? start : state === 'connecting' ? undefined : stop
-
-  const showCountdown = state === 'sleeping' && wakeAtRef.current
-  const remainingSeconds = showCountdown
-    ? Math.max(0, Math.ceil(((wakeAtRef.current as number) - now) / 1000))
-    : 0
+  const remainingSeconds = wakeAt ? Math.max(0, Math.ceil((wakeAt - Date.now()) / 1000)) : 0
 
   return (
-    <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-3xl bg-secondary/25'>
+    <div
+      className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-3xl bg-secondary/25'
+      style={{ viewTransitionName: 'aksara-shell' }}
+    >
       <div className='relative flex h-full w-full items-center justify-center'>
         <OrbAnimation
           state={stateToOrb[state]}
