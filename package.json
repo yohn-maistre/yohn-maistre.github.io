@@ -6,7 +6,9 @@
     "dev": "astro dev",
     "dev:check": "astro check --watch & astro dev",
     "build:aksara-context": "bun run scripts/build-aksara-context.ts",
-    "build": "bun run build:aksara-context && astro build",
+    "build:search-index": "bun run scripts/build-search-index.ts",
+    "build:voice-bundles": "bun run build:aksara-context && bun run build:search-index",
+    "build": "bun run build:voice-bundles && astro build",
     "preview": "astro preview",
     "sync": "astro sync",
     "check": "astro check",
@@ -57,6 +59,7 @@
     "clsx": "^2.1.1",
     "katex": "^0.16.25",
     "lucide-react": "^0.545.0",
+    "minisearch": "^7.2.0",
     "prettier-plugin-astro-organize-imports": "^0.4.11",
     "prettier-plugin-tailwindcss": "^0.7.0",
     "react": "^19.2.0",
@@ -74,7 +77,8 @@
     "sharp": "^0.34.4",
     "tailwind-merge": "^3.3.1",
     "three": "^0.180.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",

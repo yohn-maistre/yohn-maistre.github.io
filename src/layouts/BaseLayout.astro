@@ -1,7 +1,11 @@
 ---
+import { ClientRouter } from 'astro:transitions'
+
 import { Footer, Header, ThemeProvider } from '@yohn-maistre/astro-pure-fork/components/basic'
 import type { SiteMeta } from '@yohn-maistre/astro-pure-fork/types'
 import BaseHead from '@/components/BaseHead.astro'
+import AksaraCorner from '@/components/aksara/AksaraCorner.tsx'
+import { getLangFromUrl } from '@/lib/i18n'
 
 import config from '../site.config'
 // Import the global.css file here so that it is included on
@@ -13,12 +17,18 @@ const {
   highlightColor,
   ...props
 } = Astro.props
+
+const lang = getLangFromUrl(Astro.url)
+const pathname = Astro.url.pathname
+// Home pages have the in-bento Aksara tile. The corner is for every other route.
+const isHome = pathname === '/' || pathname === '/id' || pathname === '/id/'
 ---
 
 <html lang={config.locale.lang}>
   <head>
     <BaseHead {articleDate} {description} {ogImage} {title} />
     <ThemeProvider />
+    <ClientRouter />
   </head>
 
   <body class='flex justify-center bg-background text-foreground' {...props}>
@@ -40,6 +50,17 @@ const {
       </div>
       <Footer />
     </div>
+
+    {/*
+      Global Aksara corner: present on every non-home page. `transition:persist`
+      keeps the React tree (and the WebSocket) alive across client-side nav
+      between content pages, so a conversation started on /blog continues
+      seamlessly through /projects. On the home page, the bento tile owns
+      Aksara instead — see BentoGrid.astro.
+    */}
+    {!isHome && (
+      <AksaraCorner client:load transition:persist='aksara-corner' lang={lang} />
+    )}
 
     {/* Set highlight color */}
     <style define:vars={{ highlightColor }}>

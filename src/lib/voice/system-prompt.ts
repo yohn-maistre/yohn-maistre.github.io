@@ -37,27 +37,5 @@ export const AKSARA_SYSTEM_PROMPT = [
   '- Never read aloud raw URLs, code blocks, or long lists of file paths — summarize instead.'
 ].join('\n')
 
-export const AKSARA_TOOLS = [
-  {
-    functionDeclarations: [
-      {
-        name: 'search_movies_tv',
-        description:
-          "Search TMDB for a movie or TV show by title. Use when the user " +
-          "asks about media — Yose's taste, a film he mentioned, or a new " +
-          'release. Returns the top 3 results with title, type, year, ' +
-          'overview, and rating.',
-        parameters: {
-          type: 'OBJECT',
-          properties: {
-            query: {
-              type: 'STRING',
-              description: 'Movie or TV show title to search for.'
-            }
-          },
-          required: ['query']
-        }
-      }
-    ]
-  }
-]
+// TMDB tool is still registered in the dispatcher but lives next to the
+// rest of Aksara's tool declarations in src/lib/voice/tools.ts now.

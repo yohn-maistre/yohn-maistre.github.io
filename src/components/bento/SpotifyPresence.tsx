@@ -22,8 +22,19 @@ const SpotifyPresence = () => {
     fetch(`https://lastfm-last-played.biancarosa.com.br/${BENTO.LASTFM_USERNAME}/latest-song`)
       .then((response) => response.json())
       .then((data) => {
-        setDisplayData(data.track)
+        const t: Track | undefined = data.track
+        setDisplayData(t ?? null)
         setIsLoading(false)
+        // Publish for Aksara's play_music tool. last.fm gives us last.fm URLs;
+        // good enough as a fallback when we can't reach Spotify directly.
+        if (t) {
+          ;(window as any).__yose_spotify_now_playing = {
+            title: t.name,
+            artist: t.artist['#text'],
+            album: t.album['#text'],
+            url: t.url
+          }
+        }
       })
       .catch((error) => {
         console.error('Error fetching latest song:', error)

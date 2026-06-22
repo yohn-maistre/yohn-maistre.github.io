@@ -1,7 +1,6 @@
 import {
   AKSARA_MODEL,
   AKSARA_SYSTEM_PROMPT,
-  AKSARA_TOOLS,
   AKSARA_VOICE
 } from './system-prompt'
 import {
@@ -9,6 +8,7 @@ import {
   formatBundleForPrompt,
   loadAksaraContext
 } from './site-context'
+import { AKSARA_GEMINI_TOOLS, runTool, type ToolContext } from './tools'
 import { searchMoviesTv } from './tmdb-tool'
 
 const TOKEN_ENDPOINT = import.meta.env.PUBLIC_TOKEN_ENDPOINT as string
@@ -48,6 +48,12 @@ export interface GeminiLiveClientOpts {
   onError?: (e: AgentError) => void
   /** UI locale at session start. Defaults to 'id' to match the site's primary audience. */
   lang?: 'en' | 'id'
+  /** Initial pathname; tool handlers see live values via updateContext. */
+  pathname?: string
+  /** Programmatic navigation hook. Defaults to `window.location.assign` if omitted. */
+  navigate?: (path: string) => void
+  /** Optional toast hook surfaced to tools that act on the user's behalf. */
+  toast?: (msg: string) => void
 }
 
 interface FunctionCall {
@@ -66,8 +72,58 @@ export class GeminiLiveClient {
   private playbackQueueEnd = 0
   private activeSources = new Set<AudioBufferSourceNode>()
   private state: AgentState = 'idle'
+  private ctxLang: 'en' | 'id' = 'id'
+  private ctxPathname: string = '/'
 
-  constructor(private opts: GeminiLiveClientOpts) {}
+  constructor(private opts: GeminiLiveClientOpts) {
+    this.ctxLang = opts.lang ?? 'id'
+    this.ctxPathname = opts.pathname ?? (typeof window !== 'undefined' ? window.location.pathname : '/')
+  }
+
+  /**
+   * Update the locale/pathname tool handlers see. Call from the host
+   * component whenever the user navigates or switches language so tools
+   * always operate on the live view.
+   */
+  updateContext(next: { lang?: 'en' | 'id'; pathname?: string }): void {
+    let changed = false
+    if (next.lang && next.lang !== this.ctxLang) {
+      this.ctxLang = next.lang
+      changed = true
+      // Nudge Aksara to switch language smoothly mid-session.
+      this.ws?.send(
+        JSON.stringify({
+          clientContent: {
+            turns: [
+              { role: 'user', parts: [{ text: `[locale changed to ${next.lang}]` }] }
+            ],
+            turnComplete: false
+          }
+        })
+      )
+    }
+    if (next.pathname && next.pathname !== this.ctxPathname) {
+      this.ctxPathname = next.pathname
+      changed = true
+    }
+    if (changed) console.log('[gemini-live] context', this.ctxLang, this.ctxPathname)
+  }
+
+  /**
+   * Programmatic clientContent turn — used by tools (e.g. read_aloud) to
+   * pipe text back into Aksara's response stream.
+   */
+  injectSystemTurn(text: string): void {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return
+    this.ws.send(
+      JSON.stringify({
+        clientContent: {
+          turns: [{ role: 'user', parts: [{ text }] }],
+          turnComplete: true
+        }
+      })
+    )
+  }
 
   async connect(): Promise<void> {
     this.setState('connecting')
@@ -191,7 +247,7 @@ export class GeminiLiveClient {
                 },
               },
               systemInstruction: { parts: [{ text: systemText }] },
-              tools: AKSARA_TOOLS,
+              tools: AKSARA_GEMINI_TOOLS,
               realtimeInputConfig: {
                 automaticActivityDetection: {
                   startOfSpeechSensitivity: 'START_SENSITIVITY_HIGH',
@@ -341,6 +397,17 @@ export class GeminiLiveClient {
   }
 
   private async dispatchToolCalls(calls: FunctionCall[]) {
+    const ctx: ToolContext = {
+      lang: this.ctxLang,
+      pathname: this.ctxPathname,
+      navigate:
+        this.opts.navigate ??
+        ((path) => {
+          if (typeof window !== 'undefined') window.location.assign(path)
+        }),
+      toast: this.opts.toast,
+      injectSystemTurn: (t) => this.injectSystemTurn(t)
+    }
     const responses = await Promise.all(
       calls.map(async (call) => {
         try {
@@ -348,7 +415,7 @@ export class GeminiLiveClient {
           if (call.name === 'search_movies_tv') {
             output = await searchMoviesTv(String(call.args.query ?? ''))
           } else {
-            output = { error: `unknown tool: ${call.name}` }
+            output = await runTool(call.name, call.args, ctx)
           }
           return { id: call.id, name: call.name, response: { output } }
         } catch (e) {
