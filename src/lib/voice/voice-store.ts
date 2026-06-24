@@ -142,6 +142,17 @@ export const voiceStore = {
       _client.resume()
       return
     }
+    // Defensive sweep — a paused client whose WS died in the meantime
+    // (Gemini's idle timeout, network blip) leaves _client non-null but
+    // non-resumable. Without this, the click would silently bail on
+    // `if (_client) return` below. Clear the wreck and fall through to a
+    // fresh connect.
+    if (_client && !_client.isResumable) {
+      console.log('[voice-store] dropping stale client (WS died during pause)')
+      _client.disconnect()
+      _client = null
+      _track = undefined
+    }
     if (_client) return
     if (_state === 'sleeping') return
     if (!import.meta.env.PUBLIC_TOKEN_ENDPOINT) {

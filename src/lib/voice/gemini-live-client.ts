@@ -379,7 +379,15 @@ export class GeminiLiveClient {
           this.opts.onError?.({ kind: 'rate-limit', message: `WS ${ev.code}: ${ev.reason}`, retryAfter: 60 })
           this.setState('sleeping')
           this.disconnect({ keepState: true })
-        } else if (this.state !== 'idle' && this.state !== 'sleeping') {
+        } else if (this.state === 'idle') {
+          // WS died while paused — most likely Gemini's own idle timeout
+          // or a network blip after the visitor paused. Clear the ws ref so
+          // isResumable starts returning false and voiceStore.start() drops
+          // the stale client + does a fresh connect on the next click,
+          // instead of bailing on `if (_client) return` like before.
+          console.log('[gemini-live] WS died while paused — marking unresumable')
+          this.ws = undefined
+        } else if (this.state !== 'sleeping') {
           this.disconnect()
         }
       }
