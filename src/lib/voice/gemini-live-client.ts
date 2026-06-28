@@ -74,12 +74,20 @@ export class GeminiLiveClient {
   private state: AgentState = 'idle'
   private ctxLang: 'en' | 'id' = 'id'
   private ctxPathname: string = '/'
+  /** Session-resumption handle from the server; passed back on reconnect to restore context. */
+  private resumeHandle?: string
   /** Hard session ceilings — see GUARDRAILS.md (or this file) for rationale. */
   private windDownTimer = 0
   private hardCutoffTimer = 0
   /** Soft wind-down at 150 s, hard cutoff at 180 s. Protects the free-tier 10 RPM / 1500 RPD budget. */
   private static readonly WIND_DOWN_MS = 150_000
   private static readonly HARD_CUTOFF_MS = 180_000
+  /** Each segment recycles the WS via the resumption handle (seamless). After
+   * MAX_RECYCLES the visit hits its ceiling and Aksara winds down for real.
+   * Step 3 (KV) will replace this per-visit ceiling with a per-day budget. */
+  private static readonly MAX_RECYCLES = 2
+  private recycleCount = 0
+  private reconnecting = false
 
   constructor(private opts: GeminiLiveClientOpts) {
     this.ctxLang = opts.lang ?? 'id'
@@ -249,20 +257,72 @@ export class GeminiLiveClient {
    */
   private armSessionCaps(): void {
     this.clearSessionCaps()
-    this.windDownTimer = window.setTimeout(() => {
-      this.injectSystemTurn(
-        '[wind down — your free-tier session is at the 3-minute cap and will close in ~30 seconds. ' +
-        'In the language the visitor has been using, briefly EXPLAIN this is a per-session limit ' +
-        '(not your choice) and that they can come back in a few seconds to keep chatting. Examples: ' +
-        '"kuota sesi 3 menit habis sebentar lagi — balik lagi yuk, klik aja Aksara biar lanjut" / ' +
-        '"my 3-minute session cap is up — pop back in a few seconds and we can keep going". ' +
-        'Then a warm one-line goodbye. Do not over-apologize and do not pretend it was your idea.]'
-      )
-    }, GeminiLiveClient.WIND_DOWN_MS)
-    this.hardCutoffTimer = window.setTimeout(() => {
-      console.log('[gemini-live] hard cutoff — session reached', GeminiLiveClient.HARD_CUTOFF_MS, 'ms')
+    // Each segment runs up to HARD_CUTOFF_MS, then recycles the socket via the
+    // resumption handle so the conversation continues seamlessly. No per-segment
+    // "session closing" message anymore — the recycle is meant to be invisible.
+    this.hardCutoffTimer = window.setTimeout(() => this.recycleOrEnd(), GeminiLiveClient.HARD_CUTOFF_MS)
+  }
+
+  /**
+   * At a segment boundary (our timer) or a server `goAway`: if we still hold a
+   * resumption handle and haven't hit the per-visit ceiling, reconnect-with-
+   * handle to keep going. Otherwise wind down for real with a warm goodbye.
+   */
+  private recycleOrEnd(): void {
+    this.clearSessionCaps()
+    if (this.resumeHandle && this.recycleCount < GeminiLiveClient.MAX_RECYCLES) {
+      this.recycleCount++
+      console.log('[gemini-live] recycling segment', this.recycleCount, 'of', GeminiLiveClient.MAX_RECYCLES)
+      void this.reconnectWithHandle()
+      return
+    }
+    console.log('[gemini-live] per-visit ceiling reached — winding down')
+    this.injectSystemTurn(
+      '[wind down — the conversation has reached its limit for now and will close in a few seconds. ' +
+      'In the language the visitor has been using, warmly let them know they can come back anytime — ' +
+      "even tomorrow — and you'll pick things up. One short, warm goodbye. Do not over-apologize, " +
+      'do not pretend it was your idea.]'
+    )
+    this.windDownTimer = window.setTimeout(() => this.disconnect(), 8000)
+  }
+
+  /**
+   * Seamless reconnect that preserves the conversation: mint a fresh ephemeral
+   * token, open a new socket passing the stored resumption handle, re-arm caps.
+   * Mic capture + playback contexts stay alive (the worklet targets `this.ws`,
+   * which we reassign). No greeting / mic-check. Fail-safe: any error falls back
+   * to a clean disconnect, so the worst case equals the pre-resumption behavior.
+   */
+  private async reconnectWithHandle(): Promise<void> {
+    if (this.reconnecting) return
+    this.reconnecting = true
+    try {
+      // Detach the old socket's handlers so its close() doesn't trip the
+      // teardown/reconnect logic, then close it. Mic + playback stay up.
+      const old = this.ws
+      this.ws = undefined
+      if (old) {
+        old.onopen = null
+        old.onmessage = null
+        old.onerror = null
+        old.onclose = null
+        if (old.readyState !== WebSocket.CLOSED) old.close()
+      }
+      const [token, bundle] = await Promise.all([
+        this.fetchToken(),
+        loadAksaraContext().catch(() => null)
+      ])
+      const contextSuffix = bundle ? '\n\n' + formatBundleForPrompt(bundle) : ''
+      await this.openSocket(token, contextSuffix)
+      // No greeting primer: the server restores context from the handle.
+      this.armSessionCaps()
+      this.setState('listening')
+    } catch (e) {
+      console.error('[gemini-live] reconnect-with-handle failed — closing', e)
       this.disconnect()
-    }, GeminiLiveClient.HARD_CUTOFF_MS)
+    } finally {
+      this.reconnecting = false
+    }
   }
 
   private clearSessionCaps(): void {
@@ -337,6 +397,13 @@ export class GeminiLiveClient {
                   endOfSpeechSensitivity: 'END_SENSITIVITY_HIGH',
                 },
               },
+              // Session resumption: the server emits sessionResumptionUpdate frames
+              // carrying a newHandle; we store it (see handleServer) and pass it back
+              // on reconnect to restore conversation context. null = fresh session.
+              sessionResumption: { handle: this.resumeHandle ?? null },
+              // Context-window compression (sliding window) lifts the 15-min audio
+              // session ceiling to unlimited by pruning the oldest turns server-side.
+              contextWindowCompression: { slidingWindow: {} },
             },
           })
         )
@@ -482,8 +549,18 @@ export class GeminiLiveClient {
       console.log('[gemini-live] toolCall', msg.toolCall)
       this.dispatchToolCalls(msg.toolCall.functionCalls ?? [])
     }
+    if (msg.sessionResumptionUpdate) {
+      const u = msg.sessionResumptionUpdate
+      if (u.resumable && u.newHandle) {
+        this.resumeHandle = u.newHandle
+        console.log('[gemini-live] resumption handle updated', String(u.newHandle).slice(0, 12) + '…')
+      }
+    }
     if (msg.goAway) {
-      console.warn('[gemini-live] goAway', msg.goAway)
+      // Google force-closes the WS ~every 10 min; goAway warns ahead of time.
+      // Recycle-with-handle so the conversation survives the forced drop.
+      console.warn('[gemini-live] goAway — timeLeft', msg.goAway?.timeLeft)
+      this.recycleOrEnd()
     }
   }
 
