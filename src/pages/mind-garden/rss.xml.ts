@@ -70,7 +70,7 @@ const GET = async (context: AstroGlobal) => {
     site: import.meta.env.SITE,
     items: await Promise.all(
       allPostsByDate.map(async (post) => ({
-        link: `/mind-garden/${post.id}`,
+        link: `/mind-garden/${post.id.replace(/^(en|id)\//, '')}`,
         content: await renderContent(post, siteUrl),
         ...post.data
       }))
