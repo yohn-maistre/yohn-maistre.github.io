@@ -15,8 +15,7 @@ import config from '../../site.config'
       const el = document.querySelector('.waline-pageview-count')
       if (el) {
         pageview.pageviewCount({
-          serverURL: walineServer,
-          path: window.location.pathname
+          serverURL: walineServer
         })
       }
     } catch (e) {
